@@ -10,6 +10,8 @@
     "migrate": "tsx scripts/migrate.ts",
     "smoke-test": "tsx scripts/smoke-test.ts",
     "typecheck": "tsc --noEmit",
+    "test": "node --test --import tsx scripts/tests/*.test.ts",
+    "run-modo": "tsx scripts/run-modo.ts",
     "validate:dia": "tsx scripts/validate-dia.ts",
     "validate:carrefour": "tsx scripts/validate-carrefour.ts",
     "validate:galicia": "tsx scripts/validate-galicia.ts",
