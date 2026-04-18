@@ -1,7 +1,15 @@
 // Shared Postgres client for CLI scripts.
 // Singleton so multiple imports in one process share a connection pool.
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import postgres, { type Sql } from 'postgres';
+
+// Load .env.local from the repo root (this file lives in scripts/lib/).
+// We load .env.local explicitly because dotenv's auto-config only reads `.env`.
+const __dirname = dirname(fileURLToPath(import.meta.url));
+loadEnv({ path: resolve(__dirname, '..', '..', '.env.local') });
+loadEnv({ path: resolve(__dirname, '..', '..', '.env'), override: false });
 
 let client: Sql | null = null;
 
