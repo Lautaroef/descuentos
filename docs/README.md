@@ -11,6 +11,7 @@ Read in this order if you're new to the project:
 7. [competitor-promoarg.md](competitor-promoarg.md) — Reverse-engineering of PromoArg. Their "55k promos" is denormalized; they have no moat. What to copy, where to beat them.
 8. [long-tail-sourcing.md](long-tail-sourcing.md) — Phase 2 validation. Press-article LLM extraction for Cuenta DNI (9/9 promos first try), open web catalogs for Brubank/Naranja X/Ualá/Personal Pay, supermarket-native cross-wallet catalogs (Coto `/descuentos`, Jumbo `/descuentos-del-dia`, Carrefour `/descuentos-bancarios`). Tier 3 collapses; coverage jumps to ~85-90% of AR deal-hunter's promo universe.
 9. [build-plan.md](build-plan.md) — **The work contract.** Phased build plan from Phase 0 (bootstrap) through Phase 6 (optional public launch). Each phase has goal, deliverables, exit criteria, effort estimate, risks. Personal-use ship by end of Phase 2; differentiator parity+ by end of Phase 4.
+10. [firecrawl-alternative-analysis.md](firecrawl-alternative-analysis.md) — **Stack-cost review (April 2026).** Evaluates replacing Firecrawl with self-hosted Playwright / ScrapFly / direct LLM calls. Empirically validated: keep Firecrawl `/scrape` (commodity-priced), replace `firecrawl_extract` (~28 credit markup) with direct Gemini 2.5 Flash calls. Measured steady-state cost **~$16.52/mo** vs. $83/mo status quo (5.0x cheaper), 10/10 schema-valid on the MODO stress corpus. Benchmark: `scripts/samples/llm-comparison/gemini-benchmark-summary.md`.
 
 ## Conventions
 

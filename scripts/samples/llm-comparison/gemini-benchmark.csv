@@ -1,0 +1,11 @@
+slug,schema_valid,fields_matched,fields_diverged,input_tokens,output_tokens,latency_ms,cost_usd
+coto-mar26,true,10,1,3168,317,2771,0.001743
+supermiercoles-santander-info-mar26-jun26,true,10,1,2535,237,2488,0.001353
+carrefour-mar26,true,10,1,2241,224,1847,0.001232
+30-corrientes-supermercados-ene26,true,10,1,2092,209,1563,0.001150
+20-aiello-rm-supervielle-mar26,true,7,4,2101,327,2067,0.001448
+3csi-farmacias-bna-mar24,true,10,1,1679,185,1551,0.000966
+openfarma-abril26,true,9,2,2910,291,1960,0.001600
+transportevqr-abril26,true,8,3,2693,266,1871,0.001473
+30-bica-comerciosadheridos-abr26,true,9,2,2154,189,1579,0.001119
+3csi-simplicity-macro-abr26,true,9,2,1952,124,1288,0.000896

@@ -1,0 +1,1403 @@
+{
+  "model": "gemini-2.5-flash",
+  "pricing": {
+    "model": "gemini-2.5-flash",
+    "inputUsdPerMillionTokens": 0.3,
+    "outputUsdPerMillionTokens": 2.5
+  },
+  "run_at": "2026-04-18T23:12:53.396Z",
+  "results": [
+    {
+      "slug": "coto-mar26",
+      "url": "https://www.modo.com.ar/promos/coto-mar26",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 10,
+      "fields_diverged": 1,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": true,
+          "firecrawl": "COTO",
+          "gemini": "COTO"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "supermercado",
+          "gemini": "supermercado"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 20,
+          "gemini": 20
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": 25000,
+          "gemini": 25000
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": "month",
+          "gemini": "month"
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            2
+          ],
+          "gemini": [
+            2
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": true,
+          "firecrawl": "2026-03-01",
+          "gemini": "2026-03-01"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-04-30",
+          "gemini": "2026-04-30"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": 60000,
+          "gemini": 60000
+        },
+        {
+          "field": "issuer_bank",
+          "matched": false,
+          "firecrawl": [
+            "nacion",
+            "galicia",
+            "bbva",
+            "santander",
+            "macro",
+            "icbc",
+            "supervielle",
+            "credicoop",
+            "ciudad",
+            "bancor",
+            "comafi",
+            "columbia"
+          ],
+          "gemini": [
+            "santander",
+            "nacion",
+            "galicia",
+            "bbva",
+            "macro",
+            "santafe",
+            "entrerios",
+            "sanjuan",
+            "santacruz",
+            "icbc",
+            "yoy",
+            "supervielle",
+            "credicoop",
+            "ciudad",
+            "buepp",
+            "bancor",
+            "comafi",
+            "columbia",
+            "bancodelsol"
+          ],
+          "note": "overlap=12/19 fc_only=[] gm_only=[bancodelsol,buepp,entrerios,sanjuan,santacruz,santafe,yoy]"
+        }
+      ],
+      "input_tokens": 3168,
+      "output_tokens": 317,
+      "thoughts_tokens": 0,
+      "latency_ms": 2771,
+      "cost_usd": 0.0017429,
+      "gemini_raw": "{\n  \"merchant\": \"COTO\",\n  \"category\": \"supermercado\",\n  \"pct\": 20,\n  \"tope\": 25000,\n  \"tope_period\": \"month\",\n  \"valid_days\": [2],\n  \"valid_days_reasoning\": \"Realicen un pago por un monto mayor o igual a $60.000 (sesenta mil pesos) los días MARTES en los comercios adheridos\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2026-03-01\",\n  \"valid_to\": \"2026-04-30\",\n  \"requires_min_spend\": 60000,\n  \"issuer_bank\": [\n    \"santander\",\n    \"nacion\",\n    \"galicia\",\n    \"bbva\",\n    \"macro\",\n    \"santafe\",\n    \"entrerios\",\n    \"sanjuan\",\n    \"santacruz\",\n    \"icbc\",\n    \"yoy\",\n    \"supervielle\",\n    \"credicoop\",\n    \"ciudad\",\n    \"buepp\",\n    \"bancor\",\n    \"comafi\",\n    \"columbia\",\n    \"bancodelsol\"\n  ],\n  \"wallet\": [\"modo\"],\n  \"variants\": []\n}",
+      "gemini_parsed": {
+        "merchant": "COTO",
+        "category": "supermercado",
+        "pct": 20,
+        "tope": 25000,
+        "tope_period": "month",
+        "valid_days": [
+          2
+        ],
+        "valid_days_reasoning": "Realicen un pago por un monto mayor o igual a $60.000 (sesenta mil pesos) los días MARTES en los comercios adheridos",
+        "valid_regions": [],
+        "valid_from": "2026-03-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": 60000,
+        "issuer_bank": [
+          "santander",
+          "nacion",
+          "galicia",
+          "bbva",
+          "macro",
+          "santafe",
+          "entrerios",
+          "sanjuan",
+          "santacruz",
+          "icbc",
+          "yoy",
+          "supervielle",
+          "credicoop",
+          "ciudad",
+          "buepp",
+          "bancor",
+          "comafi",
+          "columbia",
+          "bancodelsol"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    },
+    {
+      "slug": "supermiercoles-santander-info-mar26-jun26",
+      "url": "https://www.modo.com.ar/promos/supermiercoles-santander-info-mar26-jun26",
+      "edge_case": "multi-rate (25% indumentaria + 10% perfumería/joyería/librería, all Wednesdays)",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 10,
+      "fields_diverged": 1,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": false,
+          "firecrawl": "Santander",
+          "gemini": "Supermiércoles Santander"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "indumentaria",
+          "gemini": "indumentaria"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 25,
+          "gemini": 25
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            3
+          ],
+          "gemini": [
+            3
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": true,
+          "firecrawl": "2026-03-25",
+          "gemini": "2026-03-25"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-06-24",
+          "gemini": "2026-06-24"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "issuer_bank",
+          "matched": true,
+          "firecrawl": [
+            "Santander"
+          ],
+          "gemini": [
+            "santander"
+          ]
+        }
+      ],
+      "input_tokens": 2535,
+      "output_tokens": 237,
+      "thoughts_tokens": 0,
+      "latency_ms": 2488,
+      "cost_usd": 0.001353,
+      "gemini_raw": "{\n  \"merchant\": \"Supermiércoles Santander\",\n  \"category\": \"indumentaria\",\n  \"pct\": 25,\n  \"tope\": null,\n  \"tope_period\": null,\n  \"valid_days\": [3],\n  \"valid_days_reasoning\": \"Válida los días miércoles\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2026-03-25\",\n  \"valid_to\": \"2026-06-24\",\n  \"requires_min_spend\": null,\n  \"issuer_bank\": [\"santander\"],\n  \"wallet\": [\"modo\"],\n  \"variants\": [\n    {\n      \"pct\": 10,\n      \"tope\": null,\n      \"tope_period\": null,\n      \"category_scope\": \"Perfumerías, joyerías y librerías\",\n      \"notes\": \"10% de reintegro para clientes suscriptos al programa Sorpresa Santander.\"\n    }\n  ]\n}",
+      "gemini_parsed": {
+        "merchant": "Supermiércoles Santander",
+        "category": "indumentaria",
+        "pct": 25,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [
+          3
+        ],
+        "valid_days_reasoning": "Válida los días miércoles",
+        "valid_regions": [],
+        "valid_from": "2026-03-25",
+        "valid_to": "2026-06-24",
+        "requires_min_spend": null,
+        "issuer_bank": [
+          "santander"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": [
+          {
+            "pct": 10,
+            "tope": null,
+            "tope_period": null,
+            "category_scope": "Perfumerías, joyerías y librerías",
+            "notes": "10% de reintegro para clientes suscriptos al programa Sorpresa Santander."
+          }
+        ]
+      }
+    },
+    {
+      "slug": "carrefour-mar26",
+      "url": "https://www.modo.com.ar/promos/carrefour-mar26",
+      "edge_case": "Sin tope + descuento-en-caja (not reintegro). 'TODOS LOS DÍAS' implied.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 10,
+      "fields_diverged": 1,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": true,
+          "firecrawl": "Carrefour",
+          "gemini": "Carrefour"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "supermercado",
+          "gemini": "supermercado"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 10,
+          "gemini": 10
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "valid_days",
+          "matched": false,
+          "firecrawl": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "gemini": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": true,
+          "firecrawl": "2026-03-06",
+          "gemini": "2026-03-06"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-04-25",
+          "gemini": "2026-04-25"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "issuer_bank",
+          "matched": true,
+          "firecrawl": [
+            "nacion",
+            "galicia",
+            "bbva",
+            "santander",
+            "macro",
+            "icbc"
+          ],
+          "gemini": [
+            "nacion",
+            "galicia",
+            "bbva",
+            "santander",
+            "macro",
+            "icbc"
+          ]
+        }
+      ],
+      "input_tokens": 2241,
+      "output_tokens": 224,
+      "thoughts_tokens": 0,
+      "latency_ms": 1847,
+      "cost_usd": 0.0012323,
+      "gemini_raw": "{\n  \"merchant\": \"Carrefour\",\n  \"category\": \"supermercado\",\n  \"pct\": 10,\n  \"tope\": null,\n  \"tope_period\": null,\n  \"valid_days\": [0, 1, 2, 3, 4, 5, 6],\n  \"valid_days_reasoning\": \"BENEFICIO VÁLIDO EXCLUSIVAMENTE EN LA REPÚBLICA ARGENTINA, HASTA EL 25/04/2026.\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2026-03-06\",\n  \"valid_to\": \"2026-04-25\",\n  \"requires_min_spend\": null,\n  \"issuer_bank\": [\"nacion\", \"galicia\", \"bbva\", \"santander\", \"macro\", \"icbc\"],\n  \"wallet\": [\"modo\"],\n  \"variants\": []\n}",
+      "gemini_parsed": {
+        "merchant": "Carrefour",
+        "category": "supermercado",
+        "pct": 10,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "valid_days_reasoning": "BENEFICIO VÁLIDO EXCLUSIVAMENTE EN LA REPÚBLICA ARGENTINA, HASTA EL 25/04/2026.",
+        "valid_regions": [],
+        "valid_from": "2026-03-06",
+        "valid_to": "2026-04-25",
+        "requires_min_spend": null,
+        "issuer_bank": [
+          "nacion",
+          "galicia",
+          "bbva",
+          "santander",
+          "macro",
+          "icbc"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    },
+    {
+      "slug": "30-corrientes-supermercados-ene26",
+      "url": "https://www.modo.com.ar/promos/30-corrientes-supermercados-ene26",
+      "edge_case": "Province-scoped (Banco Corrientes). Mid/Thu only.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 10,
+      "fields_diverged": 1,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": true,
+          "firecrawl": "Supermercados adheridos",
+          "gemini": "Supermercados adheridos"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "supermercado",
+          "gemini": "supermercado"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 30,
+          "gemini": 30
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": 20000,
+          "gemini": 20000
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": "month",
+          "gemini": "month"
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            3,
+            4
+          ],
+          "gemini": [
+            3,
+            4
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [
+            "AR-W"
+          ],
+          "gemini": [
+            "AR-W"
+          ]
+        },
+        {
+          "field": "valid_from",
+          "matched": false,
+          "firecrawl": "2025-12-31",
+          "gemini": "2026-01-01"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-12-31",
+          "gemini": "2026-12-31"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "issuer_bank",
+          "matched": true,
+          "firecrawl": [
+            "banco corrientes"
+          ],
+          "gemini": [
+            "corrientes"
+          ]
+        }
+      ],
+      "input_tokens": 2092,
+      "output_tokens": 209,
+      "thoughts_tokens": 0,
+      "latency_ms": 1563,
+      "cost_usd": 0.0011501,
+      "gemini_raw": "{\"merchant\": \"Supermercados adheridos\", \"category\": \"supermercado\", \"pct\": 30, \"tope\": 20000, \"tope_period\": \"month\", \"valid_days\": [3, 4], \"valid_days_reasoning\": \"PROMOCIÓN VIGENTE DESDE EL 01-01-2026 AL 31-12-2026 PARA COMPRAS CON TARJETAS DE CREDITO VISA Y MASTERCARD Y VISA DEBITO DEL BANCO DE CORRIENTES, LOS DIAS MIERCOLES Y JUEVES\", \"valid_regions\": [\"AR-W\"], \"valid_from\": \"2026-01-01\", \"valid_to\": \"2026-12-31\", \"requires_min_spend\": null, \"issuer_bank\": [\"corrientes\"], \"wallet\": [\"modo\"], \"variants\": []}",
+      "gemini_parsed": {
+        "merchant": "Supermercados adheridos",
+        "category": "supermercado",
+        "pct": 30,
+        "tope": 20000,
+        "tope_period": "month",
+        "valid_days": [
+          3,
+          4
+        ],
+        "valid_days_reasoning": "PROMOCIÓN VIGENTE DESDE EL 01-01-2026 AL 31-12-2026 PARA COMPRAS CON TARJETAS DE CREDITO VISA Y MASTERCARD Y VISA DEBITO DEL BANCO DE CORRIENTES, LOS DIAS MIERCOLES Y JUEVES",
+        "valid_regions": [
+          "AR-W"
+        ],
+        "valid_from": "2026-01-01",
+        "valid_to": "2026-12-31",
+        "requires_min_spend": null,
+        "issuer_bank": [
+          "corrientes"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    },
+    {
+      "slug": "20-aiello-rm-supervielle-mar26",
+      "url": "https://www.modo.com.ar/promos/20-aiello-rm-supervielle-mar26",
+      "edge_case": "Regional-chain with customer-tier variants (CG 20% / IDT/PS 25%). Tuesday only.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 7,
+      "fields_diverged": 4,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": false,
+          "firecrawl": "Supermercados Aiello",
+          "gemini": "Aiello"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "supermercado",
+          "gemini": "supermercado"
+        },
+        {
+          "field": "pct",
+          "matched": false,
+          "firecrawl": 20,
+          "gemini": 25
+        },
+        {
+          "field": "tope",
+          "matched": false,
+          "firecrawl": 15000,
+          "gemini": 25000
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": "month",
+          "gemini": "month"
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            2
+          ],
+          "gemini": [
+            2
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": false,
+          "firecrawl": "2026-03-01",
+          "gemini": "2026-02-28"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-05-31",
+          "gemini": "2026-05-31"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "issuer_bank",
+          "matched": true,
+          "firecrawl": [
+            "Supervielle"
+          ],
+          "gemini": [
+            "supervielle"
+          ]
+        }
+      ],
+      "input_tokens": 2101,
+      "output_tokens": 327,
+      "thoughts_tokens": 0,
+      "latency_ms": 2067,
+      "cost_usd": 0.0014478,
+      "gemini_raw": "{\n  \"merchant\": \"Aiello\",\n  \"category\": \"supermercado\",\n  \"pct\": 25,\n  \"tope\": 25000,\n  \"tope_period\": \"month\",\n  \"valid_days\": [2],\n  \"valid_days_reasoning\": \"Vigente en la República Argentina los días martes del 1 de marzo al 31 de mayo de 2026\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2026-02-28\",\n  \"valid_to\": \"2026-05-31\",\n  \"requires_min_spend\": null,\n  \"issuer_bank\": [\"supervielle\"],\n  \"wallet\": [\"modo\"],\n  \"variants\": [\n    {\n      \"pct\": 20,\n      \"tope\": 15000,\n      \"tope_period\": \"month\",\n      \"category_scope\": \"Cartera General\",\n      \"notes\": \"Clientes de Cartera General\"\n    },\n    {\n      \"pct\": 25,\n      \"tope\": 25000,\n      \"tope_period\": \"month\",\n      \"category_scope\": \"Identité y Plan Sueldo\",\n      \"notes\": \"Clientes Identité y quienes perciban sus haberes en el Banco (Plan Sueldo o PS)\"\n    }\n  ]\n}",
+      "gemini_parsed": {
+        "merchant": "Aiello",
+        "category": "supermercado",
+        "pct": 25,
+        "tope": 25000,
+        "tope_period": "month",
+        "valid_days": [
+          2
+        ],
+        "valid_days_reasoning": "Vigente en la República Argentina los días martes del 1 de marzo al 31 de mayo de 2026",
+        "valid_regions": [],
+        "valid_from": "2026-02-28",
+        "valid_to": "2026-05-31",
+        "requires_min_spend": null,
+        "issuer_bank": [
+          "supervielle"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": [
+          {
+            "pct": 20,
+            "tope": 15000,
+            "tope_period": "month",
+            "category_scope": "Cartera General",
+            "notes": "Clientes de Cartera General"
+          },
+          {
+            "pct": 25,
+            "tope": 25000,
+            "tope_period": "month",
+            "category_scope": "Identité y Plan Sueldo",
+            "notes": "Clientes Identité y quienes perciban sus haberes en el Banco (Plan Sueldo o PS)"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "3csi-farmacias-bna-mar24",
+      "url": "https://www.modo.com.ar/promos/3csi-farmacias-bna-mar24",
+      "edge_case": "Old 'sticky' slug (mar24) still active in 2026. Cuotas-only (pct=0). Monday only.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 10,
+      "fields_diverged": 1,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": true,
+          "firecrawl": "Farmacias",
+          "gemini": "Farmacias"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "farmacia",
+          "gemini": "farmacia"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 0,
+          "gemini": 0
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            1
+          ],
+          "gemini": [
+            1
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": false,
+          "firecrawl": "2024-03-04",
+          "gemini": "2024-03-03"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-05-31",
+          "gemini": "2026-05-31"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "issuer_bank",
+          "matched": true,
+          "firecrawl": [
+            "Banco Nación"
+          ],
+          "gemini": [
+            "nacion"
+          ]
+        }
+      ],
+      "input_tokens": 1679,
+      "output_tokens": 185,
+      "thoughts_tokens": 0,
+      "latency_ms": 1551,
+      "cost_usd": 0.0009662,
+      "gemini_raw": "{\n  \"merchant\": \"Farmacias\",\n  \"category\": \"farmacia\",\n  \"pct\": 0,\n  \"tope\": null,\n  \"tope_period\": null,\n  \"valid_days\": [1],\n  \"valid_days_reasoning\": \"PROMOCIÓN VÁLIDA TODOS LOS LUNES DEL 04/03/2024 AL 31/05/2026\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2024-03-03\",\n  \"valid_to\": \"2026-05-31\",\n  \"requires_min_spend\": null,\n  \"issuer_bank\": [\"nacion\"],\n  \"wallet\": [\"modo\"],\n  \"variants\": []\n}",
+      "gemini_parsed": {
+        "merchant": "Farmacias",
+        "category": "farmacia",
+        "pct": 0,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [
+          1
+        ],
+        "valid_days_reasoning": "PROMOCIÓN VÁLIDA TODOS LOS LUNES DEL 04/03/2024 AL 31/05/2026",
+        "valid_regions": [],
+        "valid_from": "2024-03-03",
+        "valid_to": "2026-05-31",
+        "requires_min_spend": null,
+        "issuer_bank": [
+          "nacion"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    },
+    {
+      "slug": "openfarma-abril26",
+      "url": "https://www.modo.com.ar/promos/openfarma-abril26",
+      "edge_case": "Current-month (abril26). Martes y jueves only.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 9,
+      "fields_diverged": 2,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": true,
+          "firecrawl": "Openfarma",
+          "gemini": "Openfarma"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "farmacia",
+          "gemini": "farmacia"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 15,
+          "gemini": 15
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": 8000,
+          "gemini": 8000
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": "month",
+          "gemini": "month"
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            2,
+            4
+          ],
+          "gemini": [
+            2,
+            4
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": false,
+          "firecrawl": "2026-04-01",
+          "gemini": "2026-04-02"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-04-30",
+          "gemini": "2026-04-30"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": 50000,
+          "gemini": 50000
+        },
+        {
+          "field": "issuer_bank",
+          "matched": false,
+          "firecrawl": [
+            "Banco Santander",
+            "Banco Nación",
+            "Banco Galicia",
+            "Banco BBVA",
+            "Banco Macro",
+            "Banco Santa Fe",
+            "Banco Entre Rios",
+            "Banco San Juan",
+            "Banco Santa Cruz",
+            "Banco ICBC",
+            "Billetera YOY",
+            "Banco Supervielle",
+            "Banco Credicoop",
+            "Banco Ciudad",
+            "Billetera BUEPP",
+            "Banco Bancor",
+            "Banco Comafi",
+            "Banco del Sol"
+          ],
+          "gemini": [
+            "santander",
+            "nacion",
+            "galicia",
+            "bbva",
+            "macro",
+            "santafe",
+            "entrerios",
+            "sanjuan",
+            "santacruz",
+            "icbc",
+            "yoy",
+            "supervielle",
+            "credicoop",
+            "ciudad",
+            "buepp",
+            "bancor",
+            "comafi",
+            "bancodelsol"
+          ],
+          "note": "overlap=17/18 fc_only=[delsol] gm_only=[bancodelsol]"
+        }
+      ],
+      "input_tokens": 2910,
+      "output_tokens": 291,
+      "thoughts_tokens": 0,
+      "latency_ms": 1960,
+      "cost_usd": 0.0016005,
+      "gemini_raw": "{\n  \"merchant\": \"Openfarma\",\n  \"category\": \"farmacia\",\n  \"pct\": 15,\n  \"tope\": 8000,\n  \"tope_period\": \"month\",\n  \"valid_days\": [2, 4],\n  \"valid_days_reasoning\": \"Realicen un pago los días MARTES y JUEVES\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2026-04-02\",\n  \"valid_to\": \"2026-04-30\",\n  \"requires_min_spend\": 50000,\n  \"issuer_bank\": [\n    \"santander\",\n    \"nacion\",\n    \"galicia\",\n    \"bbva\",\n    \"macro\",\n    \"santafe\",\n    \"entrerios\",\n    \"sanjuan\",\n    \"santacruz\",\n    \"icbc\",\n    \"yoy\",\n    \"supervielle\",\n    \"credicoop\",\n    \"ciudad\",\n    \"buepp\",\n    \"bancor\",\n    \"comafi\",\n    \"bancodelsol\"\n  ],\n  \"wallet\": [\"modo\"],\n  \"variants\": []\n}",
+      "gemini_parsed": {
+        "merchant": "Openfarma",
+        "category": "farmacia",
+        "pct": 15,
+        "tope": 8000,
+        "tope_period": "month",
+        "valid_days": [
+          2,
+          4
+        ],
+        "valid_days_reasoning": "Realicen un pago los días MARTES y JUEVES",
+        "valid_regions": [],
+        "valid_from": "2026-04-02",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": 50000,
+        "issuer_bank": [
+          "santander",
+          "nacion",
+          "galicia",
+          "bbva",
+          "macro",
+          "santafe",
+          "entrerios",
+          "sanjuan",
+          "santacruz",
+          "icbc",
+          "yoy",
+          "supervielle",
+          "credicoop",
+          "ciudad",
+          "buepp",
+          "bancor",
+          "comafi",
+          "bancodelsol"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    },
+    {
+      "slug": "transportevqr-abril26",
+      "url": "https://www.modo.com.ar/promos/transportevqr-abril26",
+      "edge_case": "TODOS LOS DÍAS + transporte category. 50% reintegro, tope $8k per bank per promo.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 8,
+      "fields_diverged": 3,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": true,
+          "firecrawl": "Colectivos y subtes",
+          "gemini": "Colectivos y subtes"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "transporte",
+          "gemini": "transporte"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 50,
+          "gemini": 50
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": 8000,
+          "gemini": 8000
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": "month",
+          "gemini": "month"
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "gemini": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": false,
+          "firecrawl": "2026-04-05",
+          "gemini": "2026-04-06"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-04-30",
+          "gemini": "2026-04-30"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": false,
+          "firecrawl": 1200,
+          "gemini": null
+        },
+        {
+          "field": "issuer_bank",
+          "matched": false,
+          "firecrawl": [
+            "nacion",
+            "galicia",
+            "santander",
+            "macro",
+            "icbc",
+            "credicoop"
+          ],
+          "gemini": [
+            "nacion",
+            "ciudad",
+            "credicoop",
+            "galicia",
+            "santacruz",
+            "santafe",
+            "sanjuan",
+            "entrerios",
+            "icbc",
+            "yoy",
+            "macro",
+            "santander",
+            "supervielle"
+          ],
+          "note": "overlap=6/13 fc_only=[] gm_only=[ciudad,entrerios,sanjuan,santacruz,santafe,supervielle,yoy]"
+        }
+      ],
+      "input_tokens": 2693,
+      "output_tokens": 266,
+      "thoughts_tokens": 0,
+      "latency_ms": 1871,
+      "cost_usd": 0.0014729,
+      "gemini_raw": "{\n  \"merchant\": \"Colectivos y subtes\",\n  \"category\": \"transporte\",\n  \"pct\": 50,\n  \"tope\": 8000,\n  \"tope_period\": \"month\",\n  \"valid_days\": [0, 1, 2, 3, 4, 5, 6],\n  \"valid_days_reasoning\": \"Días que aplica TODOS LOS DÍAS\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2026-04-06\",\n  \"valid_to\": \"2026-04-30\",\n  \"requires_min_spend\": null,\n  \"issuer_bank\": [\n    \"nacion\",\n    \"ciudad\",\n    \"credicoop\",\n    \"galicia\",\n    \"santacruz\",\n    \"santafe\",\n    \"sanjuan\",\n    \"entrerios\",\n    \"icbc\",\n    \"yoy\",\n    \"macro\",\n    \"santander\",\n    \"supervielle\"\n  ],\n  \"wallet\": [\"modo\"],\n  \"variants\": []\n}",
+      "gemini_parsed": {
+        "merchant": "Colectivos y subtes",
+        "category": "transporte",
+        "pct": 50,
+        "tope": 8000,
+        "tope_period": "month",
+        "valid_days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "valid_days_reasoning": "Días que aplica TODOS LOS DÍAS",
+        "valid_regions": [],
+        "valid_from": "2026-04-06",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "issuer_bank": [
+          "nacion",
+          "ciudad",
+          "credicoop",
+          "galicia",
+          "santacruz",
+          "santafe",
+          "sanjuan",
+          "entrerios",
+          "icbc",
+          "yoy",
+          "macro",
+          "santander",
+          "supervielle"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    },
+    {
+      "slug": "30-bica-comerciosadheridos-abr26",
+      "url": "https://www.modo.com.ar/promos/30-bica-comerciosadheridos-abr26",
+      "edge_case": "Regional bank (BICA = Santa Fe). Generic 'comercios adheridos' multi-category.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 9,
+      "fields_diverged": 2,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": false,
+          "firecrawl": "comercios adheridos",
+          "gemini": "Comercios adheridos"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "otro",
+          "gemini": "otro"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 30,
+          "gemini": 30
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": 8000,
+          "gemini": 8000
+        },
+        {
+          "field": "tope_period",
+          "matched": true,
+          "firecrawl": "month",
+          "gemini": "month"
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "gemini": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": false,
+          "firecrawl": [
+            "AR-S"
+          ],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": true,
+          "firecrawl": "2026-04-01",
+          "gemini": "2026-04-01"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-06-30",
+          "gemini": "2026-06-30"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "issuer_bank",
+          "matched": true,
+          "firecrawl": [
+            "Banco Bica"
+          ],
+          "gemini": [
+            "bica"
+          ]
+        }
+      ],
+      "input_tokens": 2154,
+      "output_tokens": 189,
+      "thoughts_tokens": 0,
+      "latency_ms": 1579,
+      "cost_usd": 0.0011186999999999998,
+      "gemini_raw": "{\n  \"merchant\": \"Comercios adheridos\",\n  \"category\": \"otro\",\n  \"pct\": 30,\n  \"tope\": 8000,\n  \"tope_period\": \"month\",\n  \"valid_days\": [0, 1, 2, 3, 4, 5, 6],\n  \"valid_days_reasoning\": \"Realizando la compra hasta 12 cuotas cualquier día de la semana.\",\n  \"valid_regions\": [],\n  \"valid_from\": \"2026-04-01\",\n  \"valid_to\": \"2026-06-30\",\n  \"requires_min_spend\": null,\n  \"issuer_bank\": [\"bica\"],\n  \"wallet\": [\"modo\"],\n  \"variants\": []\n}",
+      "gemini_parsed": {
+        "merchant": "Comercios adheridos",
+        "category": "otro",
+        "pct": 30,
+        "tope": 8000,
+        "tope_period": "month",
+        "valid_days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "valid_days_reasoning": "Realizando la compra hasta 12 cuotas cualquier día de la semana.",
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-06-30",
+        "requires_min_spend": null,
+        "issuer_bank": [
+          "bica"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    },
+    {
+      "slug": "3csi-simplicity-macro-abr26",
+      "url": "https://www.modo.com.ar/promos/3csi-simplicity-macro-abr26",
+      "edge_case": "Cuotas-only (no reintegro). Macro x Simplicity indumentaria.",
+      "schema_valid": true,
+      "zod_issues": [],
+      "parse_error": null,
+      "fields_matched": 9,
+      "fields_diverged": 2,
+      "field_comparisons": [
+        {
+          "field": "merchant",
+          "matched": true,
+          "firecrawl": "Simplicity",
+          "gemini": "Simplicity"
+        },
+        {
+          "field": "category",
+          "matched": true,
+          "firecrawl": "indumentaria",
+          "gemini": "indumentaria"
+        },
+        {
+          "field": "pct",
+          "matched": true,
+          "firecrawl": 0,
+          "gemini": 0
+        },
+        {
+          "field": "tope",
+          "matched": true,
+          "firecrawl": null,
+          "gemini": null
+        },
+        {
+          "field": "tope_period",
+          "matched": false,
+          "firecrawl": "month",
+          "gemini": null
+        },
+        {
+          "field": "valid_days",
+          "matched": true,
+          "firecrawl": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "gemini": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "field": "valid_regions",
+          "matched": true,
+          "firecrawl": [],
+          "gemini": []
+        },
+        {
+          "field": "valid_from",
+          "matched": false,
+          "firecrawl": "2026-04-01",
+          "gemini": "2026-03-31"
+        },
+        {
+          "field": "valid_to",
+          "matched": true,
+          "firecrawl": "2026-04-30",
+          "gemini": "2026-04-30"
+        },
+        {
+          "field": "requires_min_spend",
+          "matched": true,
+          "firecrawl": 60000,
+          "gemini": 60000
+        },
+        {
+          "field": "issuer_bank",
+          "matched": true,
+          "firecrawl": [
+            "macro"
+          ],
+          "gemini": [
+            "macro"
+          ]
+        }
+      ],
+      "input_tokens": 1952,
+      "output_tokens": 124,
+      "thoughts_tokens": 0,
+      "latency_ms": 1288,
+      "cost_usd": 0.0008956000000000001,
+      "gemini_raw": "{\"merchant\":\"Simplicity\",\"category\":\"indumentaria\",\"pct\":0,\"tope\":null,\"tope_period\":null,\"valid_days\":[0,1,2,3,4,5,6],\"valid_days_reasoning\":\"PROMOCIÓN VÁLIDA TODOS LOS DÍAS\",\"valid_regions\":[],\"valid_from\":\"2026-03-31\",\"valid_to\":\"2026-04-30\",\"requires_min_spend\":60000,\"issuer_bank\":[\"macro\"],\"wallet\":[\"modo\"],\"variants\":[]}",
+      "gemini_parsed": {
+        "merchant": "Simplicity",
+        "category": "indumentaria",
+        "pct": 0,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "valid_days_reasoning": "PROMOCIÓN VÁLIDA TODOS LOS DÍAS",
+        "valid_regions": [],
+        "valid_from": "2026-03-31",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": 60000,
+        "issuer_bank": [
+          "macro"
+        ],
+        "wallet": [
+          "modo"
+        ],
+        "variants": []
+      }
+    }
+  ]
+}
