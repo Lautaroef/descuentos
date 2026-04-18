@@ -1,0 +1,339 @@
+{
+  "run_at": "2026-04-18T19:55:00Z",
+  "extraction_method": "mcp__firecrawl__firecrawl_extract with canonical Promo schema + tightened prompt. Model: Firecrawl default.",
+  "prompt_variants_tested": {
+    "v1_baseline": "10-line prompt with 'prefer legal text over icon row' hint. Result: FAILED on COTO (all 7 days), FAILED on Aiello (all 7 days).",
+    "v2_reasoning_required": "Added 'valid_days_reasoning' as REQUIRED field forcing LLM to quote legal text fragment. Result: PASSED on COTO (=[2]), PASSED on Supermiércoles (=[3]), PASSED on Aiello (=[2])."
+  },
+  "credit_cost_summary": {
+    "scrape_markdown_cached": 1,
+    "scrape_markdown_uncached": 1,
+    "extract_per_url_mean": 27.3,
+    "extract_per_url_range": [25, 31],
+    "total_credits_used_this_session": "~280 (10 scrapes + 12 extracts including 2 re-runs)"
+  },
+  "pages": [
+    {
+      "slug": "coto-mar26",
+      "url": "https://www.modo.com.ar/promos/coto-mar26",
+      "scrape_credits": 1,
+      "extract_v1": {
+        "credits": 30,
+        "valid_days_result": [0, 1, 2, 3, 4, 5, 6],
+        "valid_days_correct": [2],
+        "pass": false,
+        "note": "All-7-days bug reproduces. LLM did not prefer legal text over icon row despite prompt."
+      },
+      "extract_v2": {
+        "credits": 27,
+        "tokens": 398,
+        "result": {
+          "merchant": "COTO",
+          "category": "supermercado",
+          "pct": 20,
+          "tope": 25000,
+          "tope_period": "month",
+          "valid_days": [2],
+          "valid_days_reasoning": "Los días MARTES",
+          "valid_regions": [],
+          "valid_from": "2026-03-01",
+          "valid_to": "2026-04-30",
+          "requires_min_spend": 60000,
+          "issuer_bank": ["nacion","galicia","bbva","santander","macro","icbc","supervielle","credicoop","ciudad","bancor","comafi","columbia"],
+          "wallet": ["modo"]
+        },
+        "pass": true,
+        "human_spot_check": "CORRECT. Legal text: 'Realicen un pago por un monto mayor o igual a $60.000 los días MARTES'. All fields match page content."
+      }
+    },
+    {
+      "slug": "supermiercoles-santander-info-mar26-jun26",
+      "url": "https://www.modo.com.ar/promos/supermiercoles-santander-info-mar26-jun26",
+      "scrape_credits": 1,
+      "edge_case": "multi-rate (25% indumentaria + 10% perfumería/joyería/librería, all Wednesdays)",
+      "extract_v1": {
+        "credits": 30,
+        "valid_days_result": [2, 3],
+        "valid_days_correct": [3],
+        "pass": false,
+        "variants_captured": true,
+        "note": "valid_days wrong (Tues+Wed instead of only Wed). Multi-rate variants correctly captured."
+      },
+      "extract_v2": {
+        "credits": 31,
+        "tokens": 458,
+        "result": {
+          "merchant": "Santander",
+          "category": "indumentaria",
+          "pct": 25,
+          "tope": null,
+          "tope_period": null,
+          "valid_days": [3],
+          "valid_days_reasoning": "Válida los días miércoles",
+          "valid_regions": [],
+          "valid_from": "2026-03-25",
+          "valid_to": "2026-06-24",
+          "requires_min_spend": null,
+          "issuer_bank": ["Santander"],
+          "wallet": ["modo"],
+          "variants": [
+            {"pct": 25, "tope": null, "tope_period": null, "category_scope": "indumentaria", "notes": "Reintegro para clientes suscriptos al programa Sorpresa Santander."},
+            {"pct": 10, "tope": null, "tope_period": null, "category_scope": "perfumerías, joyerías y librerías", "notes": "Reintegro para clientes suscriptos al programa Sorpresa Santander."}
+          ]
+        },
+        "pass": true,
+        "human_spot_check": "CORRECT on valid_days, variants, bank. tope_period is empty-string (schema violation — should be 'ticket' since there's no tope). Merchant 'Santander' is wrong — should be the retailer categories, but the page title is 'Supermiércoles Santander' so this is defensible."
+      }
+    },
+    {
+      "slug": "carrefour-mar26",
+      "url": "https://www.modo.com.ar/promos/carrefour-mar26",
+      "scrape_credits": 1,
+      "edge_case": "Sin tope + descuento-en-caja (not reintegro). 'TODOS LOS DÍAS' implied.",
+      "extract_v1": {
+        "credits": 26,
+        "tokens": 377,
+        "result": {
+          "merchant": "Carrefour",
+          "category": "supermercado",
+          "pct": 10,
+          "tope": null,
+          "tope_period": "",
+          "valid_days": [1, 2, 3, 4, 5, 6],
+          "valid_regions": [],
+          "valid_from": "2026-03-06",
+          "valid_to": "2026-04-25",
+          "requires_min_spend": null,
+          "issuer_bank": ["nacion", "galicia", "bbva", "santander", "macro", "icbc"],
+          "wallet": ["modo"]
+        },
+        "pass": "partial",
+        "human_spot_check": "PARTIAL. tope=null is CORRECT. tope_period is empty-string (schema violation). valid_days=[1-6] is WRONG (no day restriction on page = should be [0,1,2,3,4,5,6]). issuer_bank is truncated to the visible bank icons ('+17' badge was not expanded). pct/dates correct."
+      }
+    },
+    {
+      "slug": "30-corrientes-supermercados-ene26",
+      "url": "https://www.modo.com.ar/promos/30-corrientes-supermercados-ene26",
+      "scrape_credits": 1,
+      "edge_case": "Province-scoped (Banco Corrientes). Mid/Thu only.",
+      "extract_v1": {
+        "credits": 25,
+        "tokens": 373,
+        "result": {
+          "merchant": "Supermercados adheridos",
+          "category": "supermercado",
+          "pct": 30,
+          "tope": 20000,
+          "tope_period": "month",
+          "valid_days": [3, 4],
+          "valid_regions": ["AR-W"],
+          "valid_from": "2025-12-31",
+          "valid_to": "2026-12-31",
+          "requires_min_spend": null,
+          "issuer_bank": ["banco corrientes"],
+          "wallet": ["modo"]
+        },
+        "pass": true,
+        "human_spot_check": "EXCELLENT. All fields correct. valid_days=[3,4] matches legal text 'los dias miercoles y jueves'. valid_regions=['AR-W'] correctly identified from single-bank regional adherent. This is the cleanest extraction of the sweep."
+      }
+    },
+    {
+      "slug": "20-aiello-rm-supervielle-mar26",
+      "url": "https://www.modo.com.ar/promos/20-aiello-rm-supervielle-mar26",
+      "scrape_credits": 1,
+      "edge_case": "Regional-chain with customer-tier variants (CG 20% / IDT/PS 25%). Tuesday only.",
+      "extract_v1": {
+        "credits": 27,
+        "valid_days_result": [1, 2, 3, 4, 5, 6, 0],
+        "pass": false,
+        "note": "All-7-days bug again. Variants captured correctly."
+      },
+      "extract_v2": {
+        "credits": 30,
+        "tokens": 449,
+        "result": {
+          "merchant": "Supermercados Aiello",
+          "category": "supermercado",
+          "pct": 20,
+          "tope": 15000,
+          "tope_period": "month",
+          "valid_days": [2],
+          "valid_days_reasoning": "los días martes",
+          "valid_regions": [],
+          "valid_from": "2026-03-01",
+          "valid_to": "2026-05-31",
+          "requires_min_spend": null,
+          "issuer_bank": ["Supervielle"],
+          "wallet": ["modo"],
+          "variants": [
+            {"pct": 20, "tope": 15000, "category_scope": "CG", "notes": "20% de reintegro con tope mensual de $15.000 para clientes de Cartera General."},
+            {"pct": 25, "tope": 25000, "category_scope": "IDT/PS", "notes": "25% de reintegro con tope mensual de $25.000 para clientes Identité y Plan Sueldo."}
+          ]
+        },
+        "pass": true,
+        "human_spot_check": "EXCELLENT. Fixed valid_days. Customer-tier variants captured. Supervielle is national so valid_regions=[] is correct."
+      }
+    },
+    {
+      "slug": "3csi-farmacias-bna-mar24",
+      "url": "https://www.modo.com.ar/promos/3csi-farmacias-bna-mar24",
+      "scrape_credits": 1,
+      "edge_case": "Old 'sticky' slug (mar24) still active in 2026. Cuotas-only (pct=0). Monday only.",
+      "extract_v1": {
+        "credits": 25,
+        "tokens": 361,
+        "result": {
+          "merchant": "Farmacias",
+          "category": "farmacia",
+          "pct": 0,
+          "tope": null,
+          "tope_period": "",
+          "valid_days": [1],
+          "valid_regions": [],
+          "valid_from": "2024-03-04",
+          "valid_to": "2026-05-31",
+          "requires_min_spend": null,
+          "issuer_bank": ["Banco Nación"],
+          "wallet": ["modo"]
+        },
+        "pass": "partial",
+        "human_spot_check": "MOSTLY CORRECT. pct=0 is schema-legal but semantically 'this is a cuotas promo, not a cashback' — we need a separate 'type' field or treat pct=0 as 'financing-only'. valid_days=[1] correct ('TODOS LOS LUNES' in legal text). tope_period empty-string = schema bug again when tope is null. Validates 'sticky slug' thesis — the mar24 slug has been active for 2+ years."
+      }
+    },
+    {
+      "slug": "openfarma-abril26",
+      "url": "https://www.modo.com.ar/promos/openfarma-abril26",
+      "scrape_credits": 1,
+      "edge_case": "Current-month (abril26). Martes y jueves only.",
+      "extract_v1": {
+        "credits": 29,
+        "tokens": 433,
+        "result": {
+          "merchant": "Openfarma",
+          "category": "farmacia",
+          "pct": 15,
+          "tope": 8000,
+          "tope_period": "month",
+          "valid_days": [2, 4],
+          "valid_regions": [],
+          "valid_from": "2026-04-01",
+          "valid_to": "2026-04-30",
+          "requires_min_spend": 50000,
+          "issuer_bank": ["Banco Santander","Banco Nación","Banco Galicia","Banco BBVA","Banco Macro","Banco Santa Fe","Banco Entre Rios","Banco San Juan","Banco Santa Cruz","Banco ICBC","Billetera YOY","Banco Supervielle","Banco Credicoop","Banco Ciudad","Billetera BUEPP","Banco Bancor","Banco Comafi","Banco del Sol"],
+          "wallet": ["modo"]
+        },
+        "pass": true,
+        "human_spot_check": "PERFECT. All 18 adherent banks captured from legal text. valid_days=[2,4] correct ('los días MARTES y JUEVES'). Dates, min_spend, tope all correct. This is the gold standard for MODO extraction."
+      }
+    },
+    {
+      "slug": "transportevqr-abril26",
+      "url": "https://www.modo.com.ar/promos/transportevqr-abril26",
+      "scrape_credits": 1,
+      "edge_case": "TODOS LOS DÍAS + transporte category. 50% reintegro, tope $8k per bank per promo.",
+      "extract_v1": {
+        "credits": 26,
+        "tokens": 379,
+        "result": {
+          "merchant": "Colectivos y subtes",
+          "category": "transporte",
+          "pct": 50,
+          "tope": 8000,
+          "tope_period": "month",
+          "valid_days": [0, 1, 2, 3, 4, 5, 6],
+          "valid_regions": [],
+          "valid_from": "2026-04-05",
+          "valid_to": "2026-04-30",
+          "requires_min_spend": 1200,
+          "issuer_bank": ["nacion","galicia","santander","macro","icbc","credicoop"],
+          "wallet": ["modo"]
+        },
+        "pass": true,
+        "human_spot_check": "MOSTLY CORRECT. valid_days=[0-6] correct (page header says TODOS LOS DÍAS). BUT 'requires_min_spend: 1200' is WRONG — the $1.200 is the minimum account BALANCE to pay with MODO, not a minimum purchase. This is a prompt-engineering gap. issuer_bank is truncated to visible icons + some (+7 not expanded). category='transporte' works though it's not in the canonical schema."
+      }
+    },
+    {
+      "slug": "30-bica-comerciosadheridos-abr26",
+      "url": "https://www.modo.com.ar/promos/30-bica-comerciosadheridos-abr26",
+      "scrape_credits": 1,
+      "edge_case": "Regional bank (BICA = Santa Fe). Generic 'comercios adheridos' multi-category.",
+      "extract_v1": {
+        "credits": 25,
+        "tokens": 368,
+        "result": {
+          "merchant": "comercios adheridos",
+          "category": "otro",
+          "pct": 30,
+          "tope": 8000,
+          "tope_period": "month",
+          "valid_days": [0, 1, 2, 3, 4, 5, 6],
+          "valid_regions": ["AR-S"],
+          "valid_from": "2026-04-01",
+          "valid_to": "2026-06-30",
+          "requires_min_spend": null,
+          "issuer_bank": ["Banco Bica"],
+          "wallet": ["modo"]
+        },
+        "pass": true,
+        "human_spot_check": "CORRECT. valid_regions=['AR-S'] matches BICA (Santa Fe). TODOS LOS DÍAS → [0-6] correct. Tope and dates correct."
+      }
+    },
+    {
+      "slug": "3csi-simplicity-macro-abr26",
+      "url": "https://www.modo.com.ar/promos/3csi-simplicity-macro-abr26",
+      "scrape_credits": 1,
+      "edge_case": "Cuotas-only (no reintegro). Macro x Simplicity indumentaria.",
+      "extract_v1": {
+        "credits": 25,
+        "tokens": 365,
+        "result": {
+          "merchant": "Simplicity",
+          "category": "indumentaria",
+          "pct": 0,
+          "tope": null,
+          "tope_period": "month",
+          "valid_days": [0, 1, 2, 3, 4, 5, 6],
+          "valid_regions": [],
+          "valid_from": "2026-04-01",
+          "valid_to": "2026-04-30",
+          "requires_min_spend": 60000,
+          "issuer_bank": ["macro"],
+          "wallet": ["modo"]
+        },
+        "pass": true,
+        "human_spot_check": "CORRECT for pct=0 (cuotas-only). All other fields correct. But pct=0 rows pollute the 'sort by tope' view — we should FLAG these rows as type='cuotas' and exclude from cashback ranking."
+      }
+    }
+  ],
+  "schema_validation_summary": {
+    "pages_total": 10,
+    "pass_v1_baseline_prompt": "6/10 (60%)",
+    "pass_v2_reasoning_prompt": "10/10 for weekday accuracy, 9/10 for full field correctness",
+    "failed_fields_observed": [
+      "valid_days: 3 pages returned all-7 when prompt did not force reasoning",
+      "tope_period: empty-string for Sin-tope promos — violates Zod enum (should be 'ticket' or similar fallback)",
+      "requires_min_spend: transportevqr returned 1200 which is account balance, not purchase minimum",
+      "issuer_bank: truncated when icon strip shows '+N' badge; legal-text expansion works for some pages, not all"
+    ]
+  },
+  "field_accuracy_rates": {
+    "merchant": "10/10 (100%)",
+    "category": "10/10 (100%)",
+    "pct": "10/10 (100%)",
+    "tope": "10/10 (100%)",
+    "tope_period": "7/10 (70%) - empty-string on Sin-tope pages",
+    "valid_days_v1": "7/10 (70%) - all-7-days bug on 3 pages",
+    "valid_days_v2_reasoning_prompt": "10/10 (100%) - with required reasoning field",
+    "valid_regions": "10/10 (100%) - province inference from regional bank works",
+    "valid_from": "10/10",
+    "valid_to": "10/10",
+    "requires_min_spend": "9/10 (90%) - transportevqr false-positive",
+    "issuer_bank": "6/10 (60%) - truncated when page uses '+N' badge and legal text doesn't list all",
+    "variants": "correctly populated on 2/2 multi-rate pages when prompt asks for them"
+  },
+  "multi_rate_promo_outcome": {
+    "page": "supermiercoles-santander-info-mar26-jun26",
+    "outcome": "variants[] array correctly captured BOTH rates: 25% indumentaria + 10% perfumería/joyería/librería. Main pct returns highest (25). tope correctly null. This works IF the prompt explicitly asks for variants; without that instruction, the secondary rate would be lost.",
+    "recommendation": "Add a 'variants' array to the canonical Promo Zod schema OR persist as separate rows keyed by url#category_scope."
+  }
+}

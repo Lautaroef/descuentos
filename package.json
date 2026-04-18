@@ -1,0 +1,31 @@
+{
+  "name": "descuentos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "migrate": "tsx scripts/migrate.ts",
+    "smoke-test": "tsx scripts/smoke-test.ts",
+    "typecheck": "tsc --noEmit",
+    "validate:dia": "tsx scripts/validate-dia.ts",
+    "validate:carrefour": "tsx scripts/validate-carrefour.ts",
+    "validate:galicia": "tsx scripts/validate-galicia.ts",
+    "validate:mp": "tsx scripts/validate-mp.ts",
+    "validate:modo": "tsx scripts/validate-modo.ts",
+    "validate:modo-stress": "tsx scripts/validate-modo-stress.ts"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "postgres": "^3.4.5",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

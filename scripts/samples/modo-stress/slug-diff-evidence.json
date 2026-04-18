@@ -1,0 +1,60 @@
+{
+  "captured_at": "2026-04-18T20:00:00Z",
+  "methods": [
+    "Firecrawl scrape of https://www.modo.com.ar/promos twice, ~30 min apart",
+    "Wayback CDX API query for 2026-01-01 to 2026-04-18 archived /promos/* URLs",
+    "modo.com.ar/sitemap.xml (4,492 total promo URLs including historical)"
+  ],
+  "same_day_churn": {
+    "scrape_1_slug_count": 57,
+    "scrape_2_slug_count": 57,
+    "diff": 0,
+    "verdict": "ZERO churn in 30 min. Hub cache is stable same-day. This matches expectations (MODO publishes new promos monthly, not hourly)."
+  },
+  "wayback_2026_vs_live": {
+    "wayback_cdx_slugs_count": 31,
+    "live_hub_today_count": 57,
+    "overlap_sticky_count": 2,
+    "overlap_sticky_slugs": [
+      "3csi-farmacias-bna-mar24",
+      "10off-3csi-opticas-bna-mar25"
+    ],
+    "wayback_only_rotated_out": 29,
+    "verdict": "The 2 sticky slugs validate the 'permanent program' category — the 'mar24' suffix on farmacias BNA has stayed alive for 2+ years. The other 29 archived slugs are MONTHLY promos that rotated out."
+  },
+  "monthly_rotation_evidence": {
+    "transporte_vqr_slug_sequence": [
+      "transportevqr-feb26 (archived 2026-02-09)",
+      "transportevqr-mar26 (archived 2026-03-03)",
+      "transportevqr-abril26 (live on hub 2026-04-18)"
+    ],
+    "farmaplus_slug_sequence": [
+      "farmaplus-oct23 (old, rotated out)",
+      "farmaplus-jul24 (old, rotated out)",
+      "farmaplus-abril26 (live)"
+    ],
+    "verdict": "Monthly rotation CONFIRMED. Each month the slug suffix changes. The slug-diff strategy (detect new/changed slugs between daily hub crawls, re-extract only those) WILL WORK."
+  },
+  "sitemap_signal": {
+    "total_promos_in_sitemap": 4492,
+    "sitemap_lastmod_unique_values": 6,
+    "sitemap_lastmod_note": "All 4,492 URLs share 6 nearly-identical lastmod timestamps (all within 4ms of each other, all 2026-04-18T20:33:34.xxxZ). Sitemap is regenerated as a bulk job; lastmod is NOT per-page content-change signal. Don't rely on sitemap lastmod for incremental refresh — use slug-set diff instead.",
+    "sitemap_by_year_suffix": {
+      "26 (current)": 2539,
+      "25": 1501,
+      "older": 409,
+      "no_yy_suffix": 43
+    }
+  },
+  "recommended_incremental_strategy": {
+    "step_1": "Daily hub scrape (~1 credit each for the 5 slot pages + root = 5 credits/day).",
+    "step_2": "Diff today's slug set against yesterday's. New slugs → re-extract. Gone slugs → mark last_seen_at + TTL expire.",
+    "step_3": "For existing slugs, content-hash the scraped markdown. If hash unchanged, skip LLM extract (save 25-30 credits per skip).",
+    "step_4": "Monthly (1st of month): force re-extract of every active slug to catch legal-text changes the hash missed.",
+    "projected_credit_cost_daily_cadence": "~100 credits/day average (5 hub + ~3 new slugs × 30 credits) = 3k/month vs naive 45k/month full refresh."
+  },
+  "wayback_limitations": {
+    "finding": "Wayback snapshots of the MODO hub capture ONLY the SPA shell (no JS rendered). Detail-page snapshots do exist (3csi-farmacias-bna-mar24 is there) but the rendered promo fields (tope, pct, Vigencia) are NOT in the captured HTML — same reason the live site requires Firecrawl to render. Wayback can prove a slug EXISTED at time T, but cannot validate its content state at T.",
+    "implication": "We cannot backfill historical promo extractions from Wayback. If we need time-series data, we must start collecting it ourselves from day 1."
+  }
+}

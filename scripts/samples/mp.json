@@ -1,0 +1,66 @@
+{
+  "wp_root": "https://promociones.mercadopago.com.ar/wp-json/wp/v2/",
+  "categories": [
+    {
+      "name": "Alimentos y Bebidas",
+      "slug": "6alimentos-y-bebidas",
+      "count": 0
+    },
+    {
+      "name": "Electro",
+      "slug": "2electro",
+      "count": 4
+    },
+    {
+      "name": "Hogar",
+      "slug": "3home",
+      "count": 2
+    },
+    {
+      "name": "Moda",
+      "slug": "1apparel",
+      "count": 8
+    },
+    {
+      "name": "Otros",
+      "slug": "7-otros",
+      "count": 0
+    },
+    {
+      "name": "Salud y Belleza",
+      "slug": "5salud-y-belleza",
+      "count": 3
+    },
+    {
+      "name": "Supermercado",
+      "slug": "supermercado",
+      "count": 0
+    },
+    {
+      "name": "Turismo",
+      "slug": "4turismo",
+      "count": 1
+    }
+  ],
+  "mp_vendedores_cpt_rest_accessible": false,
+  "homepage_seller_slugs": [
+    "/seller/la-barra-ccu/",
+    "/seller/dash/",
+    "/seller/samsonite/",
+    "/seller/tramontina/",
+    "/seller/tucci/",
+    "/seller/on-sports/",
+    "/seller/perfumerias-rouge/",
+    "/seller/beauty-24/",
+    "/seller/tiendas-landmark/",
+    "/seller/reebok/",
+    "/seller/rouge-maison/"
+  ],
+  "representative_visible_text": "Mercado Pago - Promociones and tags on every page of your site. --> Creá tu cuenta LOS MEJORES DESCUENTOS EN CYBER MONDAY CON MERCADO PAGO Inicio Pagá online en miles de marcas de forma rápida y segura Aprovechá los descuentos pagando con Mercado Pago Descuentos 0 1 Cuotas sin intereses 0 1 Marcas Destacada 0 1 Todo Moda Electro Hogar Turismo Salud y Belleza Results Per Page 100 \"> Hasta 6 cuotas sin interés Promoción ¡Aprovechá hasta 6 cuotas sin interés en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de Noviembre Hasta 6 cuotas sin interés \"> La barra CCU Hasta 3 cuotas sin interés Hasta 3 Cuotas sin Tarjeta Promoción ¡Aprovechá hasta 3 cuotas sin interés + 3 Cuotas sin Tarjeta en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre La barra CCU Hasta 3 cuotas sin interés Hasta 3 Cuotas sin Tarjeta \"> DASH Hasta 70% OFF Hasta 3 cuotas sin interés Hasta 3 Cuotas sin Tarjeta Promoción ¡Aprovechá hasta 70% OFF y 3 cuotas sin interés + 3 Cuotas sin Tarjeta en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre DASH Hasta 70% OFF Hasta 3 cuotas sin interés Hasta 3 Cuotas sin Tarjeta \"> SAMSONITE Hasta 12 cuotas sin interés Promoción ¡Aprovechá hasta 12 cuotas sin interés en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre SAMSONITE Hasta 12 cuotas sin interés \"> TRAMONTINA Hasta 70% OFF Hasta 12 cuotas sin interés Promoción ¡Aprovechá hasta 70% OFF y 12 cuotas sin interés en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre TRAMONTINA Hasta 70% OFF Hasta 12 cuotas sin interés \"> TUCCI Hasta 25% OFF Hasta 12 cuotas sin interés Promoción ¡Aprovechá hasta 25% OFF + 12 cuotas sin interés en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre TUCCI Hasta 25% OFF Hasta 12 cuotas sin interés \"> ON SPORTS Hasta 3 cuotas sin interés Promoción ¡Aprovechá hasta 3 cuotas sin interes en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre ON SPORTS Hasta 3 cuotas sin interés \"> PERFUMERIAS ROUGE Hasta 6 cuotas sin interés Promoción ¡Aprovechá hasta 6 cuotas sin interés en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de Noviembre PERFUMERIAS ROUGE Hasta 6 cuotas sin interés \"> BEAUTY 24 Hasta 6 cuotas sin interés Promoción ¡Aprovechá 6 cuotas sin interés en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre BEAUTY 24 Hasta 6 cuotas sin interés \"> TIENDAS LANDMARK Hasta 50% OFF Hasta 6 cuotas sin interés Hasta 3 Cuotas sin Tarjeta Promoción ¡Aprovechá hasta 50% OFF y hasta 6 cuotas sin interés + 3 Cuotas sin Tarjeta en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre TIENDAS LANDMARK Hasta 50% OFF Hasta 6 cuotas sin interés Hasta 3 Cuotas sin Tarjeta \"> REEBOK Hasta 6 cuotas sin interés Promoción ¡Aprovechá hasta 6 cuotas sin interés en la tienda online! Ir a la promoción Legales Válido del 3 al 9 de noviembre REEBOK Hasta 6 cuotas sin interés",
+  "notes": [
+    "Seller detail pages at /seller/<slug>/ 301-redirect to the merchant site — not usable.",
+    "Homepage HTML (decompressed from gzip) contains ~12 seller cards with pct/duration text.",
+    "MP Promociones is cuotas-focused, not cashback-tope. tope/tope_period are absent.",
+    "Real extraction path: scrape /, then each /seller/<slug>/ is a dead end — use the home cards only."
+  ]
+}

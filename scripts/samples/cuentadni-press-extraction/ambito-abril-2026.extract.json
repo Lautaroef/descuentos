@@ -1,0 +1,42 @@
+{
+  "source_url": "https://www.ambito.com/economia/como-ahorrar-un-40-semana-cuenta-dni-abril-n6265995",
+  "extracted_at": "2026-04-18",
+  "method": "firecrawl_extract with canonical Promo-aligned schema",
+  "tokensUsed": 851,
+  "creditsUsed": 57,
+  "promo_count": 9,
+  "schema_valid_count_against_canonical_promo": 7,
+  "schema_validation_notes": [
+    "7/9 validate cleanly against the canonical Promo schema.",
+    "2/9 have tope=null AND the LLM correctly left tope_period=null — but canonical schema requires tope_period to be non-null enum. Fix: schema should accept tope_period: z.enum([...]).nullable() when tope is null, OR extractor should default to 'month' when tope is null. Trivial patch.",
+    "Extractor correctly mapped valid_days to 0-6 integer format on every row (e.g., sábados y domingos -> [5,6]).",
+    "All pct values correct.",
+    "All tope values correct (including requires_min_spend $25.000 for carnicerías, derived from the article's 'se alcanza con $25.000 en compras')."
+  ],
+  "field_coverage": {
+    "merchant": "9/9",
+    "category": "9/9 (LLM mapped correctly: gastronomía->gastronomia, Full YPF->combustible, farmacias->farmacia, supermercados->supermercado, rest->otro)",
+    "wallet": "9/9",
+    "pct": "9/9",
+    "tope": "7/9 direct, 2/9 null (correct: article says 'sin tope' for Librerías and Farmacias)",
+    "tope_period": "7/9 direct",
+    "valid_days": "9/9 — lunes a viernes -> [1,2,3,4,5], sábados/domingos -> [5,6], todos los días -> [0..6]",
+    "valid_regions": "9/9 — all AR-B (default supplied by prompt)",
+    "valid_from": "9/9 — 2026-04-01 (default from prompt)",
+    "valid_to": "9/9 — 2026-04-30 (default from prompt)",
+    "requires_min_spend": "1/9 present (25000 for comercios de cercanía)"
+  },
+  "data": {
+    "promos": [
+      {"merchant": "Ferias y mercados bonaerenses", "category": "otro", "wallet": ["cuentadni"], "pct": 40, "tope": 6000, "tope_period": "week", "valid_days": [0,1,2,3,4,5,6], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null},
+      {"merchant": "Comercios de cercanía", "category": "otro", "wallet": ["cuentadni"], "pct": 20, "tope": 5000, "tope_period": "week", "valid_days": [1,2,3,4,5], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": 25000},
+      {"merchant": "Marcas destacadas (Havanna, La Fonte de Oro, Le Park, Lucciano's, Grido)", "category": "otro", "wallet": ["cuentadni"], "pct": 30, "tope": 15000, "tope_period": "month", "valid_days": [0,1,2,3,4,5,6], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null},
+      {"merchant": "Gastronomía", "category": "gastronomia", "wallet": ["cuentadni"], "pct": 25, "tope": 8000, "tope_period": "week", "valid_days": [5,6], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null},
+      {"merchant": "Full YPF (no combustibles)", "category": "combustible", "wallet": ["cuentadni"], "pct": 25, "tope": 8000, "tope_period": "week", "valid_days": [5,6], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null},
+      {"merchant": "Universidades bonaerenses", "category": "otro", "wallet": ["cuentadni"], "pct": 40, "tope": 6000, "tope_period": "week", "valid_days": [0,1,2,3,4,5,6], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null},
+      {"merchant": "Librerías", "category": "otro", "wallet": ["cuentadni"], "pct": 10, "tope": null, "tope_period": null, "valid_days": [1,2], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null},
+      {"merchant": "Farmacias y perfumerías", "category": "farmacia", "wallet": ["cuentadni"], "pct": 10, "tope": null, "tope_period": null, "valid_days": [3,4], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null},
+      {"merchant": "Supermercados (5% adicional jubilados Banco Provincia)", "category": "supermercado", "wallet": ["cuentadni"], "pct": 5, "tope": null, "tope_period": null, "valid_days": [0,1,2,3,4,5,6], "valid_regions": ["AR-B"], "valid_from": "2026-04-01", "valid_to": "2026-04-30", "requires_min_spend": null}
+    ]
+  }
+}

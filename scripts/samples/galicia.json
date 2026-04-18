@@ -1,0 +1,39 @@
+{
+  "aem_endpoint": "https://www.galicia.ar/personas/buscador-de-promociones.model.json",
+  "aem_status": 200,
+  "aem_contained_iframe_src": "https://beneficios.galicia.ar/",
+  "beneficios_home": "https://beneficios.galicia.ar/",
+  "beneficios_status": 200,
+  "beneficios_channelId": "onlinebanking",
+  "beneficios_distributionChannel": "local-mock",
+  "bff_basepath": "/bff",
+  "mock_user_in_nextdata": "veronica maria",
+  "probes": [
+    {
+      "url": "https://beneficios.galicia.ar/bff/promociones",
+      "status": 200,
+      "isSpaShell": true
+    },
+    {
+      "url": "https://beneficios.galicia.ar/bff/promociones/list",
+      "status": 200,
+      "isSpaShell": true
+    },
+    {
+      "url": "https://beneficios.galicia.ar/promos",
+      "status": 200,
+      "isSpaShell": true
+    },
+    {
+      "url": "https://beneficios.galicia.ar/promotions",
+      "status": 200,
+      "isSpaShell": true
+    },
+    {
+      "url": "https://beneficios.galicia.ar/api/promociones",
+      "status": 200,
+      "isSpaShell": true
+    }
+  ],
+  "verdict": "Galicia's .model.json is a marketing shell. Real promo data is gated behind online-banking auth via a BFF at /bff/*. No unauthenticated structured feed exists. This contradicts docs/data-sources.md and shifts Galicia from Tier 1 to 'scrape MODO instead'."
+}

@@ -1,0 +1,72 @@
+{
+  "captured_at": "2026-04-18T20:10:00Z",
+  "firecrawl_pricing_2026": {
+    "source": "https://www.firecrawl.dev/pricing (captured 2026-04-18)",
+    "plans": [
+      {"name": "Free", "credits_month": 500, "cost_usd_month": 0, "concurrency": 2, "note": "one-time, not monthly"},
+      {"name": "Hobby", "credits_month": 3000, "cost_usd_month": 16, "concurrency": 5, "extra_credits_1k_usd": 9},
+      {"name": "Standard", "credits_month": 100000, "cost_usd_month": "~83 (derived from $998/yr save-$198)", "concurrency": 50, "extra_35k_usd": 47},
+      {"name": "Growth", "credits_month": 500000, "cost_usd_month": "~332 (derived from $3990/yr save-$798)", "concurrency": 100, "extra_175k_usd": 177},
+      {"name": "Scale", "credits_month": 1000000, "cost_usd_month": 599, "concurrency": 150},
+      {"name": "Enterprise", "credits_month": "custom", "cost_usd_month": "custom"}
+    ],
+    "per_request_costs": {
+      "scrape": "1 credit / page (markdown, html, rawHtml all cost 1)",
+      "crawl": "1 credit / page",
+      "map": "1 credit / page",
+      "search": "2 credits / 10 results",
+      "extract": "variable (~25-31 credits per MODO detail page measured this session)",
+      "browser": "2 credits / browser minute"
+    },
+    "caching": "cacheState: hit on scrape reuses prior result for ~4 hours at no additional savings (still 1 credit). Not a cost optimization, just a perf one."
+  },
+  "projected_credit_consumption": {
+    "naive_full_refresh_daily": {
+      "hub_scrapes": "5 pages × 1 credit = 5",
+      "detail_extracts": "~50 active slugs × 28 credits = 1,400",
+      "total_per_day": 1405,
+      "total_per_month": 42150,
+      "plan_fit": "STANDARD plan (100k credits/mo) with 57k headroom. $83/mo."
+    },
+    "slug_diff_incremental": {
+      "hub_scrapes": "5/day = 5 credits",
+      "content_hash_skip": "Assume 80% of slugs unchanged day-over-day → 10 re-extracts × 28 = 280",
+      "total_per_day": 285,
+      "total_per_month": 8550,
+      "plan_fit": "HOBBY plan (3k credits/mo) INSUFFICIENT. STANDARD plan (100k) has 91k headroom. $83/mo.",
+      "note": "Hobby only works if cadence drops to weekly (8.5k × 1/4 = ~2k/mo)."
+    },
+    "weekly_cadence_full": {
+      "total_per_week": 1405,
+      "total_per_month": 5620,
+      "plan_fit": "HOBBY plan (3k credits/mo) INSUFFICIENT at weekly full-refresh. Need Standard ($83/mo)."
+    },
+    "rawhtml_regex_days_approach": {
+      "description": "Use Firecrawl scrape with rawHtml format (1 credit), regex-extract valid_days from data-testid, feed the LLM ONLY fields that can't be regex'd (pct, tope, vigencia, min_spend, issuer_bank, variants).",
+      "projected_extract_cost": "Unchanged (~28 credits) since LLM still reads the page. Savings come from ACCURACY, not cost. However, moving to server-side regex + direct GPT call (bypassing firecrawl_extract) could drop the ~25-30 credit surcharge entirely."
+    }
+  },
+  "antibot_posture": {
+    "modo_proxy_used": "basic (no stealth/enhanced needed)",
+    "captcha_encountered": "none across 20+ requests this session",
+    "anti_bot_fingerprints_in_rawHtml": "NONE (no Akamai, Cloudflare challenge pages, PerimeterX, DataDome, Incapsula, Sucuri, hCaptcha, reCaptcha markers)",
+    "http_status_observed": "all 200 OK",
+    "cache_hit_rate": "Firecrawl cacheState=hit on repeat scrapes (<4h apart) — server caches help performance, credits still charged per request",
+    "raw_fetch_vs_firecrawl": "Node raw fetch returns 47-char SPA shell (per Phase 1 PoC). Firecrawl's JS rendering is REQUIRED — this is an operational constraint.",
+    "verdict": "MODO has ZERO anti-bot protection on the public promo pages. They serve as marketing, not gated content. This is a sustainable scrape target for now. Risk: if they add WAF later, we'd need Firecrawl's stealth proxy (~2-5x credit cost)."
+  },
+  "breakthrough_finding_rawhtml_days": {
+    "discovery": "The rawHtml for MODO detail pages encodes the weekday active state via data-testid attribute:",
+    "inactive_example": "<span data-testid=\"day-of-week-L\">L</span>  (Monday INACTIVE)",
+    "active_example": "<span data-testid=\"day-of-week-selected-M\">M</span>  (Tuesday ACTIVE)",
+    "implication": "valid_days can be extracted DETERMINISTICALLY via regex without LLM: match /data-testid=\"day-of-week-selected-([LMXJVSD])\"/g and map letters to 0-6. This sidesteps the all-7-days LLM bug entirely.",
+    "mapping": {"D": 0, "L": 1, "M": 2, "X": 3, "J": 4, "V": 5, "S": 6},
+    "production_recommendation": "Scrape with rawHtml format (1 credit), regex-extract valid_days first, then feed LLM the remaining content + the pre-computed valid_days as a hint. This gives 100% accuracy on valid_days at no extra cost."
+  },
+  "competitor_signal_promoarg": {
+    "query": "Francisco Martos PromoArg MODO 2026",
+    "findings": "LinkedIn post (Dec 2025-ish, post_id=7442944621451816961) describes PromoArg as a personal project for centralizing bank promos. No 2026 posts specifically mentioning MODO scraper breakage, rate limits, or access issues surfaced in search.",
+    "note": "LinkedIn blocks Firecrawl access to post content — only description snippet available. Deeper competitor investigation was not prioritized (time budget).",
+    "interpretation": "No signal that MODO is actively blocking scrapers. PromoArg's own data suggests they rely on MODO as a source (same conclusion as our PoC)."
+  }
+}

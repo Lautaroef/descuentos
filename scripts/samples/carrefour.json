@@ -1,0 +1,1291 @@
+{
+  "productId": "773203",
+  "productName": "Azúcar común Bulnez 1 kg",
+  "brand": "Bulnez",
+  "brandId": 2000317,
+  "brandImageUrl": null,
+  "linkText": "azucar-comun-bulnez-1-kg-773203",
+  "productReference": "773203",
+  "productReferenceCode": "773203",
+  "categoryId": "243",
+  "productTitle": "",
+  "metaTagDescription": "Azúcar común Bulnez 1 kg",
+  "releaseDate": "2026-01-28T00:00:00Z",
+  "clusterHighlights": {},
+  "productClusters": {
+    "24334": "Productos Bulnez"
+  },
+  "searchableClusters": {},
+  "categories": [
+    "/Desayuno y merienda/Azúcar y endulzantes/Azúcar/",
+    "/Desayuno y merienda/Azúcar y endulzantes/",
+    "/Desayuno y merienda/"
+  ],
+  "categoriesIds": [
+    "/222/242/243/",
+    "/222/242/",
+    "/222/"
+  ],
+  "link": "https://www.carrefour.com.ar/azucar-comun-bulnez-1-kg-773203/p",
+  "Estado por Tienda": [
+    "0"
+  ],
+  "EC_Sección": [
+    "SECO"
+  ],
+  "EC_Familia": [
+    "AZUCAR"
+  ],
+  "Código Marca": [
+    "P00050"
+  ],
+  "Cantidad máxima permitida para Compra Inmediata": [
+    "8"
+  ],
+  "Estado por Compañía": [
+    "S"
+  ],
+  "Precio Cuidado": [
+    "false"
+  ],
+  "Status 900": [
+    "SI"
+  ],
+  "EC_Código sumarizado": [
+    "1   4  06  00  01"
+  ],
+  "Fraccionable": [
+    "false"
+  ],
+  "Cantidad Maxima Permitida": [
+    "8"
+  ],
+  "Descripción Genexis": [
+    "AZUCAR COMUN BULNEZ X 1 KG"
+  ],
+  "EC_Categoría": [
+    "S"
+  ],
+  "Madre ó Relacionado": [
+    "S"
+  ],
+  "EC_Sector": [
+    "P.G.C."
+  ],
+  "Huella Natural": [
+    "false"
+  ],
+  "EC_Subfamilia": [
+    "AZUCAR COMUN"
+  ],
+  "Fecha ultima novedad": [
+    "2026 Mar 3 01:50:32"
+  ],
+  "EC_Grupo": [
+    "ENDULZANTES"
+  ],
+  "Unidad de Necesidad": [
+    "AZUCAR COMUN"
+  ],
+  "Saludable": [
+    "true"
+  ],
+  "EAN": [
+    "7791720048726"
+  ],
+  "Envase Código": [
+    "9"
+  ],
+  "Envase Tipo": [
+    "BOLSA"
+  ],
+  "Etiqueta por Balanza": [
+    "N"
+  ],
+  "Marca Gnx": [
+    "BULNEZ"
+  ],
+  "País código": [
+    "1"
+  ],
+  "Proveedor Razón Social": [
+    "COMPLEJO ALIM SAN SALVADOR SA"
+  ],
+  "Proveedor Código última compra": [
+    "108262"
+  ],
+  "Cantidad Inicial de Compra": [
+    "1"
+  ],
+  "Fecha alta": [
+    "16012026"
+  ],
+  "País de origen": [
+    "Argentina"
+  ],
+  "Especificaciones Genesix": [
+    "Estado por Tienda",
+    "EC_Sección",
+    "EC_Familia",
+    "Código Marca",
+    "Cantidad máxima permitida para Compra Inmediata",
+    "Estado por Compañía",
+    "Precio Cuidado",
+    "Status 900",
+    "EC_Código sumarizado",
+    "Fraccionable",
+    "Cantidad Maxima Permitida",
+    "Descripción Genexis",
+    "EC_Categoría",
+    "Madre ó Relacionado",
+    "EC_Sector",
+    "Huella Natural",
+    "EC_Subfamilia",
+    "Fecha ultima novedad",
+    "EC_Grupo",
+    "Unidad de Necesidad",
+    "Saludable",
+    "EAN",
+    "Envase Código",
+    "Envase Tipo",
+    "Etiqueta por Balanza",
+    "Marca Gnx",
+    "País código",
+    "Proveedor Razón Social",
+    "Proveedor Código última compra",
+    "Cantidad Inicial de Compra",
+    "Fecha alta",
+    "País de origen"
+  ],
+  "Tipo de producto": [
+    "Azúcar"
+  ],
+  "Especificaciones Default": [
+    "Tipo de producto"
+  ],
+  "Precio x unidad": [
+    "($1,190.00 x 1 K.)"
+  ],
+  "Precio x Unidad": [
+    "Precio x unidad"
+  ],
+  "Gramaje leyenda Mostrar": [
+    "SI"
+  ],
+  "Gramaje leyenda de conversión": [
+    "1 K."
+  ],
+  "Gramaje descripción de medida": [
+    "Gramos - a 1 Kg."
+  ],
+  "Gramaje factor de conversión": [
+    "0.00100000"
+  ],
+  "Gramaje de unidad de consumo": [
+    "1000.00"
+  ],
+  "Gramaje de unidad de medida": [
+    "GRM"
+  ],
+  "Genesix Vtex": [
+    "Gramaje leyenda de conversión",
+    "Gramaje descripción de medida",
+    "Gramaje factor de conversión",
+    "Gramaje de unidad de consumo",
+    "Gramaje de unidad de medida"
+  ],
+  "Surtido Modalidad Venta": [
+    "Seller"
+  ],
+  "Mostrar especificaciones tecnicas": [
+    "Si"
+  ],
+  "Condiciones Venta": [
+    "Surtido Modalidad Venta",
+    "Mostrar especificaciones tecnicas"
+  ],
+  "pricePerUnit": [
+    "1190.00"
+  ],
+  "leyDeGondolas": [
+    "pricePerUnit"
+  ],
+  "IVA": [
+    "21"
+  ],
+  "III": [
+    "0"
+  ],
+  "IIN": [
+    "No"
+  ],
+  "Impuestos": [
+    "IVA",
+    "III",
+    "IIN"
+  ],
+  "allSpecifications": [
+    "Estado por Tienda",
+    "EC_Sección",
+    "EC_Familia",
+    "Código Marca",
+    "Cantidad máxima permitida para Compra Inmediata",
+    "Estado por Compañía",
+    "Precio Cuidado",
+    "Status 900",
+    "EC_Código sumarizado",
+    "Fraccionable",
+    "Cantidad Maxima Permitida",
+    "Descripción Genexis",
+    "EC_Categoría",
+    "Madre ó Relacionado",
+    "EC_Sector",
+    "Huella Natural",
+    "EC_Subfamilia",
+    "Fecha ultima novedad",
+    "EC_Grupo",
+    "Unidad de Necesidad",
+    "Saludable",
+    "EAN",
+    "Envase Código",
+    "Envase Tipo",
+    "Etiqueta por Balanza",
+    "Marca Gnx",
+    "País código",
+    "Proveedor Razón Social",
+    "Proveedor Código última compra",
+    "Cantidad Inicial de Compra",
+    "Fecha alta",
+    "País de origen",
+    "Tipo de producto",
+    "Precio x unidad",
+    "Gramaje leyenda Mostrar",
+    "Gramaje leyenda de conversión",
+    "Gramaje descripción de medida",
+    "Gramaje factor de conversión",
+    "Gramaje de unidad de consumo",
+    "Gramaje de unidad de medida",
+    "Surtido Modalidad Venta",
+    "Mostrar especificaciones tecnicas",
+    "pricePerUnit",
+    "IVA",
+    "III",
+    "IIN"
+  ],
+  "allSpecificationsGroups": [
+    "Especificaciones Genesix",
+    "Especificaciones Default",
+    "Precio x Unidad",
+    "Gramaje leyenda Mostrar",
+    "Genesix Vtex",
+    "Condiciones Venta",
+    "leyDeGondolas",
+    "Impuestos"
+  ],
+  "description": "",
+  "items": [
+    {
+      "itemId": "277106",
+      "name": "Azúcar común Bulnez 1 kg",
+      "nameComplete": "Azúcar común Bulnez 1 kg",
+      "complementName": "",
+      "ean": "7791720048726",
+      "referenceId": [
+        {
+          "Key": "RefId",
+          "Value": "7791720048726"
+        }
+      ],
+      "measurementUnit": "un",
+      "unitMultiplier": 1,
+      "modalType": null,
+      "isKit": false,
+      "images": [
+        {
+          "imageId": "796412",
+          "imageLabel": "",
+          "imageTag": "<img src=\"~/arquivos/ids/796412-#width#-#height#/7791720048726_02.jpg?v=639052198953600000\" width=\"#width#\" height=\"#height#\" alt=\"7791720048726_02\" id=\"\" />",
+          "imageUrl": "https://carrefourar.vteximg.com.br/arquivos/ids/796412/7791720048726_02.jpg?v=639052198953600000",
+          "imageText": "7791720048726_02",
+          "imageLastModified": "2026-01-28T17:58:15.3600000Z"
+        }
+      ],
+      "sellers": [
+        {
+          "sellerId": "1",
+          "sellerName": "CARREFOUR",
+          "addToCartLink": "https://www.carrefour.com.ar/checkout/cart/add?sku=277106&qty=1&seller=1&sc=1&price=119000&cv=_&sc=1",
+          "sellerDefault": true,
+          "commertialOffer": {
+            "DeliverySlaSamplesPerRegion": {
+              "0": {
+                "DeliverySlaPerTypes": [],
+                "Region": null
+              }
+            },
+            "Installments": [
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "American Express",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "American Express à vista"
+              },
+              {
+                "Value": 785.4,
+                "InterestRate": 16,
+                "TotalValuePlusInterestRate": 1570.8,
+                "NumberOfInstallments": 2,
+                "PaymentSystemName": "American Express",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "American Express 2 vezes com juros"
+              },
+              {
+                "Value": 661.67,
+                "InterestRate": 22.27,
+                "TotalValuePlusInterestRate": 1985.01,
+                "NumberOfInstallments": 3,
+                "PaymentSystemName": "American Express",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "American Express 3 vezes com juros"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Visa",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Visa à vista"
+              },
+              {
+                "Value": 627.6,
+                "InterestRate": 2.74,
+                "TotalValuePlusInterestRate": 1255.2,
+                "NumberOfInstallments": 2,
+                "PaymentSystemName": "Visa",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Visa 2 vezes com juros"
+              },
+              {
+                "Value": 396.66,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 3,
+                "PaymentSystemName": "Visa",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Visa 3 vezes sem juros"
+              },
+              {
+                "Value": 333.16,
+                "InterestRate": 11.33,
+                "TotalValuePlusInterestRate": 1998.96,
+                "NumberOfInstallments": 6,
+                "PaymentSystemName": "Visa",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Visa 6 vezes com juros"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Mastercard",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Mastercard à vista"
+              },
+              {
+                "Value": 627.6,
+                "InterestRate": 2.74,
+                "TotalValuePlusInterestRate": 1255.2,
+                "NumberOfInstallments": 2,
+                "PaymentSystemName": "Mastercard",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Mastercard 2 vezes com juros"
+              },
+              {
+                "Value": 396.66,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 3,
+                "PaymentSystemName": "Mastercard",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Mastercard 3 vezes sem juros"
+              },
+              {
+                "Value": 333.16,
+                "InterestRate": 11.33,
+                "TotalValuePlusInterestRate": 1998.96,
+                "NumberOfInstallments": 6,
+                "PaymentSystemName": "Mastercard",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Mastercard 6 vezes com juros"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Visa Electron",
+                "PaymentSystemGroupName": "debitCardPaymentGroup",
+                "Name": "Visa Electron à vista"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Vale",
+                "PaymentSystemGroupName": "giftCardPaymentGroup",
+                "Name": "Vale à vista"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Cabal",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Cabal à vista"
+              },
+              {
+                "Value": 678.65,
+                "InterestRate": 7.03,
+                "TotalValuePlusInterestRate": 1357.3,
+                "NumberOfInstallments": 2,
+                "PaymentSystemName": "Cabal",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Cabal 2 vezes com juros"
+              },
+              {
+                "Value": 509.24,
+                "InterestRate": 9.46,
+                "TotalValuePlusInterestRate": 1527.72,
+                "NumberOfInstallments": 3,
+                "PaymentSystemName": "Cabal",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Cabal 3 vezes com juros"
+              },
+              {
+                "Value": 402.06,
+                "InterestRate": 17.12,
+                "TotalValuePlusInterestRate": 2412.36,
+                "NumberOfInstallments": 6,
+                "PaymentSystemName": "Cabal",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Cabal 6 vezes com juros"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Naranja",
+                "PaymentSystemGroupName": "creditCardPaymentGroup",
+                "Name": "Naranja à vista"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Maestro",
+                "PaymentSystemGroupName": "debitCardPaymentGroup",
+                "Name": "Maestro à vista"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "MercadoPagoPro",
+                "PaymentSystemGroupName": "MercadoPagoProPaymentGroup",
+                "Name": "MercadoPagoPro à vista"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Tarjeta Carrefour Mastercard",
+                "PaymentSystemGroupName": "customPrivate_502PaymentGroup",
+                "Name": "Tarjeta Carrefour Mastercard à vista"
+              },
+              {
+                "Value": 730.54,
+                "InterestRate": 11.39,
+                "TotalValuePlusInterestRate": 1461.08,
+                "NumberOfInstallments": 2,
+                "PaymentSystemName": "Tarjeta Carrefour Mastercard",
+                "PaymentSystemGroupName": "customPrivate_502PaymentGroup",
+                "Name": "Tarjeta Carrefour Mastercard 2 vezes com juros"
+              },
+              {
+                "Value": 396.66,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 3,
+                "PaymentSystemName": "Tarjeta Carrefour Mastercard",
+                "PaymentSystemGroupName": "customPrivate_502PaymentGroup",
+                "Name": "Tarjeta Carrefour Mastercard 3 vezes sem juros"
+              },
+              {
+                "Value": 1190,
+                "InterestRate": 0,
+                "TotalValuePlusInterestRate": 1190,
+                "NumberOfInstallments": 1,
+                "PaymentSystemName": "Prepaga BSF",
+                "PaymentSystemGroupName": "customPrivate_505PaymentGroup",
+                "Name": "Prepaga BSF à vista"
+              }
+            ],
+            "DiscountHighLight": [],
+            "GiftSkuIds": [],
+            "Teasers": [
+              {
+                "<Name>k__BackingField": "Tarjeta Carrefour 15%",
+                "<GeneralValues>k__BackingField": {},
+                "<Conditions>k__BackingField": {
+                  "<MinimumQuantity>k__BackingField": 0,
+                  "<Parameters>k__BackingField": [
+                    {
+                      "<Name>k__BackingField": "RestrictionsBins",
+                      "<Value>k__BackingField": "507858,858110,858111,585274,538156,520225,539958,527061,898989"
+                    }
+                  ]
+                },
+                "<Effects>k__BackingField": {
+                  "<Parameters>k__BackingField": [
+                    {
+                      "<Name>k__BackingField": "PercentualDiscount",
+                      "<Value>k__BackingField": "15"
+                    }
+                  ]
+                }
+              }
+            ],
+            "PromotionTeasers": [
+              {
+                "Name": "Tarjeta Carrefour 15%",
+                "GeneralValues": {},
+                "Conditions": {
+                  "MinimumQuantity": 0,
+                  "Parameters": [
+                    {
+                      "Name": "RestrictionsBins",
+                      "Value": "507858,858110,858111,585274,538156,520225,539958,527061,898989"
+                    }
+                  ]
+                },
+                "Effects": {
+                  "Parameters": [
+                    {
+                      "Name": "PercentualDiscount",
+                      "Value": "15"
+                    }
+                  ]
+                }
+              }
+            ],
+            "BuyTogether": [],
+            "ItemMetadataAttachment": [],
+            "Price": 1190,
+            "ListPrice": 1190,
+            "PriceWithoutDiscount": 1190,
+            "FullSellingPrice": 1190,
+            "PriceToken": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjllNDVhMDQ3LTg1ZGQtNGI0YS05YTA2LTliM2Q0NTIwMjJmZSIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InByaWNlIjoxMTkwMDAsInByaWNlV2l0aG91dERpc2NvdW50IjoxMTkwMDAsInNlbGxlciI6IjEiLCJpZCI6IjI3NzEwNiIsImFjY291bnROYW1lIjoiY2FycmVmb3VyYXIiLCJzYWxlc0NoYW5uZWwiOiIxIn0sImV4cCI6MTc3NjU0MzE5OSwiaWF0IjoxNzc2NTQxMzk5LCJqdGkiOiI1NjQ5ZWE3MS04YmVkLTQ2ZDktODhlMS0zMmYzY2M5ZDMyZTIiLCJpc3MiOiJzZXNzaW9uL2RhdGEtc2lnbmVyIn0.BD3OO5FyItHDaL9zo7hiDTSmZPXAafmZ5LdCIibpBpb4dRG88zG02D5Jk0yDiyx22WHv9CEi2h3zya8aiyNoZw",
+            "RewardValue": 0,
+            "PriceValidUntil": "2027-04-18T19:32:17Z",
+            "AvailableQuantity": 99999,
+            "IsAvailable": true,
+            "Tax": 0,
+            "DeliverySlaSamples": [
+              {
+                "DeliverySlaPerTypes": [],
+                "Region": null
+              }
+            ],
+            "GetInfoErrorMessage": null,
+            "CacheVersionUsedToCallCheckout": "_",
+            "PaymentOptions": {
+              "installmentOptions": [
+                {
+                  "paymentSystem": "1",
+                  "bin": null,
+                  "paymentName": "American Express",
+                  "paymentGroupName": "creditCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    },
+                    {
+                      "count": 2,
+                      "hasInterestRate": true,
+                      "interestRate": 1600,
+                      "value": 78540,
+                      "total": 157080,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 2,
+                          "hasInterestRate": true,
+                          "interestRate": 1600,
+                          "value": 78540,
+                          "total": 157080
+                        }
+                      ]
+                    },
+                    {
+                      "count": 3,
+                      "hasInterestRate": true,
+                      "interestRate": 2227,
+                      "value": 66167,
+                      "total": 198501,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 3,
+                          "hasInterestRate": true,
+                          "interestRate": 2227,
+                          "value": 66167,
+                          "total": 198501
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "2",
+                  "bin": null,
+                  "paymentName": "Visa",
+                  "paymentGroupName": "creditCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    },
+                    {
+                      "count": 2,
+                      "hasInterestRate": true,
+                      "interestRate": 274,
+                      "value": 62760,
+                      "total": 125520,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 2,
+                          "hasInterestRate": true,
+                          "interestRate": 274,
+                          "value": 62760,
+                          "total": 125520
+                        }
+                      ]
+                    },
+                    {
+                      "count": 3,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 39666,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 3,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 39666,
+                          "total": 119000
+                        }
+                      ]
+                    },
+                    {
+                      "count": 6,
+                      "hasInterestRate": true,
+                      "interestRate": 1133,
+                      "value": 33316,
+                      "total": 199896,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 6,
+                          "hasInterestRate": true,
+                          "interestRate": 1133,
+                          "value": 33316,
+                          "total": 199896
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "4",
+                  "bin": null,
+                  "paymentName": "Mastercard",
+                  "paymentGroupName": "creditCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    },
+                    {
+                      "count": 2,
+                      "hasInterestRate": true,
+                      "interestRate": 274,
+                      "value": 62760,
+                      "total": 125520,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 2,
+                          "hasInterestRate": true,
+                          "interestRate": 274,
+                          "value": 62760,
+                          "total": 125520
+                        }
+                      ]
+                    },
+                    {
+                      "count": 3,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 39666,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 3,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 39666,
+                          "total": 119000
+                        }
+                      ]
+                    },
+                    {
+                      "count": 6,
+                      "hasInterestRate": true,
+                      "interestRate": 1133,
+                      "value": 33316,
+                      "total": 199896,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 6,
+                          "hasInterestRate": true,
+                          "interestRate": 1133,
+                          "value": 33316,
+                          "total": 199896
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "10",
+                  "bin": null,
+                  "paymentName": "Visa Electron",
+                  "paymentGroupName": "debitCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "16",
+                  "bin": null,
+                  "paymentName": "Vale",
+                  "paymentGroupName": "giftCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "33",
+                  "bin": null,
+                  "paymentName": "Cabal",
+                  "paymentGroupName": "creditCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    },
+                    {
+                      "count": 2,
+                      "hasInterestRate": true,
+                      "interestRate": 703,
+                      "value": 67865,
+                      "total": 135730,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 2,
+                          "hasInterestRate": true,
+                          "interestRate": 703,
+                          "value": 67865,
+                          "total": 135730
+                        }
+                      ]
+                    },
+                    {
+                      "count": 3,
+                      "hasInterestRate": true,
+                      "interestRate": 946,
+                      "value": 50924,
+                      "total": 152772,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 3,
+                          "hasInterestRate": true,
+                          "interestRate": 946,
+                          "value": 50924,
+                          "total": 152772
+                        }
+                      ]
+                    },
+                    {
+                      "count": 6,
+                      "hasInterestRate": true,
+                      "interestRate": 1712,
+                      "value": 40206,
+                      "total": 241236,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 6,
+                          "hasInterestRate": true,
+                          "interestRate": 1712,
+                          "value": 40206,
+                          "total": 241236
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "35",
+                  "bin": null,
+                  "paymentName": "Naranja",
+                  "paymentGroupName": "creditCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "39",
+                  "bin": null,
+                  "paymentName": "Maestro",
+                  "paymentGroupName": "debitCardPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "127",
+                  "bin": null,
+                  "paymentName": "MercadoPagoPro",
+                  "paymentGroupName": "MercadoPagoProPaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "502",
+                  "bin": null,
+                  "paymentName": "Tarjeta Carrefour Mastercard",
+                  "paymentGroupName": "customPrivate_502PaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    },
+                    {
+                      "count": 2,
+                      "hasInterestRate": true,
+                      "interestRate": 1139,
+                      "value": 73054,
+                      "total": 146108,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 2,
+                          "hasInterestRate": true,
+                          "interestRate": 1139,
+                          "value": 73054,
+                          "total": 146108
+                        }
+                      ]
+                    },
+                    {
+                      "count": 3,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 39666,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 3,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 39666,
+                          "total": 119000
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "paymentSystem": "505",
+                  "bin": null,
+                  "paymentName": "Prepaga BSF",
+                  "paymentGroupName": "customPrivate_505PaymentGroup",
+                  "value": 119000,
+                  "installments": [
+                    {
+                      "count": 1,
+                      "hasInterestRate": false,
+                      "interestRate": 0,
+                      "value": 119000,
+                      "total": 119000,
+                      "sellerMerchantInstallments": [
+                        {
+                          "id": "CARREFOURAR",
+                          "count": 1,
+                          "hasInterestRate": false,
+                          "interestRate": 0,
+                          "value": 119000,
+                          "total": 119000
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "paymentSystems": [
+                {
+                  "id": 16,
+                  "name": "Vale",
+                  "groupName": "giftCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "16",
+                  "template": "giftCardPaymentGroup-template",
+                  "requiresDocument": false,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390173Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 127,
+                  "name": "MercadoPagoPro",
+                  "groupName": "MercadoPagoProPaymentGroup",
+                  "validator": null,
+                  "stringId": "127",
+                  "template": "MercadoPagoProPaymentGroup-template",
+                  "requiresDocument": false,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390175Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 502,
+                  "name": "Tarjeta Carrefour Mastercard",
+                  "groupName": "customPrivate_502PaymentGroup",
+                  "validator": null,
+                  "stringId": "502",
+                  "template": "customPrivate_502PaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": true,
+                  "description": "Tarjeta Abierta",
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-28T19:22:08.6390177Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 1,
+                  "name": "American Express",
+                  "groupName": "creditCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "1",
+                  "template": "creditCardPaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390178Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 2,
+                  "name": "Visa",
+                  "groupName": "creditCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "2",
+                  "template": "creditCardPaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390181Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 4,
+                  "name": "Mastercard",
+                  "groupName": "creditCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "4",
+                  "template": "creditCardPaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390183Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 33,
+                  "name": "Cabal",
+                  "groupName": "creditCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "33",
+                  "template": "creditCardPaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390187Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 10,
+                  "name": "Visa Electron",
+                  "groupName": "debitCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "10",
+                  "template": "debitCardPaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390189Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 39,
+                  "name": "Maestro",
+                  "groupName": "debitCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "39",
+                  "template": "debitCardPaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390191Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 505,
+                  "name": "Prepaga BSF",
+                  "groupName": "customPrivate_505PaymentGroup",
+                  "validator": null,
+                  "stringId": "505",
+                  "template": "customPrivate_505PaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": true,
+                  "description": "Tarjeta prepaga Mastercard BSF Prepaga",
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-28T19:22:08.6390192Z",
+                  "availablePayments": null
+                },
+                {
+                  "id": 35,
+                  "name": "Naranja",
+                  "groupName": "creditCardPaymentGroup",
+                  "validator": null,
+                  "stringId": "35",
+                  "template": "creditCardPaymentGroup-template",
+                  "requiresDocument": true,
+                  "isCustom": false,
+                  "description": null,
+                  "requiresAuthentication": false,
+                  "dueDate": "2026-04-25T19:14:08.6390193Z",
+                  "availablePayments": null
+                }
+              ],
+              "payments": [],
+              "giftCards": [],
+              "giftCardMessages": [],
+              "availableAccounts": [],
+              "availableTokens": []
+            }
+          }
+        }
+      ],
+      "Videos": [],
+      "estimatedDateArrival": null
+    }
+  ]
+}
