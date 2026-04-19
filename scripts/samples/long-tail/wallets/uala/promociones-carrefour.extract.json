@@ -1,0 +1,21 @@
+{
+  "slug": "carrefour",
+  "source_url": "https://www.uala.com.ar/promociones/carrefour",
+  "note": "Known-good LLM output for offline testing. Derived from promociones-carrefour.md — single-Promo per-url extraction.",
+  "data": {
+    "merchant": "Carrefour",
+    "category": "supermercado",
+    "pct": 10,
+    "tope": null,
+    "tope_period": null,
+    "valid_days": [6],
+    "valid_days_reasoning": "los días sábados 4, 11, 18 y 25 de marzo de 2026 inclusive",
+    "valid_regions": [],
+    "valid_from": "2026-04-01",
+    "valid_to": "2026-04-30",
+    "requires_min_spend": null,
+    "issuer_bank": ["uala"],
+    "wallet": ["uala"],
+    "promo_type": "mixed"
+  }
+}
