@@ -113,7 +113,7 @@ test.describe('SSR filters survive JS-disabled navigation', () => {
     const resp = await page.goto('/categorias/supermercado');
     expect(resp?.status()).toBe(200);
 
-    await expect(page.getByRole('heading', { level: 1, name: /Promos de Supermercado/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /Promos en Supermercado/i })).toBeVisible();
 
     const articles = await page.getByRole('article').all();
     test.skip(articles.length === 0, 'no supermercado promos in the live DB');

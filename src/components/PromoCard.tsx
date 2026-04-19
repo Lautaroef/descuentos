@@ -39,9 +39,7 @@ export function PromoCard({ promo }: PromoCardProps) {
   // Zero-price tope-line replacement copy.
   let topeLine: string;
   if (isZero) {
-    if (promo.promo_type === '2x1') topeLine = 'Pagás uno, llevás dos';
-    else if (Number(promo.pct) === 100) topeLine = 'Es gratis';
-    else topeLine = formatTopeLine(promo.tope, promo.tope_period);
+    topeLine = 'Es gratis';
   } else if (variant === 'sin-tope') {
     topeLine = 'Sin tope declarado';
   } else {

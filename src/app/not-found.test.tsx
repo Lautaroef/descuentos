@@ -16,7 +16,7 @@ describe('not-found page — behavior contract', () => {
 
   it('offers a link back to the home page', () => {
     render(<NotFound />);
-    const home = screen.getByRole('link', { name: /Volver al inicio/i });
+    const home = screen.getByRole('link', { name: /Ver promos/i });
     expect(home).toHaveAttribute('href', '/');
   });
 });

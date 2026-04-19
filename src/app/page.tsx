@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { getPromoStats, listPromos, parseFilterFromParams } from '@/lib/queries';
 import { FilterBar } from '@/components/FilterBar';
 import { PromoList } from '@/components/PromoList';
 import { OnboardingSheet } from '@/components/OnboardingSheet';
-import { DISCLAIMER_TEXT } from '@/lib/constants';
-import { relativeSpanish } from '@/lib/format';
+import { NavBar } from '@/components/NavBar';
+import { Disclaimer } from '@/components/Disclaimer';
 
 export const revalidate = 3600; // ISR every hour — ingestion runs weekly.
 
@@ -23,58 +22,49 @@ export default async function HomePage({
 }) {
   const sp = await searchParams;
   const filter = parseFilterFromParams(sp);
-  const [promos, stats] = await Promise.all([listPromos(filter), getPromoStats()]);
+  const [promos, stats] = await Promise.all([
+    listPromos(filter),
+    getPromoStats(),
+  ]);
+
+  const anyFilter =
+    filter.wallets.length > 0 ||
+    filter.categories.length > 0 ||
+    filter.banks.length > 0 ||
+    filter.day !== null ||
+    filter.region !== null;
+  const showingCount = anyFilter && stats.total !== promos.length;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:pt-10">
-      <OnboardingSheet />
+    <>
+      <NavBar />
+      <main className="mx-auto max-w-[1120px] px-4 pb-24 pt-6 sm:pt-10 sm:px-6 lg:px-8">
+        <OnboardingSheet />
 
-      <header className="mb-6">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Descuentos AR</h1>
-            <p className="mt-1 text-sm tx-muted">
-              Promos ordenadas por <strong className="text-[color:var(--color-accent)]">tope de reintegro</strong>,
-              de mayor a menor. {stats.total} activas
-              {stats.lastSeen && (
-                <>
-                  {' '}
-                  · última verificación {relativeSpanish(stats.lastSeen)}
-                </>
-              )}
-              .
-            </p>
-          </div>
-          <nav className="flex gap-2 text-xs tx-muted">
-            <Link
-              href="/banco/modo"
-              className="rounded-md border border-token bg-subtle px-2.5 py-1.5 hover:text-[color:var(--color-text)]"
-            >
-              Por banco
-            </Link>
-            <Link
-              href="/categorias/supermercado"
-              className="rounded-md border border-token bg-subtle px-2.5 py-1.5 hover:text-[color:var(--color-text)]"
-            >
-              Por rubro
-            </Link>
-          </nav>
-        </div>
-      </header>
+        <header className="mb-6">
+          <h1 className="text-[28px] font-semibold leading-[34px] tracking-[-0.015em] text-text-primary">
+            Descuentos
+          </h1>
+          <p className="mt-1 text-sm font-medium text-text-secondary">
+            Hoy te conviene…
+            <span className="ml-2 text-text-muted">{stats.total} activas</span>
+          </p>
+        </header>
 
-      <section className="mb-6 rounded-2xl border border-token bg-elevated p-4">
-        <FilterBar />
-      </section>
+        <section className="mb-6">
+          <FilterBar />
+        </section>
 
-      <PromoList promos={promos} />
+        {showingCount && (
+          <p className="mb-4 text-sm font-medium text-text-muted">
+            Mostrando {promos.length} de {stats.total} promos
+          </p>
+        )}
 
-      <footer className="mt-16 border-t border-token pt-6 text-xs tx-dim">
-        <p>{DISCLAIMER_TEXT}</p>
-        <p className="mt-1">
-          No estamos afiliados a ningún banco ni billetera. Consultá los términos y
-          condiciones en la fuente original antes de comprar.
-        </p>
-      </footer>
-    </main>
+        <PromoList promos={promos} />
+
+        <Disclaimer variant="home" />
+      </main>
+    </>
   );
 }

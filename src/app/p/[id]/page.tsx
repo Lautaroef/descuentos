@@ -4,21 +4,25 @@ import { notFound } from 'next/navigation';
 import { ExternalLink, ArrowLeft } from 'lucide-react';
 import { getPromoById } from '@/lib/queries';
 import {
+  daysUntil,
   formatDateShort,
+  formatFreshness,
   formatPct,
   formatTope,
   formatValidDays,
-  relativeSpanish,
   topePeriodLabel,
 } from '@/lib/format';
 import {
   BANK_LABELS,
   CATEGORY_LABELS,
-  DISCLAIMER_TEXT,
   WALLET_LABELS,
   isBankSlug,
   isWalletSlug,
 } from '@/lib/constants';
+import { NavBar } from '@/components/NavBar';
+import { Disclaimer } from '@/components/Disclaimer';
+import { PromoHero } from '@/components/PromoHero';
+import { isZeroPrice } from '@/lib/promo-variant';
 
 export const revalidate = 3600;
 
@@ -50,135 +54,173 @@ export default async function PromoDetailPage({ params }: PageProps) {
   if (!promo) notFound();
 
   const banks = promo.issuer_bank ?? [];
+  const zero = isZeroPrice(promo);
+  const ageDays = Math.floor(
+    (Date.now() - new Date(promo.last_seen_at).getTime()) / 86_400_000,
+  );
+  const stale = ageDays > 14;
+  const endingDays = daysUntil(promo.valid_to ?? null);
+
+  const heroCardClasses = zero
+    ? 'bg-[color:var(--color-zero-bg)]'
+    : 'bg-surface';
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-24 pt-6 sm:pt-10">
-      <Link
-        href="/"
-        className="mb-4 inline-flex items-center gap-1 text-xs tx-muted hover:text-[color:var(--color-text)]"
-      >
-        <ArrowLeft className="h-3 w-3" />
-        Volver al listado
-      </Link>
+    <>
+      <NavBar />
+      <main className="mx-auto max-w-[720px] px-4 pb-24 pt-6 sm:pt-10">
+        <Link
+          href="/"
+          className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-text-muted transition-colors duration-[150ms] hover:text-text-primary"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+          Volver al listado
+        </Link>
 
-      <article className="rounded-2xl border border-token bg-elevated p-6">
-        <header className="mb-4 flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs tx-muted">{CATEGORY_LABELS[promo.category]}</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-              {promo.merchant}
-            </h1>
-          </div>
-          <div className="text-right">
-            <div className="text-4xl font-bold leading-none text-[color:var(--color-accent)]">
-              {formatPct(promo.pct)}
-            </div>
-            <div className="text-xs tx-muted">reintegro</div>
-          </div>
-        </header>
+        <article
+          className={`rounded-[16px] border border-border ${heroCardClasses} p-6`}
+        >
+          <p className="text-xs font-medium text-text-muted">
+            {CATEGORY_LABELS[promo.category]}
+          </p>
+          <h1 className="mt-1 text-[28px] font-semibold leading-[34px] tracking-[-0.015em] text-text-primary">
+            {promo.merchant}
+          </h1>
 
-        <dl className="grid grid-cols-2 gap-4 border-y border-token py-4 sm:grid-cols-3">
-          <Field label="Tope de reintegro">
-            {formatTope(promo.tope)}
-            {promo.tope !== null && (
-              <span className="tx-muted"> {topePeriodLabel(promo.tope_period)}</span>
-            )}
-          </Field>
-          <Field label="Días válidos">{formatValidDays(promo.valid_days)}</Field>
-          <Field label="Vigencia">
-            {formatDateShort(promo.valid_from)} – {formatDateShort(promo.valid_to)}
-          </Field>
-          <Field label="Billetera">
-            {promo.wallet.map((w) => (isWalletSlug(w) ? WALLET_LABELS[w] : w)).join(', ') || '—'}
-          </Field>
-          {promo.requires_min_spend !== null && (
-            <Field label="Compra mínima">
-              {new Intl.NumberFormat('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                maximumFractionDigits: 0,
-              }).format(promo.requires_min_spend)}
+          <div className="mt-6">
+            <PromoHero promo={promo} />
+          </div>
+
+          <hr className="my-6 border-t border-divider" />
+
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 text-sm">
+            <Field label="Válido">{formatValidDays(promo.valid_days)}</Field>
+            <Field label="Vigencia">
+              {formatDateShort(promo.valid_from)} – {formatDateShort(promo.valid_to)}
+              {endingDays !== null && endingDays >= 0 && endingDays <= 3 && (
+                <span className="ml-2 font-semibold text-[color:var(--color-warning)]">
+                  {endingDays === 0
+                    ? '· Termina hoy'
+                    : endingDays === 1
+                      ? '· Termina mañana'
+                      : `· Termina en ${endingDays} días`}
+                </span>
+              )}
             </Field>
-          )}
-          {promo.valid_regions.length > 0 && (
-            <Field label="Regiones">{promo.valid_regions.join(', ')}</Field>
-          )}
-        </dl>
+            {promo.tope !== null && (
+              <Field label="Tope">{topePeriodLabel(promo.tope_period) || '—'}</Field>
+            )}
+            <Field label="Billetera">
+              {promo.wallet
+                .map((w) => (isWalletSlug(w) ? WALLET_LABELS[w] : w))
+                .join(', ') || '—'}
+            </Field>
+            {promo.requires_min_spend !== null && (
+              <Field label="Compra mín.">
+                {new Intl.NumberFormat('es-AR', {
+                  style: 'currency',
+                  currency: 'ARS',
+                  maximumFractionDigits: 0,
+                }).format(promo.requires_min_spend)}
+              </Field>
+            )}
+            {promo.valid_regions.length > 0 && (
+              <Field label="Regiones">{promo.valid_regions.join(', ')}</Field>
+            )}
+          </dl>
 
-        {banks.length > 0 && (
-          <section className="mt-5">
-            <h2 className="mb-2 text-[11px] font-medium uppercase tracking-wide tx-dim">
-              Bancos adheridos
-            </h2>
-            <div className="flex flex-wrap gap-1.5">
-              {banks.map((b) => (
-                <Link
-                  key={b}
-                  href={`/banco/${b}`}
-                  className="rounded-full border border-token bg-subtle px-2.5 py-1 text-xs tx-muted transition hover:text-[color:var(--color-accent)]"
-                >
-                  {isBankSlug(b) ? BANK_LABELS[b] : b}
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
+          {promo.tope === null && (
+            <p className="mt-4 text-sm font-medium text-text-secondary">
+              Todo tu consumo suma al reintegro — no hay techo declarado.
+            </p>
+          )}
 
-        {promo.variants && promo.variants.length > 0 && (
-          <section className="mt-5">
-            <h2 className="mb-2 text-[11px] font-medium uppercase tracking-wide tx-dim">
-              Tarifas particulares
-            </h2>
-            <ul className="divide-y divide-[color:var(--color-border)] rounded-xl border border-token bg-subtle/50">
-              {promo.variants.map((v, i) => (
-                <li key={i} className="flex items-baseline justify-between px-4 py-2 text-sm">
-                  <span>
-                    <strong>{formatPct(v.pct)}</strong>
-                    {v.category_scope && <span className="tx-muted"> · {v.category_scope}</span>}
-                    {v.notes && <span className="tx-dim"> ({v.notes})</span>}
-                  </span>
-                  {v.tope != null && (
-                    <span className="tx-muted">
-                      {formatTope(v.tope)} {topePeriodLabel(v.tope_period ?? null)}
+          {banks.length > 0 && (
+            <section className="mt-6 border-t border-divider pt-5">
+              <h2 className="mb-2 text-xs font-medium text-text-muted">
+                Bancos adheridos
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {banks.map((b) => (
+                  <Link
+                    key={b}
+                    href={`/banco/${b}`}
+                    className="inline-flex min-h-9 items-center rounded-pill border border-border bg-surface px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors duration-[150ms] hover:border-border-strong hover:text-text-primary"
+                  >
+                    {isBankSlug(b) ? BANK_LABELS[b] : b}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {promo.variants && promo.variants.length > 0 && (
+            <section className="mt-6 border-t border-divider pt-5">
+              <h2 className="mb-2 text-xs font-medium text-text-muted">
+                Tarifas particulares
+              </h2>
+              <ul className="divide-y divide-[color:var(--color-divider)] rounded-md border border-border bg-surface">
+                {promo.variants.map((v, i) => (
+                  <li
+                    key={i}
+                    className="flex items-baseline justify-between px-4 py-3 text-sm"
+                  >
+                    <span>
+                      <strong className="font-semibold text-[color:var(--color-savings)]">
+                        {formatPct(v.pct)}
+                      </strong>
+                      {v.category_scope && (
+                        <span className="ml-2 text-text-secondary">· {v.category_scope}</span>
+                      )}
+                      {v.notes && (
+                        <span className="ml-2 text-text-muted">({v.notes})</span>
+                      )}
                     </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+                    {v.tope != null && (
+                      <span className="text-text-secondary">
+                        {formatTope(v.tope)} {topePeriodLabel(v.tope_period ?? null)}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-          <span className="text-xs tx-dim">
-            Verificado {relativeSpanish(promo.last_seen_at)} · fuente {promo.source_id}
-          </span>
-          <a
-            href={promo.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-accent)] px-4 py-2 text-sm font-semibold text-[color:var(--color-accent-contrast)] transition hover:opacity-90"
-          >
-            Ir al sitio <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        </div>
-      </article>
+          <div className="mt-6 flex flex-col gap-1 border-t border-divider pt-5 text-xs font-medium text-text-muted">
+            <span>{formatFreshness(promo.last_seen_at)}</span>
+            <span>Fuente: {promo.source_id}</span>
+            {stale && (
+              <span className="mt-1 font-medium text-[color:var(--color-warning)]">
+                Esta promo podría haber cambiado. Verificá en la app del banco.
+              </span>
+            )}
+          </div>
 
-      <footer className="mt-6 text-xs tx-dim">
-        <p className="rounded-xl border border-token bg-subtle/50 p-3">
-          {DISCLAIMER_TEXT} No estamos afiliados a {promo.merchant} ni a ninguna de las
-          entidades emisoras. Los términos completos pueden variar o actualizarse sin previo
-          aviso.
-        </p>
-      </footer>
-    </main>
+          <div className="mt-6 flex justify-end">
+            <a
+              href={promo.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-[color:var(--color-accent)] px-6 py-3 text-base font-semibold text-[color:var(--color-accent-ink)] transition-colors duration-[150ms] hover:bg-[color:var(--color-accent-hover)] sm:w-auto"
+            >
+              Ir al sitio
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+          </div>
+        </article>
+
+        <Disclaimer variant="detail" merchant={promo.merchant} />
+      </main>
+    </>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div>
-      <dt className="mb-0.5 text-[11px] font-medium uppercase tracking-wide tx-dim">{label}</dt>
-      <dd className="text-sm font-medium">{children}</dd>
-    </div>
+    <>
+      <dt className="text-xs font-medium text-text-muted">{label}</dt>
+      <dd className="text-sm font-medium text-text-primary">{children}</dd>
+    </>
   );
 }

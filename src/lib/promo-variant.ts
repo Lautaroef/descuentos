@@ -16,11 +16,12 @@ import { daysUntil } from './format';
 export type PromoVariantKind = 'default' | 'sin-tope' | 'expiring' | 'zero';
 
 export function isZeroPrice(promo: Promo): boolean {
+  // The current Promo schema (`scripts/promo-schema.ts`) enumerates
+  // `promo_type` as 'cashback' | 'cuotas' | 'mixed' — 2×1/bonificado are not
+  // represented today. D3 spec anticipates both via future schema evolution;
+  // for v1 we only detect 100% reintegro as the zero-price categorical.
   const n = typeof promo.pct === 'string' ? Number(promo.pct) : promo.pct;
-  if (n === 100) return true;
-  if (promo.promo_type === '2x1') return true;
-  if (promo.promo_type === 'bonificado' && n >= 50) return true;
-  return false;
+  return n === 100;
 }
 
 export function isExpiring(promo: Promo, now = new Date()): boolean {
