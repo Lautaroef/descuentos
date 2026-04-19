@@ -120,6 +120,8 @@ Per-SKU response includes `price`, `Installments` (wallet tokens like `Modo Paym
 
 **Phase 2 discovery**: The big three AR supermarket chains publish their own cross-bank/cross-wallet promo catalogs at known static URLs. These are NOT in MODO (MODO doesn't index per-chain own-cupones), and they include chain-native cupon programs that PromoArg does not source.
 
+**Phase 3.3 landed (2026-04-18)**: Adapters live for all three chains — `pnpm run-coto` / `pnpm run-jumbo` / `pnpm run-carrefour`. Per-source guides in `docs/sources/{coto,jumbo,carrefour}.md`. First-run totals: Coto 48 promos, Jumbo 14 promos, Carrefour 25 promos. Own-cupon wallets extended via migration 005: `comunidad_coto`, `jumbo_mas`, `mi_carrefour`.
+
 ### Coto
 
 - Primary: `https://www.coto.com.ar/descuentos/` — HTTP 200, 1 credit. Day-grouped catalog (Lunes / Martes / Miércoles / Jueves / Viernes / Fin de Semana).
@@ -138,7 +140,7 @@ Per-SKU response includes `price`, `Installments` (wallet tokens like `Modo Paym
 
 - Primary: `https://www.carrefour.com.ar/descuentos-bancarios` — HTTP 200, 1 credit, ~70 KB markdown. 29+ pct promos, 52+ tope mentions, all days of week. Includes Patagonia 28 mentions (heavy partner), Mercado Pago 20, Naranja 16, MODO 7, Cuenta DNI 4 (!), Mi Carrefour 3.
 - **Critical surprise**: Carrefour runs universal cross-wallet promos. Verbatim quote: *"BILLETERAS VIRTUALES PARTICIPANTES: CARREFOUR BANCO, MERCADO PAGO, CUENTA DNI, MODO, NARANJA X, UALÁ, BNA+, PERSONAL PAY, PREX... EL BENEFICIO CONSISTE EN UN 10% DE DESCUENTO, SIN TOPE DE REINTEGRO"*. This surfaces Cuenta DNI and Personal Pay deals that Phase 1 classified as unreachable.
-- **Backing-API hint**: card images load from `carrefour.com.ar/api/dataentities/BP/documents/{uuid}/img_card_N/attachments/{wallet}.png` — the promo catalog is backed by a VTEX dataentity called `BP`. If the entity ID is discoverable (`/api/dataentities/BP/search?_fields=...`), we could swap HTML scraping for direct JSON fetch. Follow-up task, not yet tested.
+- **Backing-API status**: the promo catalog IS backed by a VTEX dataentity called `BP` (confirmed via image URLs of shape `carrefour.com.ar/api/dataentities/BP/documents/{uuid}/img_card_N/attachments/{wallet}.png`). Probed 2026-04-18 as part of Phase 3.3: `search?_fields=id` returns 200 with record UUIDs, but EVERY content field (`name`, `title`, `description`, `day`, `percent`, `bank`, `tope`, `image`, `logo`, `label`, plus the likely Spanish variants) returns `403 "Cannot read private fields"`. The dataentity is auth-gated for content. **HTML fallback is the only viable path** — implemented in `scripts/ingestion/carrefour-source.ts`. Full probe transcript in `docs/sources/carrefour.md`.
 - `/especial-cupones` is a usage explainer only (no listing). `/promociones` returns 85 KB but is mostly banner images. `/app` and `beneficiarios.carrefour.com.ar` (login-gated) point to the Mi Carrefour app for per-user cupones — app-locked, refer to press coverage.
 
 ### Own-cupon programs (supermarket-native, PromoArg gap)
