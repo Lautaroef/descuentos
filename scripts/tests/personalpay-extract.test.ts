@@ -62,13 +62,12 @@ test('personalpay-extract: fixture produces schema-valid Promo rows with null to
   }
 });
 
-test('personalpay-extract: even if the LLM hallucinates a tope, the Zod gate still accepts it — BUT our contract says this shouldn\'t happen', async () => {
-  // This test documents the current invariant: the schema DOES allow non-null
-  // tope. What keeps topes null is the PROMPT (lib/personalpay-extract.ts).
-  // If a regression relaxes the prompt and the LLM starts emitting topes, the
-  // fixture-based test above catches it. We assert here that the invariant is a
-  // prompt-level, not schema-level, constraint — so future devs know to keep
-  // the prompt strict.
+test('personalpay-extract: hallucinated topes from the LLM are FORCED to null by the extractor', async () => {
+  // Phase 3.3 hardening: the extractor previously trusted the LLM to emit
+  // tope=null (prompt-level invariant), which meant a prompt regression could
+  // silently upsert invented topes. The extractor now overrides tope and
+  // tope_period to null unconditionally for Personal Pay rows. See
+  // docs/sources/personalpay.md for the partial-coverage rationale.
   const md = '# Personal Pay fake';
   const stubbed = {
     promos: [
@@ -97,12 +96,14 @@ test('personalpay-extract: even if the LLM hallucinates a tope, the Zod gate sti
     }),
   });
 
-  // Zod accepts it. Our behavioural contract (prompt + fixture test) rejects it.
-  // This test exists to document the invariant — testing agent may later convert
-  // it into a hard schema-level guard if we want to enforce 'no topes for
-  // personalpay' at the type level.
   assert.strictEqual(result.rejected_count, 0);
-  assert.strictEqual(result.promos[0].tope, 5000);
+  assert.strictEqual(result.promos.length, 1);
+  assert.strictEqual(
+    result.promos[0].tope,
+    null,
+    'hallucinated tope was overridden to null by the extractor guard',
+  );
+  assert.strictEqual(result.promos[0].tope_period, null);
 });
 
 test('personalpay-extract: personalpayPromoId is deterministic across runs', () => {

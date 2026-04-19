@@ -262,9 +262,14 @@ export async function extractPersonalPayPromos(
   const seenIds = new Set<string>();
 
   for (const item of payload.promos) {
-    // Guard: we asked the LLM to emit tope=null, but normalize defensively.
-    const tope = item.tope ?? null;
-    const tope_period = tope === null ? null : item.tope_period === '' ? null : (item.tope_period ?? null);
+    // Hard guard: Personal Pay's topes are image-locked and auth-gated (see file
+    // header). The prompt tells the LLM to emit `tope=null`, but we FORCE null
+    // here regardless of what Gemini returned. Any non-null value would be a
+    // hallucination we can't verify — better to drop it than upsert invented
+    // data. If Phase 3.3+ press-triangulation ever yields real topes, those
+    // rows come from a different source_id and aren't constrained by this rule.
+    const tope = null;
+    const tope_period = null;
 
     const id = personalpayPromoId(source_url, item.merchant, item.pct, item.valid_days);
     if (seenIds.has(id)) continue;
