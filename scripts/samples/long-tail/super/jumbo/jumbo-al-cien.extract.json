@@ -1,0 +1,26 @@
+{
+  "source_url": "https://www.jumbo.com.ar/jumbo-al-cien",
+  "extracted_at": "2026-04-18",
+  "method": "handcrafted fixture for smoke tests",
+  "data": {
+    "promos": [
+      {
+        "day_phrase": "Del Viernes 06 al Domingo 08 de Marzo de 2026",
+        "valid_days": [0, 5, 6],
+        "pct": 100,
+        "promo_type": "cashback",
+        "tope": null,
+        "tope_period": null,
+        "merchant": "Jumbo",
+        "category": "supermercado",
+        "issuer_bank": [],
+        "wallet": ["jumbo_mas"],
+        "valid_regions": [],
+        "valid_from": "2026-03-06",
+        "valid_to": "2026-03-15",
+        "requires_min_spend": null,
+        "notes": "Pesoscheck: máx 10 cupones por compra, 6 unidades por SKU, no aplica electro/indumentaria. Canje del 13 al 15 de Marzo. Requiere Jumbo+."
+      }
+    ]
+  }
+}
