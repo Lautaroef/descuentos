@@ -257,15 +257,58 @@ export function normalizeCardBrands(raw: string[] | undefined): string[] | undef
   return out.size > 0 ? [...out].sort() : undefined;
 }
 
-/** Stable day_key: sorted weekday numbers joined by commas. */
+/**
+ * Stable day_key: deduped + sorted weekday numbers joined by commas.
+ *
+ * Dedup is critical: Gemini occasionally emits arrays like `[6, 0, 6]` due to
+ * token-boundary nondeterminism on cross-phrase blocks ("Todos los Sábados y
+ * Domingos" + a stray "Sábado" near the legal body). Without dedup the id
+ * tuple for the SAME promo would drift across runs. This is one of the known
+ * root causes of the Phase 3.3 Carrefour idempotency flake.
+ */
 export function dayKey(valid_days: number[]): string {
-  return [...valid_days].sort((a, b) => a - b).join(',');
+  const seen = new Set<number>();
+  for (const d of valid_days) {
+    if (Number.isInteger(d) && d >= 0 && d <= 6) seen.add(d);
+  }
+  return [...seen].sort((a, b) => a - b).join(',');
 }
 
-/** Primary bank (for id derivation): first sorted bank, or `_none_` if empty. */
+/**
+ * Primary bank (for id derivation): first sorted bank after dedup, or
+ * `_none_` if empty.
+ *
+ * Dedup is defensive — `normalizeBanks` already de-dupes via Set, but callers
+ * may occasionally pass already-structured input (tests, migrations). Keeping
+ * this function byte-identical across inputs is load-bearing for idempotency.
+ */
 export function primaryBank(issuer_bank: string[]): string {
-  if (issuer_bank.length === 0) return '_none_';
-  return [...issuer_bank].sort()[0];
+  const seen = new Set<string>();
+  for (const b of issuer_bank) {
+    const trimmed = b.trim().toLowerCase();
+    if (trimmed) seen.add(trimmed);
+  }
+  if (seen.size === 0) return '_none_';
+  return [...seen].sort()[0];
+}
+
+/**
+ * Canonicalize the `pct` component of the id tuple.
+ *
+ * The prompt says "integer percent", but Gemini occasionally emits float
+ * approximations ("30.0", "10.000001") due to token-boundary numeric
+ * decoding. Rounding to the nearest integer prevents those alt-representations
+ * from producing a distinct UUID for the same semantic promo. Source of the
+ * Carrefour "1 insert / 24 updates" flake on idempotent re-run.
+ */
+export function canonicalPct(pct: number): number {
+  if (!Number.isFinite(pct)) return 0;
+  return Math.round(pct);
+}
+
+/** Canonicalize the `promo_type` component — trim + lowercase (enum-safe). */
+export function canonicalPromoType(promo_type: string): string {
+  return String(promo_type).trim().toLowerCase();
 }
 
 // =============================================================================
@@ -306,8 +349,28 @@ export interface IdTuple {
   promo_type: string;
 }
 
+/**
+ * Build the deterministic UUID v5 for a supermarket promo.
+ *
+ * The tuple is normalized here (belt-and-suspenders) so callers who pass raw
+ * values still get a stable id:
+ *   - `source_url`: trimmed (never contains whitespace in practice)
+ *   - `day_key`:     assumed already built via `dayKey()`; lightly trimmed
+ *   - `bank_key`:    lowercased + trimmed
+ *   - `pct`:         rounded to nearest integer (see `canonicalPct`)
+ *   - `promo_type`:  lowercased + trimmed (`canonicalPromoType`)
+ *
+ * This hardening is specifically to defuse the Gemini token-boundary
+ * nondeterminism observed on Carrefour's /descuentos-bancarios run
+ * (1 insert / 24 updates on idempotent re-run, Phase 3.3).
+ */
 export function supermarketPromoId(t: IdTuple): string {
-  const name = `${t.source_url}#${t.day_key}#${t.bank_key}#${t.pct}#${t.promo_type}`;
+  const source_url = t.source_url.trim();
+  const day_key = String(t.day_key).trim();
+  const bank_key = t.bank_key.trim().toLowerCase();
+  const pct = canonicalPct(t.pct);
+  const promo_type = canonicalPromoType(t.promo_type);
+  const name = `${source_url}#${day_key}#${bank_key}#${pct}#${promo_type}`;
   return uuidV5(name, SUPERMARKET_UUID_NAMESPACE);
 }
 

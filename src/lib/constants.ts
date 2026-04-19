@@ -1,7 +1,7 @@
 // Canonical slug sets and human labels for filters, SEO pages, and sitemap.
 // Keep in lock-step with db/migrations/001_init.sql and scripts/promo-schema.ts.
 
-import type { Category, Wallet } from './schema';
+import type { Category, Wallet } from './schema.js';
 
 // ---------------------------------------------------------------------------
 // Categories — category enum (see schema).
