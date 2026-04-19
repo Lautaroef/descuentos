@@ -48,6 +48,9 @@ export const WALLET_SLUGS: Wallet[] = [
   'lemon',
   'astropay',
   'reba',
+  'comunidad_coto',
+  'jumbo_mas',
+  'mi_carrefour',
 ];
 
 export const WALLET_LABELS: Record<Wallet, string> = {
@@ -65,6 +68,9 @@ export const WALLET_LABELS: Record<Wallet, string> = {
   lemon: 'Lemon',
   astropay: 'AstroPay',
   reba: 'Reba',
+  comunidad_coto: 'Comunidad Coto',
+  jumbo_mas: 'Jumbo+',
+  mi_carrefour: 'Mi Carrefour',
 };
 
 // ---------------------------------------------------------------------------

@@ -63,6 +63,10 @@ const EXPECTED_WALLET_VALUES = [
   'lemon',
   'astropay',
   'reba',
+  // Supermarket-native membership programs (Phase 3.3, migration 005).
+  'comunidad_coto',
+  'jumbo_mas',
+  'mi_carrefour',
 ] as const;
 
 const EXPECTED_PROMO_TYPE_VALUES = ['cashback', 'cuotas', 'mixed'] as const;

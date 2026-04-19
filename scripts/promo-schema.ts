@@ -32,6 +32,11 @@ export const Promo = z.object({
       'lemon',
       'astropay',
       'reba',
+      // Supermarket-native membership programs (Phase 3.3).
+      // See db/migrations/005_supermarket_wallets.sql for the evidence trail.
+      'comunidad_coto',
+      'jumbo_mas',
+      'mi_carrefour',
     ]),
   ),
   card_brand: z.array(z.enum(['visa', 'mastercard', 'amex', 'cabal', 'naranja'])).optional(),
