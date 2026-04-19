@@ -146,25 +146,42 @@ test('P1-5 update preserves created_at and advances last_seen_at', { skip: skipR
   }
 });
 
-test('P1-5 (source_id, source_url) uniqueness: two upserts = one row', { skip: skipReason }, async () => {
+test('P1-5 primary-key identity: same id → one row; different ids → N rows', { skip: skipReason }, async () => {
+  // Migration 004 dropped the (source_id, source_url) unique constraint so bulk
+  // sources (Cuenta DNI: one article → many Promos) can write multiple rows
+  // under the same source_url. Identity is now strictly the primary-key `id`.
+  // Each adapter is responsible for supplying a deterministic UUID v5 per promo
+  // (see modoPromoId / cuentaDniPromoId).
   const sql = getDb();
   const id = randomUUID();
   const promo = makeTestPromo();
   try {
+    // Same id, different payload → single row, updated in place.
     await upsertPromo({ id, promo, rawHtmlHash: hashMarkdown('v1') });
-    // Even with a different `id`, the ON CONFLICT (source_id, source_url) path keeps the
-    // same row — the existing id is preserved on update.
     await upsertPromo({
-      id: randomUUID(),
+      id,
       promo: { ...promo, pct: 25 },
       rawHtmlHash: hashMarkdown('v2'),
     });
-    const rows = await sql<{ count: number }[]>`
+    const [{ count: sameIdCount }] = await sql<{ count: number }[]>`
       select count(*)::int as count
       from promos
       where source_id = ${promo.source_id} and source_url = ${promo.source_url}
     `;
-    assert.strictEqual(rows[0].count, 1, 'unique-key constraint collapses to one row');
+    assert.strictEqual(sameIdCount, 1, 'same id → one row');
+
+    // Different id, same source_url → two rows coexist (bulk semantics).
+    await upsertPromo({
+      id: randomUUID(),
+      promo: { ...promo, pct: 30 },
+      rawHtmlHash: hashMarkdown('v3'),
+    });
+    const [{ count: twoIdCount }] = await sql<{ count: number }[]>`
+      select count(*)::int as count
+      from promos
+      where source_id = ${promo.source_id} and source_url = ${promo.source_url}
+    `;
+    assert.strictEqual(twoIdCount, 2, 'different ids → two rows under the same source_url');
   } finally {
     await cleanupTestRows();
   }
@@ -173,7 +190,7 @@ test('P1-5 (source_id, source_url) uniqueness: two upserts = one row', { skip: s
 // =============================================================================
 // P1-6 — Change-detection skip path.
 //
-// The production ingestion flow (scripts/ingestion/modo-detail.ts) loads the cached
+// The production ingestion flow (scripts/lib/source-runner.ts) loads the cached
 // hash via `listPromoSlugsForSource`, compares to the freshly scraped markdown's
 // `hashMarkdown`, and either calls `markPromoSeen` (unchanged) or `upsertPromo` (changed).
 // We test the two branches on top of the DB primitives directly — no LLM call involved.

@@ -1,6 +1,14 @@
 // Postgres ops for promos. Upsert-with-TTL pattern per docs/architecture.md §1.
 //
-// Identity key = (source_id, source_url) with a deterministic UUID v5 `id` layered on top.
+// Identity key = deterministic UUID v5 `id` (primary key). Each adapter derives its own
+// ids:
+//   - MODO (per-url):   modoPromoId(slug)              — one id per URL
+//   - Cuenta DNI (bulk): cuentaDniPromoId(url, merchant, pct) — many ids per URL
+//
+// Migration 004 dropped the old `(source_id, source_url)` unique constraint so bulk
+// sources can write N promos under one source_url. `listPromoSlugsForSource` still reads
+// the first matching row per URL for hash-compare; bulk sources don't use that path.
+//
 // `last_seen_at` is the TTL signal; serving layer filters to last N days. Hard-delete of
 // stale rows is deferred to Phase 4 (dedup); here we just surface candidates.
 import type { Promo } from '../promo-schema.js';
@@ -15,8 +23,8 @@ export interface PersistedPromoMeta {
 }
 
 /**
- * Upsert a single promo. Conflict key is (source_id, source_url).
- * - On INSERT: returns 'inserted' (uses provided id so UUID v5 stays stable).
+ * Upsert a single promo. Conflict key is the primary key `id` (deterministic UUID v5).
+ * - On INSERT: returns 'inserted'.
  * - On UPDATE: returns 'updated' (all scraped fields refreshed, created_at preserved).
  *
  * `rawHtmlHash` is stored alongside the row for fast change detection on the next run.
@@ -53,7 +61,9 @@ export async function upsertPromo(args: {
       ${rawHtmlHash},
       now(), now()
     )
-    on conflict (source_id, source_url) do update set
+    on conflict (id) do update set
+      source_id          = excluded.source_id,
+      source_url         = excluded.source_url,
       merchant           = excluded.merchant,
       category           = excluded.category,
       wallet             = excluded.wallet,
