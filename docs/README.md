@@ -16,6 +16,7 @@ Read in this order if you're new to the project:
 12. [phase-2-notes.md](phase-2-notes.md) — **Phase 2 shipped (April 2026).** Next.js 15 PWA on top of the Phase 1 ingest. SSR-true filters, sort-by-tope, owned-wallet onboarding, SEO landings for 24 banks × 8 categories, Serwist service worker, live on Vercel. File list, deploy URL, UX decisions, and a week-1 testing checklist.
 13. [testing.md](testing.md) — Test runners and where each kind of test lives (node:test, Vitest, Playwright). Smoke tests included as scaffolding.
 14. [sources.md](sources.md) — **The source-adapter playbook.** How to add a new ingestion source: `Source` interface, deterministic ids, test scaffolding, DB seed. Phase 3.0+.
+15. [backlog.md](backlog.md) — Validated demand signals worth revisiting (gastronomía scope, cuotas-as-inflation-hedge ranking, etc.). Source-cited; not a commitment — a memory aid.
 
 ## Conventions
 
