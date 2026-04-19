@@ -74,27 +74,28 @@ Per-SKU response includes `price`, `Installments` (wallet tokens like `Modo Paym
 
 ### Brubank
 
-- `https://brubank.com/beneficios` — HTTP 200, fully rendered Webflow static page. ~50 promo cards grouped by plan tier (One / Plus / Ultra), each with `NN% reintegro`, `Tope de reintegro: $N.NNN`, day phrase, deep link to `help.brubank.com` T&Cs article.
-- 1 Firecrawl credit per refresh. Model plan tier in `issuer_bank` as `brubank-one` / `-plus` / `-ultra`, or add a `required_plan` field if more granularity is needed.
+- `https://brubank.com/beneficios` — HTTP 200, fully rendered Webflow static page. ~85 promo cards grouped by plan tier (One / Plus / Ultra).
+- **Implementation (Phase 3.2, 2026-04-19)**: `pnpm run-brubank`. `kind: 'bulk'`. Plan tier encoded in `issuer_bank` as `brubank-one` / `-plus` / `-ultra` (no schema migration needed). Canonical id = UUID v5 over `(source_url, plan, merchant, pct, days-label)`. First live run: 85 promos / $0.0239 Gemini / idempotent on re-run. See `docs/sources/brubank.md`.
 
 ### Naranja X
 
 - Hub: `https://www.naranjax.com/promociones` — SPA, Firecrawl-resolved (`waitFor: 6000`). Cards show pct + `Tope semanal hasta $N` + day phrase + medio de pago icons (Débito / Crédito / Dinero en cuenta / QR).
-- Related surfaces: `/promociones-amba` (regional Buenos Aires promos), `/promos-relampago` (último sábado del mes 40% OFF), `/smartes` (monthly sale days), `/pagar-transporte` (100% OFF subte/colectivo), `/verano` + `/hot-sale` + `/cyber-monday` (seasonal).
-- Category deep-links: `/promociones/SUPERMERCADOS_categoria`, `/promociones/medios/Super`, `/promociones/CONSTRUCCION_categoria`, etc.
-- Plan Turbo / Plan Épico tope tiers documented at `/blog/epico-y-turbo-planes-para-ahorrar-con-naranja-x`.
+- Hubs scraped by the Phase 3.2 adapter: `/promociones`, `/promociones/SUPERMERCADOS_categoria`, `/promociones-amba`, `/promos-relampago`, `/smartes`.
+- Plan Turbo / Plan Épico tope tiers documented at `/blog/epico-y-turbo-planes-para-ahorrar-con-naranja-x` — NOT used as a scraping target; plan tier is not currently encoded.
+- **Implementation (Phase 3.2, 2026-04-19)**: `pnpm run-naranjax`. `kind: 'bulk'` with 5 hub URLs (one Source, many listUrls). Canonical id = UUID v5 over `(source_url, merchant, pct, days-label)` — provenance-per-hub; Phase 4 dedup collapses across hubs. First live run (2-hub sample): 58 promos / $0.0230 Gemini / idempotent. See `docs/sources/naranjax.md`.
 
 ### Ualá
 
 - Hub: `https://www.uala.com.ar/promociones` — Next.js, Firecrawl-resolved.
-- Per-merchant detail pages: `/promociones/<slug>` (e.g., `/promociones/carrefour`, `/promociones/sportclub`, `/promociones/coderhouse`, `/promociones/ualabis`). **These pages use MODO-grade fixed-label blocks**: `Días: L M M J V S D` icon row, `Métodos de pago`, `Tipo de comercio`, `Válido hasta`, `Tope de reintegro`, `Tiempo de acreditación`, `Disponible en`, full legal text.
-- Same extraction recipe as MODO detail pages.
+- Per-merchant detail pages: `/promociones/<slug>`. **MODO-grade fixed-label blocks**: `Días: L M M J V S D` icon row, `Métodos de pago`, `Tipo de comercio`, `Válido hasta`, `Tope de reintegro`, `Tiempo de acreditación`, `Disponible en`, full legal text.
+- **Implementation (Phase 3.2, 2026-04-19)**: `pnpm run-uala`. `kind: 'per-url'`. Hub enumerates slugs; each slug → one Promo. Canonical id = UUID v5 over `source_url` (same as MODO). Hash-compare skip on re-run. First live run: 4 promos / $0.0066 Gemini / 0 inserts / 0 updates / 4 unchanged on second run. See `docs/sources/uala.md`.
 
 ### Personal Pay
 
 - Hub: `https://www.personalpay.com.ar/beneficios` (301s to `personal.com.ar/pay/beneficios`) — renders a paginated merchant grid (~96 partners across 8 pages). Each card exposes merchant + pct + day phrase.
-- **Gotcha**: topes for Personal Pay are summarized in an IMAGE (`Desk_tabla_v2.webp` tier table) — Firecrawl markdown does not OCR. Workaround: get topes via press-article extraction (iProUp + promociones.com.ar publish monthly combo articles with explicit Nivel 1/2/3 tope numbers).
-- **Backing API hint**: card images load from `beneficiosclub.personalpay.dev/partner/<slug>.png`. That subdomain is a candidate for a cleaner JSON backend — not yet probed; follow-up task.
+- **Gotcha**: topes for Personal Pay are summarized in an IMAGE (`Desk_tabla_v2.webp` tier table) — Firecrawl markdown does not OCR. Workaround: press-article extraction (iProUp + promociones.com.ar publish monthly combo articles with explicit Nivel 1/2/3 tope numbers). Not yet implemented.
+- **Backing API probed (Phase 3.2, 2026-04-19)**: `beneficiosclub.personalpay.dev` is a CRA shell that hits an AWS API Gateway at `a06k96u4je.execute-api.us-east-1.amazonaws.com/prod/club-personal/back-office` which returns **401 Unauthorized** / **403 Forbidden** on every partner-catalog path probed (`/partners`, `/beneficios`, `/list`, `/categories`, `/api/v1/partners`). It's an authenticated back-office endpoint for Personal Pay operators, NOT a public partner catalog feed. No public JSON backend exists today.
+- **Implementation (Phase 3.2, 2026-04-19)**: `pnpm run-personalpay`. `kind: 'bulk'`, **PARTIAL coverage** — every emitted Promo has `tope: null` / `tope_period: null` (honest modelling; the prompt explicitly instructs the LLM not to invent tope values and a fixture test enforces the invariant). Canonical id = UUID v5 over `(source_url, merchant, pct, days-label)`. First live run: 10 promos / $0.0034 Gemini / idempotent. Extracts page 1 of the paginator only (future work: Firecrawl Browser API click-through). See `docs/sources/personalpay.md`.
 
 ### Cuenta DNI — via press-article extraction
 
