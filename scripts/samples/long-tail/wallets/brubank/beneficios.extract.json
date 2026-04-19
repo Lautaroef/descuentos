@@ -1,0 +1,120 @@
+{
+  "source_url": "https://brubank.com/beneficios",
+  "note": "Known-good LLM output for offline testing. Hand-curated from beneficios.md; covers the Plan Ultra / Plan Plus / Plan One tiers, a sample of cashback + descuento cards, the YPF Lunes card (single weekday), the Viernes+Sab+Dom card, a 'Todos los días' card, and a Jueves-a-domingos card (Plan One Eyelit).",
+  "data": {
+    "promos": [
+      {
+        "plan": "ultra",
+        "merchant": "Axion Energy",
+        "category": "combustible",
+        "pct": 30,
+        "tope": 6000,
+        "tope_period": "month",
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "plan": "ultra",
+        "merchant": "Cerini",
+        "category": "gastronomia",
+        "pct": 50,
+        "tope": 8000,
+        "tope_period": "month",
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "plan": "ultra",
+        "merchant": "App YPF",
+        "category": "combustible",
+        "pct": 10,
+        "tope": 6000,
+        "tope_period": "month",
+        "valid_days": [1],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "plan": "plus",
+        "merchant": "Axion Energy",
+        "category": "combustible",
+        "pct": 20,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "plan": "plus",
+        "merchant": "Kusta Barber",
+        "category": "indumentaria",
+        "pct": 50,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "plan": "one",
+        "merchant": "Axion Energy",
+        "category": "combustible",
+        "pct": 10,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [2],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "plan": "one",
+        "merchant": "Eyelit",
+        "category": "indumentaria",
+        "pct": 30,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "plan": "one",
+        "merchant": "Educación IT",
+        "category": "electro",
+        "pct": 45,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "mixed"
+      }
+    ]
+  }
+}
