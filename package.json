@@ -19,6 +19,7 @@
     "test:e2e": "playwright test",
     "test:all": "pnpm test && pnpm test:unit && pnpm test:e2e",
     "run-modo": "tsx scripts/run-modo.ts",
+    "run-cuentadni": "tsx scripts/run-cuentadni.ts",
     "validate:dia": "tsx scripts/validate-dia.ts",
     "validate:carrefour": "tsx scripts/validate-carrefour.ts",
     "validate:galicia": "tsx scripts/validate-galicia.ts",
