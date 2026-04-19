@@ -44,10 +44,25 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  /**
+   * Parallel `@modal` slot — renders the intercepted detail view as an
+   * overlay above `children`. When no intercept matches the current URL,
+   * `src/app/@modal/default.tsx` returns null so this prop is an empty
+   * fragment.
+   */
+  modal: React.ReactNode;
+}) {
   return (
     <html lang="es-AR" className={inter.variable}>
-      <body className="min-h-screen bg-bg text-text-primary">{children}</body>
+      <body className="min-h-screen bg-bg text-text-primary">
+        {children}
+        {modal}
+      </body>
     </html>
   );
 }

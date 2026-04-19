@@ -234,6 +234,26 @@ body {
   to   { opacity: 1; }
 }
 
+/* Modal — intercepting-route overlay (see Modal.tsx). Entrance only; exit is
+ * handled by the browser back-navigation removing the component from the
+ * tree. Keep in sync with `--duration-default` / `--ease-out`. */
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modal-panel-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (min-width: 640px) {
+  @keyframes modal-panel-in {
+    from { opacity: 0; transform: translateY(0) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
