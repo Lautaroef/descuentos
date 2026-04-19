@@ -18,6 +18,17 @@ Read in this order if you're new to the project:
 14. [sources.md](sources.md) — **The source-adapter playbook.** How to add a new ingestion source: `Source` interface, deterministic ids, test scaffolding, DB seed. Phase 3.0+.
 15. [backlog.md](backlog.md) — Validated demand signals worth revisiting (gastronomía scope, cuotas-as-inflation-hedge ranking, etc.). Source-cited; not a commitment — a memory aid.
 
+## Design (redesign round, April 2026)
+
+The current dark-mode "techy" aesthetic is being replaced with a warm, minimal, trust-forward visual system. Read in this order:
+
+16. [design/references.md](design/references.md) — D1 visual research. Pattern taxonomy across ~20 fintech/consumer apps; evidence-only, no recommendations.
+17. [design/user-psychology.md](design/user-psychology.md) — D2 psychology + AR context research. Transaction-utility framing, voseo register, inflation-era salience, freshness-trust evidence.
+18. [design/direction.md](design/direction.md) — **The soul of the redesign.** Mood sentence, vibe anchors, brand voice (voseo microcopy bible), palette decision ("pampa green" accent on warm off-white), Inter type system, spacing/radii/shadow/motion tokens, imagery rules, information hierarchy.
+19. [design/ia.md](design/ia.md) — Navigation structure, primary user flows, filter model, onboarding redesign, empty/loading/error states, page inventory.
+20. [design/components.md](design/components.md) — Per-component spec (PromoCard, FilterBar, OnboardingSheet, PromoDetail, NavBar, landing headers, Disclaimer footer, Sin-tope section, Loading skeleton, Empty state) with variants, states, and voseo microcopy examples.
+21. [design/system.md](design/system.md) — **The ready-to-implement token file.** CSS custom properties, Tailwind v4 `@theme` config, full `globals.css` scaffold, Next.js font loader config, migration checklist for D4.
+
 ## Conventions
 
 - All URLs and endpoints were verified live in April 2026. **Re-verify before relying on any of them** — the whole premise of the AR promo landscape is that it changes constantly.
