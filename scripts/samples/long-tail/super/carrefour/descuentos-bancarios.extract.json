@@ -1,0 +1,87 @@
+{
+  "source_url": "https://www.carrefour.com.ar/descuentos-bancarios",
+  "extracted_at": "2026-04-18",
+  "method": "handcrafted fixture for smoke tests — subset of the 30+ blocks visible on the live page",
+  "notes": "Includes the PromoArg-differentiator universal cross-wallet block (10% sin tope con QR de todas las billeteras).",
+  "data": {
+    "promos": [
+      {
+        "day_phrase": "Todos los Jueves de Abril",
+        "valid_days": [4],
+        "pct": 20,
+        "promo_type": "cashback",
+        "tope": 10000,
+        "tope_period": "week",
+        "merchant": "Carrefour",
+        "category": "supermercado",
+        "issuer_bank": ["carrefour"],
+        "wallet": [],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "notes": "Cuenta Digital de Carrefour Banco — exclusivo online"
+      },
+      {
+        "day_phrase": "Lunes y Miércoles de Abril",
+        "valid_days": [1, 3],
+        "pct": 0,
+        "promo_type": "cuotas",
+        "tope": null,
+        "tope_period": null,
+        "merchant": "Carrefour",
+        "category": "supermercado",
+        "issuer_bank": [],
+        "wallet": ["mercadopago"],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "notes": "Hasta 3 Cuotas sin interés con Mercado Pago (cuotas sin tarjeta)"
+      },
+      {
+        "day_phrase": "Sábados de Abril",
+        "valid_days": [6],
+        "pct": 10,
+        "promo_type": "cashback",
+        "tope": null,
+        "tope_period": null,
+        "merchant": "Carrefour",
+        "category": "supermercado",
+        "issuer_bank": ["carrefour"],
+        "wallet": [
+          "mercadopago",
+          "cuentadni",
+          "modo",
+          "naranjax",
+          "uala",
+          "bna_plus",
+          "personalpay",
+          "prex"
+        ],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "notes": "10% QR todas las billeteras — acumulable. No incluye electro. No válido online."
+      },
+      {
+        "day_phrase": "Martes de Abril",
+        "valid_days": [2],
+        "pct": 15,
+        "promo_type": "cashback",
+        "tope": 6000,
+        "tope_period": "month",
+        "merchant": "Carrefour",
+        "category": "supermercado",
+        "issuer_bank": ["naranjax"],
+        "wallet": [],
+        "card_brand": ["visa"],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null
+      }
+    ]
+  }
+}
