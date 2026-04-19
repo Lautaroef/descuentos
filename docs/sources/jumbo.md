@@ -83,3 +83,19 @@ PromoArg-differentiator check (live DB):
 - `wallet = ['jumbo_mas']` promo: 1 row
   - "Jumbo al 100 pesoscheck — 100% / 70% / 50% reintegro on selected products, Jumbo+ members" — own-cupon PromoArg does not source.
   - `valid_from=2026-03-06`, `valid_to=2026-03-15` (March 2026 cycle; re-running when April cycle publishes will UPDATE the row in place).
+
+## Tests added (Phase 3.3 testing pass)
+
+- `scripts/tests/jumbo-extract.test.ts` (15 tests):
+  smoke (both fixtures) + schema conformance + Patagonia Sábados 30% vs 35%
+  split into TWO rows with distinct ids + Naranja X Plan Z cuotas row shape
+  (`pct=0`, `promo_type='cuotas'`) + Jumbo al 100 pesoscheck row shape
+  (`wallet=['jumbo_mas']`, `valid_from < valid_to`) + wallet enum safety +
+  id determinism + id shifts on `valid_days` change + intra-page dedup +
+  rejection path (invalid `tope_period`) + empty payload + adapter kind/URLs
+  + urlOverride.
+- Covered by shared-helper tests: `scripts/tests/supermarket-extract.test.ts`.
+- Covered by P0 idempotency regression: `scripts/tests/carrefour-idempotency.test.ts`
+  includes a parallel drift test for Jumbo.
+- Covered by runner-integration tests: `scripts/tests/supermarket-runner.test.ts`
+  asserts Jumbo re-run inserts 0 (idempotent).

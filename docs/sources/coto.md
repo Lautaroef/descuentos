@@ -92,3 +92,20 @@ Idempotent re-run:
 PromoArg-differentiator check (live DB):
 - `wallet = ['comunidad_coto']` promos: 2 rows (one per URL)
   - "Coto 15% Miércoles sin tope, todos los medios de pago, siendo miembro" — exactly the own-cupon PromoArg does not source.
+
+## Tests added (Phase 3.3 testing pass)
+
+- `scripts/tests/coto-extract.test.ts` (15 tests):
+  smoke + Comunidad Coto own-cupon row shape (`wallet=['comunidad_coto']`,
+  empty `issuer_bank`, `pct=15`, `valid_days=[3]`) + Naranja X Martes
+  Plan-Turbo vs non-Plan-Turbo split into TWO rows with distinct ids +
+  regional-bank fan-out (Santa Cruz sin-tope) + Credicoop cartera-general
+  vs Plan-sueldo split + schema conformance + wallet-enum safety +
+  Comafi Jueves tope = lower cartera-general value + adapter kind/URLs
+  + intra-page dedup + rejection path (invalid category, invalid date) +
+  empty-payload resilience.
+- Covered by shared-helper tests: `scripts/tests/supermarket-extract.test.ts`.
+- Covered by P0 idempotency regression: `scripts/tests/carrefour-idempotency.test.ts`
+  includes a parallel drift test for Coto.
+- Covered by runner-integration tests: `scripts/tests/supermarket-runner.test.ts`
+  asserts Coto re-run inserts 0 (idempotent).

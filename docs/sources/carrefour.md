@@ -101,3 +101,30 @@ PromoArg-differentiator check (live DB):
   - `issuer_bank = ['carrefour']`
   - `pct=10`, `tope=null`, `valid_days=[6]`
   - Exactly the single-promo-multi-wallet shape the brief calls for.
+
+## Tests added (Phase 3.3 testing pass)
+
+### P0 regression — idempotency flake fixed
+- Root cause (verified): `supermarketPromoId()` consumed `pct` and `valid_days`
+  directly from Gemini's output, without integer rounding or dedup. On drift
+  runs where Gemini emitted `10` vs `10.0` (structured-output float jitter) or
+  `[6]` vs `[6, 0, 6]` (token-boundary array duplication), the canonical UUID
+  changed and the DB saw "1 insert / 24 updates" on re-run.
+- Fix: `scripts/lib/supermarket-extract.ts`
+  - `dayKey()` now dedupes + sorts + guards range.
+  - `primaryBank()` dedupes + lowercases defensively.
+  - `supermarketPromoId()` now rounds `pct` to integer (`canonicalPct`),
+    lowercases+trims `bank_key` and `promo_type` (`canonicalPromoType`).
+- Regression test path:
+  - `scripts/tests/carrefour-idempotency.test.ts` — stubbed Gemini drift
+    (pct floats, duplicated `valid_days`, uppercased banks) must produce
+    byte-identical `ids` across back-to-back extractions.
+  - `scripts/tests/supermarket-runner.test.ts` — runner end-to-end with the
+    same shape: `run2.inserted === 0` on re-run.
+
+### Carrefour coverage
+- `scripts/tests/carrefour-extract.test.ts` (19 tests):
+  smoke + schema conformance + cross-wallet row shape + `cleanCarrefourMarkdown`
+  edge cases (empty, threshold boundary, blank-line collapse) + id
+  determinism + intra-page dedup + rejection path (invalid category /
+  tope_period) + empty-payload resilience + adapter shape.
