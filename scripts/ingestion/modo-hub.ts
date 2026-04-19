@@ -19,6 +19,12 @@ const MODO_HUB_URL = 'https://www.modo.com.ar/promos';
 const SLUG_LINK_RE = /\/promos\/([a-z0-9][a-z0-9-]+)(?=[\s)"'#?]|$)/gi;
 const RESERVED_SEGMENTS = new Set(['slot']);
 
+// Exported for offline regression tests. Public surface of this module remains
+// fetchModoHubSlugs; callers should not depend on this helper at runtime.
+export function extractSlugsForTests(markdown: string): string[] {
+  return extractSlugs(markdown);
+}
+
 function extractSlugs(markdown: string): string[] {
   const set = new Set<string>();
   for (const m of markdown.matchAll(SLUG_LINK_RE)) {
