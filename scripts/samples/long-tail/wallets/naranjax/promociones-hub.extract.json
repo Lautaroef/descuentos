@@ -1,0 +1,64 @@
+{
+  "source_url": "https://www.naranjax.com/promociones",
+  "note": "Known-good LLM output for the general hub. Hand-curated from promociones-hub.md; skips cuotas-only cards for size. Includes the Martes super deal (the core wedge).",
+  "data": {
+    "promos": [
+      {
+        "merchant": "Supermercados",
+        "category": "supermercado",
+        "pct": 25,
+        "tope": 12000,
+        "tope_period": "week",
+        "valid_days": [2],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback",
+        "medios": ["debito", "credito", "dinero_en_cuenta", "qr"]
+      },
+      {
+        "merchant": "Viajes Naranja X",
+        "category": "otro",
+        "pct": 55,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback",
+        "medios": ["credito"]
+      },
+      {
+        "merchant": "Cata",
+        "category": "supermercado",
+        "pct": 10,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "mixed",
+        "medios": ["credito"]
+      },
+      {
+        "merchant": "Shopgallery",
+        "category": "otro",
+        "pct": 10,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [2],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "mixed",
+        "medios": ["credito"]
+      }
+    ]
+  }
+}
