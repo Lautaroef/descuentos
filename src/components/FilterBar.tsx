@@ -1,18 +1,17 @@
 'use client';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useMemo, useTransition, useEffect, useState } from 'react';
-import { X, RotateCcw } from 'lucide-react';
+import { useMemo, useTransition, useEffect } from 'react';
 import {
   CATEGORY_LABELS,
   CATEGORY_SLUGS,
-  REGION_OPTIONS,
   WALLET_LABELS,
 } from '@/lib/constants';
 import type { Category, Wallet } from '@/lib/schema';
 
-// Wallets we actively surface in the filter UI. Keep the list tight — the long-tail wallets
-// from constants.ts become selectable once we have actual promos sourced for them (Phase 3).
+// Wallets we actively surface in the filter UI. Keep the list tight — the
+// long-tail wallets from constants.ts become selectable once we have actual
+// promos sourced for them.
 const WALLETS_IN_UI: Wallet[] = [
   'modo',
   'mercadopago',
@@ -23,8 +22,13 @@ const WALLETS_IN_UI: Wallet[] = [
   'brubank',
 ];
 
-const DAY_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: 'cualquiera', label: 'Cualquier día' },
+interface DayOption {
+  value: string;
+  label: string;
+}
+
+// Día chips, in spec order. `cualquiera` is the implicit default (no filter).
+const DAY_OPTIONS: DayOption[] = [
   { value: 'hoy', label: 'Hoy' },
   { value: 'manana', label: 'Mañana' },
   { value: '1', label: 'Lunes' },
@@ -45,9 +49,7 @@ export function FilterBar() {
   const [isPending, startTransition] = useTransition();
 
   // Hydrate owned-wallet selection from localStorage if the URL has no wallet param yet.
-  const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
-    setHydrated(true);
     const hasWallet = searchParams.get('wallet') ?? searchParams.get('banco');
     if (!hasWallet) {
       try {
@@ -80,8 +82,7 @@ export function FilterBar() {
     const walletsSel = new Set(getCsv('wallet').concat(getCsv('banco')));
     const categoriesSel = new Set(getCsv('rubro').concat(getCsv('categoria')));
     const day = searchParams.get('dia') ?? 'cualquiera';
-    const region = searchParams.get('region') ?? 'AR';
-    return { walletsSel, categoriesSel, day, region };
+    return { walletsSel, categoriesSel, day };
   }, [searchParams]);
 
   function buildNextParams(mutator: (p: URLSearchParams) => void): URLSearchParams {
@@ -100,7 +101,8 @@ export function FilterBar() {
 
   function toggleWallet(w: Wallet) {
     const next = new Set(current.walletsSel);
-    next.has(w) ? next.delete(w) : next.add(w);
+    if (next.has(w)) next.delete(w);
+    else next.add(w);
     const p = buildNextParams((x) => {
       const arr = [...next];
       if (arr.length) x.set('wallet', arr.join(','));
@@ -116,7 +118,8 @@ export function FilterBar() {
 
   function toggleCategory(c: Category) {
     const next = new Set(current.categoriesSel);
-    next.has(c) ? next.delete(c) : next.add(c);
+    if (next.has(c)) next.delete(c);
+    else next.add(c);
     const p = buildNextParams((x) => {
       const arr = [...next];
       if (arr.length) x.set('rubro', arr.join(','));
@@ -125,18 +128,13 @@ export function FilterBar() {
     commit(p);
   }
 
-  function setDay(value: string) {
+  function toggleDay(value: string) {
     const p = buildNextParams((x) => {
-      if (!value || value === 'cualquiera') x.delete('dia');
-      else x.set('dia', value);
-    });
-    commit(p);
-  }
-
-  function setRegion(value: string) {
-    const p = buildNextParams((x) => {
-      if (!value || value === 'AR') x.delete('region');
-      else x.set('region', value);
+      if (!value || value === 'cualquiera' || current.day === value) {
+        x.delete('dia');
+      } else {
+        x.set('dia', value);
+      }
     });
     commit(p);
   }
@@ -153,16 +151,15 @@ export function FilterBar() {
   const anyActive =
     current.walletsSel.size > 0 ||
     current.categoriesSel.size > 0 ||
-    current.day !== 'cualquiera' ||
-    current.region !== 'AR';
+    current.day !== 'cualquiera';
 
   return (
     <div
-      className={`flex flex-col gap-4 ${isPending ? 'opacity-70' : ''}`}
+      className={`flex flex-col gap-4 transition-opacity duration-[150ms] ${isPending ? 'opacity-70' : ''}`}
       aria-busy={isPending}
     >
       <FilterGroup title="Billetera">
-        <div className="flex flex-wrap gap-1.5">
+        <ChipRow>
           {WALLETS_IN_UI.map((w) => (
             <Chip
               key={w}
@@ -171,11 +168,11 @@ export function FilterBar() {
               label={WALLET_LABELS[w]}
             />
           ))}
-        </div>
+        </ChipRow>
       </FilterGroup>
 
       <FilterGroup title="Rubro">
-        <div className="flex flex-wrap gap-1.5">
+        <ChipRow>
           {CATEGORY_SLUGS.map((c) => (
             <Chip
               key={c}
@@ -184,52 +181,31 @@ export function FilterBar() {
               label={CATEGORY_LABELS[c]}
             />
           ))}
-        </div>
+        </ChipRow>
       </FilterGroup>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <FilterGroup title="Día">
-          <select
-            value={current.day}
-            onChange={(e) => setDay(e.target.value)}
-            className="w-full rounded-md border border-token bg-subtle px-3 py-2 text-sm"
-            aria-label="Filtrar por día"
-          >
-            {DAY_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </FilterGroup>
-
-        <FilterGroup title="Región">
-          <select
-            value={current.region}
-            onChange={(e) => setRegion(e.target.value)}
-            className="w-full rounded-md border border-token bg-subtle px-3 py-2 text-sm"
-            aria-label="Filtrar por región"
-          >
-            {REGION_OPTIONS.map((r) => (
-              <option key={r.slug} value={r.slug}>
-                {r.label}
-              </option>
-            ))}
-          </select>
-        </FilterGroup>
-      </div>
+      <FilterGroup title="Día">
+        <ChipRow>
+          {DAY_OPTIONS.map((o) => (
+            <Chip
+              key={o.value}
+              selected={current.day === o.value}
+              onClick={() => toggleDay(o.value)}
+              label={o.label}
+              ariaLabel={`Filtrar por día: ${o.label}`}
+            />
+          ))}
+        </ChipRow>
+      </FilterGroup>
 
       {anyActive && (
         <button
           onClick={resetAll}
-          className="inline-flex w-max items-center gap-1.5 rounded-md border border-token bg-subtle px-3 py-1.5 text-xs tx-muted transition hover:text-[color:var(--color-accent)]"
+          className="inline-flex w-max items-center gap-1.5 rounded-sm px-2 py-1 text-sm font-medium text-[color:var(--color-accent)] underline-offset-4 transition-colors duration-[150ms] hover:underline"
         >
-          <RotateCcw className="h-3 w-3" /> Limpiar filtros
+          Limpiar filtros
         </button>
       )}
-
-      {/* Suppress unused import warning when hydration state isn't visually shown. */}
-      <span hidden>{hydrated ? '' : ''}</span>
     </div>
   );
 }
@@ -237,9 +213,15 @@ export function FilterBar() {
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-1.5 text-[11px] font-medium uppercase tracking-wide tx-dim">{title}</h3>
+      <h3 className="mb-2 text-xs font-medium tracking-[0.01em] text-text-muted">{title}</h3>
       {children}
     </div>
+  );
+}
+
+function ChipRow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap gap-2 overflow-x-auto sm:flex-wrap">{children}</div>
   );
 }
 
@@ -247,24 +229,27 @@ function Chip({
   selected,
   onClick,
   label,
+  ariaLabel,
 }: {
   selected: boolean;
   onClick: () => void;
   label: string;
+  ariaLabel?: string;
 }) {
+  const base =
+    'inline-flex min-h-9 items-center gap-1 rounded-pill border px-3 py-1.5 text-sm transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.97]';
+  const state = selected
+    ? 'border-[color:var(--color-accent)] bg-[color:var(--color-accent-soft)] font-semibold text-[color:var(--color-accent)]'
+    : 'border-border bg-surface font-medium text-text-secondary hover:border-border-strong';
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition ${
-        selected
-          ? 'border-[color:var(--color-accent)] bg-[color:var(--color-accent)]/10 text-[color:var(--color-accent)]'
-          : 'border-token bg-subtle tx-muted hover:text-[color:var(--color-text)]'
-      }`}
+      className={`${base} ${state}`}
       aria-pressed={selected}
+      aria-label={ariaLabel}
     >
       {label}
-      {selected && <X className="h-3 w-3" />}
     </button>
   );
 }

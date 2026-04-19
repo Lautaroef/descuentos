@@ -1,9 +1,10 @@
 // Behavior contract for PromoCard.
 //
-// The UI is v0 and will be redesigned — tests here check **what the user sees**
-// (merchant, pct, tope, topé period phrasing, valid-days phrasing, bank chips,
-// disclaimer, source link) NOT visuals (classnames, spacing, colors).
-import { render, screen, within } from '@testing-library/react';
+// Tests here check **what the user sees** (merchant, pct, tope, tope period
+// phrasing, valid-days phrasing, bank chips, disclaimer, deep link) NOT visuals
+// (classnames, spacing, colors). Copy matches the voseo microcopy bible —
+// "Hasta $X por semana", "…y N más", "Sin tope declarado".
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { PromoCard } from './PromoCard';
 import { DISCLAIMER_TEXT } from '@/lib/constants';
@@ -65,7 +66,7 @@ describe('PromoCard — behavior contract', () => {
     expect(screen.queryByText('BBVA')).not.toBeInTheDocument();
     expect(screen.queryByText('Banco Nación')).not.toBeInTheDocument();
     // Overflow indicator
-    expect(screen.getByText(/… y 2 más/)).toBeInTheDocument();
+    expect(screen.getByText(/…y 2 más/)).toBeInTheDocument();
   });
 
   it('renders "Verificado" + relative Spanish time for last_seen_at', () => {
@@ -93,15 +94,11 @@ describe('PromoCard — behavior contract', () => {
   });
 
   describe('Sin tope case', () => {
-    it('renders "Sin tope" and does NOT render a period phrase', () => {
-      render(<PromoCard promo={SIN_TOPE_PROMO} />);
-      const tope = screen.getByText('Sin tope');
-      expect(tope).toBeInTheDocument();
-
-      // Its parent <dd> must not contain "por mes" / "por semana" / "por día" / "por ticket".
-      const dd = tope.closest('dd');
-      expect(dd).not.toBeNull();
-      expect(within(dd as HTMLElement).queryByText(/por (mes|semana|día|ticket)/i)).toBeNull();
+    it('renders "Sin tope declarado" and does NOT render a period phrase', () => {
+      const { container } = render(<PromoCard promo={SIN_TOPE_PROMO} />);
+      expect(screen.getByText(/Sin tope declarado/i)).toBeInTheDocument();
+      // No tope-period phrase anywhere on the card.
+      expect(container.textContent ?? '').not.toMatch(/por (mes|semana|día|ticket)/i);
     });
   });
 });

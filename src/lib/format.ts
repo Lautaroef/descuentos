@@ -102,3 +102,60 @@ export function formatDateShort(iso: string): string {
     new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()),
   );
 }
+
+/**
+ * Format the "Verificado ..." freshness line.
+ * - `<= 7 days` → relative: "Verificado hace 3 días"
+ * - `> 7 days`  → absolute: "Verificado el 08/04"
+ * The threshold flip itself signals honesty about older data (per direction.md).
+ */
+export function formatFreshness(dateIso: string, now = new Date()): string {
+  const then = new Date(dateIso);
+  if (Number.isNaN(then.getTime())) return `Verificado ${relativeSpanish(dateIso, now)}`;
+  const diffDays = Math.floor((now.getTime() - then.getTime()) / 86_400_000);
+  if (diffDays > 7) {
+    // Absolute date without year for compactness.
+    const d = SPANISH_DATE.format(then).slice(0, 5); // "DD/MM"
+    return `Verificado el ${d}`;
+  }
+  return `Verificado ${relativeSpanish(dateIso, now)}`;
+}
+
+/**
+ * Days remaining until a YYYY-MM-DD `valid_to`. `null` when input is invalid.
+ * Positive = future, 0 = today, negative = past.
+ */
+export function daysUntil(iso: string | null, now = new Date()): number | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  // Use UTC midnight to avoid local-TZ drift biasing "today".
+  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  return Math.round((end - today) / 86_400_000);
+}
+
+/**
+ * "Termina hoy" / "Termina mañana" / "Termina en N días" for the expiring-soon
+ * PromoCard variant. Returns `null` when the promo is not in the ≤3-day window.
+ */
+export function expiringLabel(validTo: string | null, now = new Date()): string | null {
+  const d = daysUntil(validTo, now);
+  if (d === null) return null;
+  if (d < 0) return null;
+  if (d === 0) return 'Termina hoy';
+  if (d === 1) return 'Termina mañana';
+  if (d <= 3) return `Termina en ${d} días`;
+  return null;
+}
+
+/**
+ * Tope "cap line" for PromoCard: `Hasta $25.000 por semana` or `Sin tope`.
+ */
+export function formatTopeLine(tope: number | null, period: TopePeriod | null): string {
+  if (tope === null) return 'Sin tope declarado';
+  const period_label = topePeriodLabel(period);
+  return period_label
+    ? `Hasta ${ARS.format(tope)} ${period_label}`
+    : `Hasta ${ARS.format(tope)}`;
+}

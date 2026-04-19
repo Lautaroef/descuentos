@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import type { Promo } from '@/lib/schema';
 import { PromoCard } from './PromoCard';
+import { EmptyState } from './EmptyState';
 
 interface PromoListProps {
   promos: Promo[];
 }
 
 /**
- * The main grid. Splits tope-having promos from "sin tope" — the latter get a collapsible
- * section so they don't pollute the sort-by-tope ranking (product.md wedge).
+ * The main grid. Splits tope-having promos from "sin tope" — the latter get a
+ * collapsible section so they don't pollute the sort-by-tope ranking
+ * (product.md wedge, components.md §8).
  */
 export function PromoList({ promos }: PromoListProps) {
   const withTope = promos.filter((p) => p.tope !== null);
@@ -21,11 +23,10 @@ export function PromoList({ promos }: PromoListProps) {
 
   if (promos.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-token bg-subtle/50 p-8 text-center">
-        <p className="text-sm tx-muted">
-          No hay promos que coincidan con tus filtros. Probá aflojar alguno.
-        </p>
-      </div>
+      <EmptyState
+        headline="No hay promos con esos filtros hoy."
+        subcopy="Probá aflojar alguno y te mostramos más."
+      />
     );
   }
 
@@ -46,32 +47,38 @@ export function PromoList({ promos }: PromoListProps) {
       )}
 
       {noTope.length > 0 && (
-        <section className="mt-6 rounded-2xl border border-token bg-subtle/50">
+        <section className="mt-12 border-t border-border pt-6">
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium tx-muted transition hover:text-[color:var(--color-text)]"
+            className="flex w-full items-center justify-between text-base font-semibold text-text-primary transition-colors duration-[150ms] hover:text-[color:var(--color-accent)]"
             aria-expanded={expanded}
           >
             <span>
               {noTope.length} {noTope.length === 1 ? 'promo' : 'promos'} sin tope declarado
             </span>
             <ChevronDown
-              className={`h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
+              className={`h-4 w-4 text-text-muted transition-transform duration-[220ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${expanded ? 'rotate-180' : ''}`}
+              aria-hidden="true"
             />
           </button>
           {expanded && (
-            <ul
-              role="list"
-              className="grid grid-cols-1 gap-3 border-t border-token p-4 sm:grid-cols-2 lg:grid-cols-3"
-              aria-label="Promos sin tope"
-            >
-              {noTope.map((p) => (
-                <li key={p.id}>
-                  <PromoCard promo={p} />
-                </li>
-              ))}
-            </ul>
+            <>
+              <p className="mt-4 text-sm font-medium text-text-secondary">
+                Estas promos no declaran un tope máximo. Todo tu consumo suma al reintegro.
+              </p>
+              <ul
+                role="list"
+                className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+                aria-label="Promos sin tope"
+              >
+                {noTope.map((p) => (
+                  <li key={p.id}>
+                    <PromoCard promo={p} />
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </section>
       )}

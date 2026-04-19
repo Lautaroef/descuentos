@@ -71,7 +71,7 @@ describe('PromoList — ordering + sin-tope section', () => {
 
   it('renders an empty-state message when no promos match', () => {
     render(<PromoList promos={[]} />);
-    expect(screen.getByText(/No hay promos que coincidan/i)).toBeInTheDocument();
+    expect(screen.getByText(/No hay promos con esos filtros hoy/i)).toBeInTheDocument();
   });
 
   it('renders just sin-tope promos without a main section when all topes are null', () => {

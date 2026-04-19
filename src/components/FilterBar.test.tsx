@@ -81,9 +81,10 @@ describe('FilterBar — URL-truth contract', () => {
       'aria-pressed',
       'true',
     );
-    // the day <select> should have its value set to "3"
-    const daySelect = screen.getByLabelText('Filtrar por día') as HTMLSelectElement;
-    expect(daySelect.value).toBe('3');
+    // The "Miércoles" day chip is pressed when ?dia=3.
+    expect(
+      screen.getByRole('button', { name: 'Filtrar por día: Miércoles' }),
+    ).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('clicking a wallet chip pushes a URL that includes ?wallet=<slug>', async () => {
@@ -154,12 +155,12 @@ describe('FilterBar — URL-truth contract', () => {
     expect(screen.queryByRole('button', { name: /Limpiar filtros/i })).toBeNull();
   });
 
-  it('changing the día selector pushes ?dia=<n>', async () => {
+  it('clicking a día chip pushes ?dia=<n>', async () => {
     const FilterBar = await loadFilterBar();
     render(<FilterBar />);
 
     const user = userEvent.setup();
-    await user.selectOptions(screen.getByLabelText('Filtrar por día'), '3');
+    await user.click(screen.getByRole('button', { name: 'Filtrar por día: Miércoles' }));
 
     const params = lastPushedParams();
     expect(params.get('dia')).toBe('3');
