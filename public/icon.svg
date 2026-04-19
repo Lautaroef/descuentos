@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="48" fill="#0a0a0b"/>
+  <g fill="#22d3ee">
+    <path d="M70 92 h60 a40 40 0 0 1 40 40 v-4 a40 40 0 0 1 -40 40 h-60 a8 8 0 0 1 -8 -8 v-60 a8 8 0 0 1 8 -8 z" opacity="0.15"/>
+    <text x="50%" y="58%" text-anchor="middle" font-family="system-ui, sans-serif" font-size="120" font-weight="800" fill="#22d3ee">%</text>
+    <text x="50%" y="82%" text-anchor="middle" font-family="system-ui, sans-serif" font-size="28" font-weight="700" fill="#f4f4f5" letter-spacing="2">AR</text>
+  </g>
+</svg>
