@@ -69,9 +69,10 @@ test.describe('Critical user paths', () => {
       'true',
     );
 
-    // Día select has "3" selected.
-    const daySelect = page.getByLabel('Filtrar por día');
-    await expect(daySelect).toHaveValue('3');
+    // The "Miércoles" day chip is pressed when ?dia=3.
+    await expect(
+      page.getByRole('button', { name: 'Filtrar por día: Miércoles' }),
+    ).toHaveAttribute('aria-pressed', 'true');
   });
 
   test('Reset button on home clears all filters', async ({ page }) => {
