@@ -99,10 +99,12 @@ Per-SKU response includes `price`, `Installments` (wallet tokens like `Modo Paym
 ### Cuenta DNI — via press-article extraction
 
 - Portal `https://www.bancoprovincia.com.ar/cuentadni/contenidos/cdniBeneficios` is a marketing shell (re-verified 2026-04-18: 371 KB HTML, 0 JSON-LD, 0 `/api/` hints, 0 embedded promo JSON). Confirmed Phase 1's finding — the app is the source of truth, and we can't reach it.
-- **But: press-article LLM extraction works.** Ámbito / Infobae / iProUp / iProfesional publish monthly Cuenta DNI roundups with explicit pct + tope + day + rubro in clean bullet lists. `firecrawl_extract` with a Promo-aligned JSON schema yielded 9/9 promos from one Ámbito article (April 2026), with near-full field coverage. Cross-triangulated against Infobae — zero divergence.
+- **But: press-article LLM extraction works.** Ámbito / Infobae / iProUp / iProfesional publish monthly Cuenta DNI roundups with explicit pct + tope + day + rubro in clean bullet lists.
+- **Implementation (Phase 3.1, 2026-04-18):** `pnpm run-cuentadni` (auto-discovers the latest article via Firecrawl search → prefers Ámbito > Infobae > iProUp > iProfesional) or `pnpm run-cuentadni --article=<url>` (explicit override). Extraction uses direct Gemini 2.5 Flash (same Hybrid B pattern as MODO, NOT `firecrawl_extract`). The prompt emits a JSON array of `Promo` objects — one article = many promos. First live run against the Ámbito April 2026 article extracted 10/10 schema-valid promos at $0.0047 in Gemini cost. See `scripts/ingestion/cuentadni-source.ts` and `scripts/lib/cuentadni-extract.ts`.
+- **Identity**: `source_id='cuenta-dni'`, `source_url=<article url>`, deterministic UUID v5 per `(source_url, merchant, pct)`. Monthly article rotation inserts fresh rows under the new URL; Phase 4 dedup collapses content-equivalent promos across months. Migration 004 dropped the old `(source_id, source_url)` unique constraint so one URL can carry N promos.
 - Cost envelope: ~175 credits/month (scrape + extract × 3 articles for triangulation).
 - This replaces the old "manual curation" recommendation. Operator burden near zero.
-- See `long-tail-sourcing.md` and `scripts/samples/cuentadni-press-extraction/`.
+- See `long-tail-sourcing.md`, `scripts/samples/cuentadni-press-extraction/`, and `docs/sources.md` for the adapter playbook.
 
 ### Galicia (and other non-MODO bank promos)
 
