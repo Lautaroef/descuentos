@@ -1,0 +1,86 @@
+{
+  "source_url": "https://www.personalpay.com.ar/beneficios",
+  "note": "Known-good LLM output for offline testing. Topes ALL null (Personal Pay keeps tope tiers in an image-only tabla; see docs/sources/personalpay.md). promo_type='cashback' even though tope is null — this is honest modelling of 'we can't see the tope', not 'there is no tope'.",
+  "data": {
+    "promos": [
+      {
+        "merchant": "Farmacia Central Oeste",
+        "category": "farmacia",
+        "pct": 20,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [3],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "merchant": "Farmalife",
+        "category": "farmacia",
+        "pct": 10,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "merchant": "Go Bar",
+        "category": "gastronomia",
+        "pct": 15,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [0, 1, 2, 3, 4, 5, 6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "merchant": "Lázaro",
+        "category": "indumentaria",
+        "pct": 20,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [1, 2],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "merchant": "Supermercado La Reina",
+        "category": "supermercado",
+        "pct": 10,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [6],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      },
+      {
+        "merchant": "Taxi Premium",
+        "category": "transporte",
+        "pct": 30,
+        "tope": null,
+        "tope_period": null,
+        "valid_days": [1, 2, 3],
+        "valid_regions": [],
+        "valid_from": "2026-04-01",
+        "valid_to": "2026-04-30",
+        "requires_min_spend": null,
+        "promo_type": "cashback"
+      }
+    ]
+  }
+}
