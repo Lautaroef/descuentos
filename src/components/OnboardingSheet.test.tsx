@@ -76,8 +76,8 @@ describe('OnboardingSheet — first-visit behavior', () => {
 
     const user = userEvent.setup();
 
-    await user.click(screen.getByRole('button', { name: /^MODO/ }));
-    await user.click(screen.getByRole('button', { name: /^Mercado Pago/ }));
+    await user.click(screen.getByRole('button', { name: /Seleccionar MODO/i }));
+    await user.click(screen.getByRole('button', { name: /Seleccionar Mercado Pago/i }));
     await user.click(screen.getByRole('button', { name: /^Guardar$/ }));
 
     // localStorage contract
@@ -115,12 +115,28 @@ describe('OnboardingSheet — first-visit behavior', () => {
     render(<OnboardingSheet />);
 
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: /^MODO/ }));
+    await user.click(screen.getByRole('button', { name: /Seleccionar MODO/i }));
     await user.click(screen.getByRole('button', { name: /^Guardar$/ }));
 
     const arg = replaceMock.mock.calls[0][0] as string;
     const params = new URLSearchParams(arg.split('?')[1] ?? '');
     expect(params.get('rubro')).toBe('supermercado');
     expect(params.get('wallet')).toBe('modo');
+  });
+
+  it('selecting a bank + Guardar pushes ?issuer=<slug> (banks route to issuer, not wallet)', async () => {
+    const OnboardingSheet = await loadOnboardingSheet();
+    render(<OnboardingSheet />);
+
+    const user = userEvent.setup();
+    // Use the search to narrow the DOM to banks, then pick Galicia.
+    await user.click(screen.getByRole('button', { name: /Seleccionar Galicia/i }));
+    await user.click(screen.getByRole('button', { name: /^Guardar$/ }));
+
+    const arg = replaceMock.mock.calls[0][0] as string;
+    const params = new URLSearchParams(arg.split('?')[1] ?? '');
+    expect(params.get('issuer')).toBe('galicia');
+    // No wallet param when only banks were picked.
+    expect(params.get('wallet')).toBeNull();
   });
 });

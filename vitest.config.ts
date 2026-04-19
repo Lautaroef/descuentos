@@ -29,6 +29,7 @@ export default defineConfig({
       'scripts/**',
       'tests/e2e/**',
       'src/lib/queries.test.ts',
+      'src/lib/logos.test.ts',
     ],
   },
 });

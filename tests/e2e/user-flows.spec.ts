@@ -108,8 +108,9 @@ test.describe('Onboarding first-visit E2E', () => {
     const save = page.getByRole('button', { name: /^Guardar$/ });
     await expect(save).toBeVisible();
 
-    // Click a couple of wallet pills (inside the sheet) and save.
-    await page.getByRole('button', { name: /^MODO/ }).first().click();
+    // Click a wallet tile (inside the sheet) — tiles use voseo aria-labels
+    // "Seleccionar MODO" / "Deseleccionar MODO".
+    await page.getByRole('button', { name: /Seleccionar MODO/i }).first().click();
     await save.click();
 
     // Sheet disappears; URL gets `wallet=modo`.

@@ -5,6 +5,10 @@
 //   - Generic "adheridos"-style strings fall through to null (no fake logos)
 //   - Diacritic + casing variance is normalized ("Aerolíneas" == "aerolineas")
 //   - Wallet + bank slugs have exhaustive domain coverage for the current enums
+//
+// Uses node:test (not Vitest) to stay alongside `src/lib/queries.test.ts` —
+// these are pure library-level assertions with no DOM / React dependency.
+// The vitest.config.ts exclude list keeps this file out of the UI test run.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {

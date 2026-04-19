@@ -28,6 +28,7 @@ The current dark-mode "techy" aesthetic is being replaced with a warm, minimal, 
 19. [design/ia.md](design/ia.md) — Navigation structure, primary user flows, filter model, onboarding redesign, empty/loading/error states, page inventory.
 20. [design/components.md](design/components.md) — Per-component spec (PromoCard, FilterBar, OnboardingSheet, PromoDetail, NavBar, landing headers, Disclaimer footer, Sin-tope section, Loading skeleton, Empty state) with variants, states, and voseo microcopy examples.
 21. [design/system.md](design/system.md) — **The ready-to-implement token file.** CSS custom properties, Tailwind v4 `@theme` config, full `globals.css` scaffold, Next.js font loader config, migration checklist for D4.
+22. [design/ux-audit.md](design/ux-audit.md) — **UX audit (April 2026).** Persona-driven walkthrough of the deployed redesign (`60a8d57`). 27 findings across 9 flows, plus cross-cutting observations on hierarchy, voseo compliance, freshness trust, a11y. Severity table and top-5 next-iteration priorities. Read before planning post-launch improvements.
 
 ## Conventions
 

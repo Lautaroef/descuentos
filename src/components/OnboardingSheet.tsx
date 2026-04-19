@@ -1,23 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { X } from 'lucide-react';
-import { WALLET_LABELS } from '@/lib/constants';
-import type { Wallet } from '@/lib/schema';
-
-const WALLETS: Wallet[] = [
-  'modo',
-  'mercadopago',
-  'cuentadni',
-  'uala',
-  'naranjax',
-  'personalpay',
-  'brubank',
-];
+import { isWalletSlug } from '@/lib/constants';
+import { WalletPicker, buildDefaultPickerItems } from './WalletPicker';
 
 const ONBOARD_KEY = 'descuentos-ar:onboarded';
 const WALLET_STORAGE_KEY = 'descuentos-ar:owned-wallets';
+const BANK_STORAGE_KEY = 'descuentos-ar:owned-banks';
 
 /**
  * First-visit onboarding — warm bottom sheet. Paper-feel, low-stakes,
@@ -25,6 +16,11 @@ const WALLET_STORAGE_KEY = 'descuentos-ar:owned-wallets';
  *
  * The sheet fades in 600ms after mount (feels like an offer, not a gate),
  * sits over a warm semi-opaque backdrop, and never blocks the list behind it.
+ *
+ * Picker surface: reuses `<WalletPicker>` with the default wallet+bank catalog,
+ * including search, "Seleccionar todos" / "Deseleccionar", and grouped tiles
+ * ("Billeteras virtuales" / "Bancos tradicionales"). Tile logos resolve via
+ * the shared favicon pipeline in `src/lib/logos.ts`.
  */
 export function OnboardingSheet() {
   const router = useRouter();
@@ -33,7 +29,14 @@ export function OnboardingSheet() {
 
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [selected, setSelected] = useState<Set<Wallet>>(new Set());
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  // Partition once per render — avoids re-splitting on every save.
+  const items = useMemo(() => buildDefaultPickerItems(), []);
+  const walletSlugs = useMemo(
+    () => new Set(items.filter((i) => i.group === 'wallet').map((i) => i.slug)),
+    [items],
+  );
 
   useEffect(() => {
     try {
@@ -62,11 +65,25 @@ export function OnboardingSheet() {
     try {
       localStorage.setItem(ONBOARD_KEY, '1');
       if (!skip && selected.size > 0) {
-        const arr = [...selected];
-        localStorage.setItem(WALLET_STORAGE_KEY, arr.join(','));
+        const wallets: string[] = [];
+        const banks: string[] = [];
+        for (const slug of selected) {
+          if (walletSlugs.has(slug) && isWalletSlug(slug)) wallets.push(slug);
+          else banks.push(slug);
+        }
+
+        if (wallets.length > 0) {
+          localStorage.setItem(WALLET_STORAGE_KEY, wallets.join(','));
+        }
+        if (banks.length > 0) {
+          localStorage.setItem(BANK_STORAGE_KEY, banks.join(','));
+        }
+
         const p = new URLSearchParams(searchParams.toString());
-        p.set('wallet', arr.join(','));
-        router.replace(`${pathname}?${p.toString()}`, { scroll: false });
+        if (wallets.length > 0) p.set('wallet', wallets.join(','));
+        if (banks.length > 0) p.set('issuer', banks.join(','));
+        const qs = p.toString();
+        router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
       }
     } catch {
       /* ignore */
@@ -94,7 +111,7 @@ export function OnboardingSheet() {
         }`}
       />
       <div
-        className={`relative w-full max-w-[440px] rounded-t-[16px] bg-surface p-6 shadow-3 transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:mx-4 sm:rounded-[16px] ${
+        className={`relative flex max-h-[min(90vh,720px)] w-full max-w-[520px] flex-col rounded-t-[16px] bg-surface shadow-3 transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:mx-4 sm:rounded-[16px] ${
           visible ? 'translate-y-0' : 'translate-y-full sm:translate-y-0 sm:scale-[0.96] sm:opacity-0'
         }`}
       >
@@ -107,59 +124,41 @@ export function OnboardingSheet() {
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
 
-        <h2
-          id="onboarding-title"
-          className="mb-1 text-[20px] font-semibold leading-7 tracking-[-0.01em] text-text-primary"
-        >
-          ¿Qué billeteras tenés?
-        </h2>
-        <p className="mb-6 text-sm font-medium text-text-secondary">
-          Marcá las tuyas y te mostramos primero las promos que podés usar.
-        </p>
-
-        <div className="mb-6 flex flex-wrap gap-2">
-          {WALLETS.map((w) => {
-            const isOn = selected.has(w);
-            return (
-              <button
-                key={w}
-                type="button"
-                onClick={() => {
-                  const next = new Set(selected);
-                  if (isOn) next.delete(w);
-                  else next.add(w);
-                  setSelected(next);
-                }}
-                className={`inline-flex min-h-11 items-center rounded-pill border px-4 py-2 text-sm transition-all duration-[150ms] ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.97] ${
-                  isOn
-                    ? 'border-[1.5px] border-[color:var(--color-accent)] bg-[color:var(--color-accent-soft)] font-semibold text-[color:var(--color-accent)]'
-                    : 'border-border bg-surface font-medium text-text-secondary hover:border-border-strong'
-                }`}
-                aria-pressed={isOn}
-              >
-                {WALLET_LABELS[w]}
-              </button>
-            );
-          })}
+        <div className="px-6 pt-6">
+          <h2
+            id="onboarding-title"
+            className="text-[20px] font-semibold leading-7 tracking-[-0.01em] text-text-primary"
+          >
+            ¿Qué billeteras tenés?
+          </h2>
+          <p className="mt-1 text-sm font-medium text-text-secondary">
+            Seleccioná las tuyas y te mostramos primero las promos que podés usar.
+          </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => submit(false)}
-          disabled={disabled}
-          className={`w-full rounded-sm bg-[color:var(--color-accent)] px-6 py-3 text-base font-semibold text-[color:var(--color-accent-ink)] transition-colors duration-[150ms] hover:bg-[color:var(--color-accent-hover)] ${
-            disabled ? 'opacity-40' : ''
-          }`}
-        >
-          Guardar
-        </button>
-        <button
-          type="button"
-          onClick={() => submit(true)}
-          className="mt-3 w-full text-center text-sm font-medium text-text-muted underline-offset-4 transition-colors duration-[150ms] hover:text-text-primary hover:underline"
-        >
-          Ahora no
-        </button>
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <WalletPicker selected={selected} onChange={setSelected} items={items} />
+        </div>
+
+        <div className="border-t border-divider px-6 pb-5 pt-4">
+          <button
+            type="button"
+            onClick={() => submit(false)}
+            disabled={disabled}
+            className={`w-full rounded-sm bg-[color:var(--color-accent)] px-6 py-3 text-base font-semibold text-[color:var(--color-accent-ink)] transition-colors duration-[150ms] hover:bg-[color:var(--color-accent-hover)] ${
+              disabled ? 'opacity-40' : ''
+            }`}
+          >
+            Guardar
+          </button>
+          <button
+            type="button"
+            onClick={() => submit(true)}
+            className="mt-3 w-full text-center text-sm font-medium text-text-muted underline-offset-4 transition-colors duration-[150ms] hover:text-text-primary hover:underline"
+          >
+            Ahora no
+          </button>
+        </div>
       </div>
     </div>
   );
