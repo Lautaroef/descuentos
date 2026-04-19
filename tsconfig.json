@@ -34,7 +34,11 @@
   "include": [
     "src/**/*",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "test/**/*",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "tests/**/*"
   ],
   "exclude": [
     "node_modules",

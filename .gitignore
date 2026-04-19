@@ -18,3 +18,9 @@ public/sw.js
 public/sw.js.map
 public/swe-worker-*.js
 public/workbox-*.js
+
+# Test-runner artifacts
+coverage/
+playwright-report/
+test-results/
+playwright/.cache/

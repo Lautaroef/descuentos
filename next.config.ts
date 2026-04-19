@@ -17,7 +17,7 @@ export default withSerwist({
   outputFileTracingRoot: process.cwd(),
   // Keep `scripts/` out of the Next compile boundary — it's the ingestion CLI world.
   outputFileTracingExcludes: {
-    '*': ['scripts/**/*', 'docs/**/*', 'db/**/*'],
+    '*': ['scripts/**/*', 'docs/**/*', 'db/**/*', 'test/**/*', 'tests/**/*'],
   },
   experimental: {
     // Keep the serverless bundle lean by default.

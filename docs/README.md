@@ -14,6 +14,7 @@ Read in this order if you're new to the project:
 10. [firecrawl-alternative-analysis.md](firecrawl-alternative-analysis.md) — **Stack-cost review (April 2026).** Evaluates replacing Firecrawl with self-hosted Playwright / ScrapFly / direct LLM calls. Empirically validated: keep Firecrawl `/scrape` (commodity-priced), replace `firecrawl_extract` (~28 credit markup) with direct Gemini 2.5 Flash calls. Measured steady-state cost **~$16.52/mo** vs. $83/mo status quo (5.0x cheaper), 10/10 schema-valid on the MODO stress corpus. Benchmark: `scripts/samples/llm-comparison/gemini-benchmark-summary.md`.
 11. [phase-1-notes.md](phase-1-notes.md) — **Phase 1 shipped (April 2026).** MODO ingestion end-to-end: hub crawler → slug-diff → Hybrid B extract (Firecrawl scrape + direct Gemini 2.5 Flash) → upsert-with-TTL. File list, first live-run numbers, gotchas, deferrals, and pointers for extending to Cuenta DNI / Brubank / Naranja X (Phase 3).
 12. [phase-2-notes.md](phase-2-notes.md) — **Phase 2 shipped (April 2026).** Next.js 15 PWA on top of the Phase 1 ingest. SSR-true filters, sort-by-tope, owned-wallet onboarding, SEO landings for 24 banks × 8 categories, Serwist service worker, live on Vercel. File list, deploy URL, UX decisions, and a week-1 testing checklist.
+13. [testing.md](testing.md) — Test runners and where each kind of test lives (node:test, Vitest, Playwright). Smoke tests included as scaffolding.
 
 ## Conventions
 
