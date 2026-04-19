@@ -70,7 +70,8 @@ async function main(): Promise<void> {
   if (rollup.errored > 0) {
     console.log('\nErrors:');
     for (const r of rollup.results.filter((x) => x.action === 'errored')) {
-      console.log(`  ${r.slug}: ${r.error}`);
+      const slugFromUrl = r.url.match(/\/promos\/([^/?#]+)/)?.[1] ?? r.url;
+      console.log(`  ${slugFromUrl}: ${r.error}`);
     }
   }
 }
