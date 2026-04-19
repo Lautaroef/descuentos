@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+/* Dark-first palette — deal-hunting feels premium on dark. Matches PWA theme. */
+:root {
+  --bg: #0a0a0b;
+  --bg-elevated: #131316;
+  --bg-subtle: #1a1a1f;
+  --border: #27272a;
+  --text: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --text-dim: #71717a;
+  --accent: #22d3ee;
+  --accent-contrast: #083344;
+  --success: #4ade80;
+  --warning: #facc15;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss03';
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Tailwind v4 uses CSS vars for theme tokens; expose ours to utility classes. */
+@theme {
+  --color-bg: #0a0a0b;
+  --color-elevated: #131316;
+  --color-subtle: #1a1a1f;
+  --color-border: #27272a;
+  --color-text: #f4f4f5;
+  --color-muted: #a1a1aa;
+  --color-dim: #71717a;
+  --color-accent: #22d3ee;
+  --color-accent-contrast: #083344;
+  --color-success: #4ade80;
+  --color-warning: #facc15;
+}
+
+/* Utility classes built on our tokens. */
+.tx-muted { color: var(--text-muted); }
+.tx-dim { color: var(--text-dim); }
+.bg-elevated { background: var(--bg-elevated); }
+.bg-subtle { background: var(--bg-subtle); }
+.border-token { border-color: var(--border); }
+
+/* Reduce scrollbar noise on the list. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 6px;
+}

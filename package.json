@@ -7,10 +7,13 @@
     "node": ">=20"
   },
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "migrate": "tsx scripts/migrate.ts",
     "smoke-test": "tsx scripts/smoke-test.ts",
-    "typecheck": "tsc --noEmit",
-    "test": "node --test --import tsx scripts/tests/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json --noEmit",
+    "test": "node --test --import tsx 'scripts/tests/*.test.ts' 'src/**/*.test.ts'",
     "run-modo": "tsx scripts/run-modo.ts",
     "validate:dia": "tsx scripts/validate-dia.ts",
     "validate:carrefour": "tsx scripts/validate-carrefour.ts",
@@ -21,14 +24,28 @@
   },
   "dependencies": {
     "@google/genai": "^1.50.1",
+    "@serwist/next": "^9.5.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "lucide-react": "^1.8.0",
+    "next": "^15",
     "postgres": "^3.4.5",
+    "react": "^19",
+    "react-dom": "^19",
+    "server-only": "^0.0.1",
+    "serwist": "^9.5.7",
     "zod": "^3.24.1",
     "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/node": "^22.10.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "postcss": "^8.5.10",
+    "tailwindcss": "^4",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }

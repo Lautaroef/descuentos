@@ -6,3 +6,15 @@ dist/
 *.log
 .pnpm-store/
 .vercel
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# PWA build artifact from Serwist
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+public/workbox-*.js
