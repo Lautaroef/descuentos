@@ -87,3 +87,32 @@ Personal Pay's wallet uses a tier-based tope structure (Nivel 1 / Nivel 2 / Nive
 - First run: 10 inserted, 0 errored, $0.0034 Gemini, 10.1s. All topes null (as designed).
 - Idempotency: 0 inserted / 10 updated, $0.0034 (bulk source re-extracts).
 - Tope coverage: 0/10 (intentional — this is the PARTIAL coverage flag in action).
+
+## Tests added + fix (Phase 3.3, testing agent)
+
+**Behavioral fix:** tightened the tope-null invariant at the extractor. The
+previous extractor normalized `undefined → null` only, trusting the prompt to
+keep `tope: null` on every row. A prompt regression or LLM hallucination could
+silently upsert invented topes. The extractor now **forces**
+`tope = null` + `tope_period = null` regardless of what Gemini returns — the
+data contract is "topes are unreachable for this source". Future press
+triangulation will come from a different `source_id` and isn't constrained.
+
+Tests:
+
+- `scripts/tests/personalpay-regressions.test.ts` (18 tests): fixture schema
+  walk, **tope-null HARD invariant** (even with hallucinated topes in the stub,
+  output has `tope === null`), source_id/wallet/issuer_bank pinned, id
+  determinism + distinctness (merchant/pct/days tuples) + UUID v5 shape,
+  day-phrase corner cases (Lunes a Miércoles → [1,2,3], Lunes/Martes comma →
+  [1,2], Fin de semana → [0,6]), same-merchant-different-rate dedup semantics
+  (distinct pct survives, same-pct duplicates collapse by id), malformed-row
+  rejection, 15k-token envelope, idempotency.
+- `scripts/tests/personalpay-source.test.ts` (9 tests): kind/id, default +
+  override URL, scrapeOptions (waitFor=6000, markdown-only), full pipeline
+  end-to-end asserting upserted rows have `tope=null`, idempotency,
+  empty-markdown → errored, **runner-level hallucination guard** (proves the
+  defensive extractor fix survives through the runner surface — upserted
+  promos are null even if Gemini returned 9999), dry-run semantics.
+- Updated `scripts/tests/personalpay-extract.test.ts`: rewrote the old
+  "documents the invariant is prompt-only" test to assert the new HARD guard.

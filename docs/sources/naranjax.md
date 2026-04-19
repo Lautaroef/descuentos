@@ -76,3 +76,16 @@ id = uuidV5(`${source_url}#${merchant}#${pct}#${days-label}`, NARANJAX_NAMESPACE
 - First run (`--limit=2`, hubs `/promociones` + `/promociones/SUPERMERCADOS_categoria`): 58 inserted, 0 errored, $0.0230 Gemini, 29.2s.
 - Idempotency: 0 inserted / 58 updated, same cost (hash-compare skip does NOT fire for `bulk` sources — see `source-runner.ts` comment; re-extraction is safe because ids are deterministic).
 - Tope coverage: 1/58 (only the Supermercados Martes wedge card carries a tope on the hub). Press triangulation required for Plan Turbo topes on specific merchants (documented in `docs/long-tail-sourcing.md`).
+
+## Tests added (Phase 3.3, testing agent)
+
+- `scripts/tests/naranjax-regressions.test.ts` (14 tests): fixture schema walk
+  through canonical Zod, wallet/issuer_bank == ['naranjax'] invariants, DISTINCT
+  ids per hub (cross-hub provenance), id determinism + merchant-casing
+  normalization + UUID v5 shape, AMBA regional tagging (['AR-C','AR-B']),
+  cuotas vs mixed schema validity, duplicate-card dedup by id within one hub,
+  malformed-row rejection (bad category), 15k-token envelope, empty payload.
+- `scripts/tests/naranjax-source.test.ts` (10 tests): kind/id, default 5-hub
+  list + urls override, waitFor=6000, end-to-end with stubbed Gemini, multi-hub
+  fan-out preserves provenance (same card on two hubs → two distinct ids),
+  idempotency, empty-markdown → errored, dry-run semantics, --limit cap.

@@ -96,3 +96,25 @@ These are starter suggestions — the testing agent is free to research more:
 - Idempotency: 0 inserted / 85 updated, $0.0239 (same prompt is deterministic → same upserts).
 - Plan distribution: Ultra 18 / Plus 24 / One 43.
 - Tope coverage: 12/85 (Ultra tier cards only).
+
+## Tests added (Phase 3.3, testing agent)
+
+Added by the testing agent on top of the three minimum smoke tests in
+`scripts/tests/brubank-extract.test.ts`:
+
+- `scripts/tests/brubank-regressions.test.ts` (19 tests): canonical-schema walk
+  over the fixture, plan-tier `issuer_bank` invariant (`^brubank-(one|plus|ultra)$`),
+  day-phrase corner cases (Jueves a domingos → [0,4,5,6], etc.), canonical-id
+  determinism + cross-plan distinctness + merchant-casing normalization,
+  malformed LLM row rejection (category/tope_period/valid_days/pct) collected
+  in `rejected_reasons` rather than crashing the run, duplicate-emission dedup,
+  plan='all' fan-out emits three distinct ids, idempotency, 15k-token envelope.
+- `scripts/tests/brubank-source.test.ts` (8 tests): `kind === 'bulk'`, listUrls
+  shape + override, full pipeline through `runSource` with stubbed Firecrawl +
+  Gemini + DB, idempotency (0 inserts on re-run), bulk policy (hash-compare
+  skip does NOT fire), empty-markdown handled as errored, schema-violating
+  Gemini row degrades gracefully (good rows still upsert), dry-run prints the
+  URL without scraping or upserting.
+- `scripts/tests/wallet-enum-parity.test.ts` (4 tests, cross-cutting): Zod
+  wallet enum vs `src/lib/constants.ts` `WALLET_SLUGS` / `WALLET_LABELS` parity,
+  all Phase 3 wallet additions present.

@@ -73,3 +73,20 @@ Single-tuple per slug — matches MODO's approach. Stable across re-runs; monthl
 - First run (`--limit=4`, covers all current hub slugs): 4 inserted, 0 errored, $0.0066 Gemini, 15.8s.
 - Idempotency / hash-skip: 0 inserted / 0 updated / 4 unchanged, $0.0000 Gemini (the hash-compare skip fires because `kind: per-url` — exactly the MODO behaviour).
 - Tope coverage: 1/4 (Sportclub has a tope; Carrefour/Coderhouse/Ualá Bis are sin-tope).
+
+## Tests added (Phase 3.3, testing agent)
+
+- `scripts/tests/uala-regressions.test.ts` (22 tests): fixture passes canonical
+  Zod schema, `source_url` shape + wallet/issuer_bank defaults, id determinism
+  + slug→id + UUID v5 shape, malformed LLM THROWS from `extractUalaPromo`
+  (per-url fail-fast), multi-day legal-text phrases (lunes a viernes → [1..5]),
+  AR-B region tagging, tope=null→tope_period=null normalization even when
+  Gemini returns `''`, cuotas-only merchants schema-valid, empty-array
+  issuer_bank falls back to `['uala']`, hub-parser dedup/skip-ignored/sort/
+  case-norm/URL-boundary/empty-input coverage, 15k-token envelope.
+- `scripts/tests/uala-source.test.ts` (10 tests): kind/id, slugOverride +
+  slugsOverride paths, markdown-only scrapeOptions (per the Ualá rawHtml size
+  note), end-to-end with stubbed Gemini, **hash-compare SKIPS Gemini** when
+  detail markdown is unchanged (exercised via stubbed hash-match — asserts
+  zero extract calls + markSeen called), hash miss triggers extract, new-URL
+  insert path, dry-run + malformed URL error path.
