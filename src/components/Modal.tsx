@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { X, ExternalLink } from 'lucide-react';
 
 interface ModalProps {
@@ -190,15 +189,19 @@ export function Modal({
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
             {fullPageHref && (
-              <Link
+              // Plain <a> (not next/link) on purpose: the intercept is already
+              // active on the current URL, so a soft nav would just re-render
+              // the same modal. A full-document navigation is the only way to
+              // bypass the intercept and reach the dedicated /p/[id] page —
+              // which is exactly the escape hatch the user asked for.
+              <a
                 href={fullPageHref}
-                scroll={false}
                 data-testid="modal-fullpage-link"
                 className="inline-flex items-center gap-1 rounded-sm px-2 py-1 text-xs font-medium text-[color:var(--color-accent)] transition-colors duration-[150ms] hover:text-[color:var(--color-accent-hover)]"
               >
                 {fullPageLabel}
                 <ExternalLink className="h-3 w-3" aria-hidden="true" />
-              </Link>
+              </a>
             )}
           </div>
 
