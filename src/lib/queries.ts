@@ -47,8 +47,8 @@ function coerce(row: PromoRowRaw): Promo {
     merchant: row.merchant,
     category: row.category,
     wallet: row.wallet,
-    card_brand: row.card_brand as Promo['card_brand'],
-    issuer_bank: row.issuer_bank,
+    card_brand: (row.card_brand ?? undefined) as Promo['card_brand'],
+    issuer_bank: row.issuer_bank ?? undefined,
     pct: typeof row.pct === 'string' ? Number(row.pct) : row.pct,
     promo_type: row.promo_type,
     tope: row.tope === null ? null : typeof row.tope === 'string' ? Number(row.tope) : row.tope,
@@ -63,8 +63,8 @@ function coerce(row: PromoRowRaw): Promo {
         : typeof row.requires_min_spend === 'string'
           ? Number(row.requires_min_spend)
           : row.requires_min_spend,
-    stacks_with: row.stacks_with,
-    variants: row.variants,
+    stacks_with: row.stacks_with ?? undefined,
+    variants: row.variants ?? undefined,
     last_seen_at:
       typeof row.last_seen_at === 'string' ? row.last_seen_at : row.last_seen_at.toISOString(),
     updated_at: row.updated_at

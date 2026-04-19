@@ -1,68 +1,25 @@
-// Shape types consumed by the UI. Mirrors scripts/promo-schema.ts one-to-one.
+// Single source of truth for the Promo shape is `scripts/promo-schema.ts` (Zod).
+// The UI imports ONLY types from that file — `import type` is elided at compile time,
+// so the NodeNext-vs-Bundler module-mode mismatch never materializes at runtime.
 //
-// We keep these as pure TypeScript types (no Zod runtime) because the UI reads data that's
-// already been validated at ingest time. If either side changes, both have to move together —
-// there's only one canonical promo shape and these two files are the authoritative record.
-// Cross-compile between NodeNext (scripts) and Bundler (Next) would otherwise fight us.
+// If you need the Zod runtime (validation, `.parse`) in UI code, import it directly
+// from `scripts/promo-schema` — Next's bundler will resolve it. Today the UI does not,
+// so we keep the surface types-only.
+import type { Promo as PromoExtracted } from '../../scripts/promo-schema.js';
 
-export type Category =
-  | 'supermercado'
-  | 'farmacia'
-  | 'gastronomia'
-  | 'combustible'
-  | 'transporte'
-  | 'indumentaria'
-  | 'electro'
-  | 'otro';
+// Re-export enum-like string unions so callers have a stable import surface and we
+// don't need to reach into `scripts/` from `src/` anywhere else in the codebase.
+export type Category = PromoExtracted['category'];
+export type Wallet = PromoExtracted['wallet'][number];
+export type CardBrand = NonNullable<PromoExtracted['card_brand']>[number];
+export type TopePeriod = NonNullable<PromoExtracted['tope_period']>;
+export type PromoType = PromoExtracted['promo_type'];
+export type PromoVariant = NonNullable<PromoExtracted['variants']>[number];
 
-export type Wallet =
-  | 'modo'
-  | 'mercadopago'
-  | 'cuentadni'
-  | 'uala'
-  | 'naranjax'
-  | 'personalpay'
-  | 'brubank'
-  | 'bna_plus'
-  | 'prex'
-  | 'yoy'
-  | 'buepp'
-  | 'lemon'
-  | 'astropay'
-  | 'reba';
-
-export type CardBrand = 'visa' | 'mastercard' | 'amex' | 'cabal' | 'naranja';
-export type TopePeriod = 'ticket' | 'day' | 'week' | 'month';
-export type PromoType = 'cashback' | 'cuotas' | 'mixed';
-
-export interface PromoVariant {
-  pct: number;
-  tope?: number | null;
-  tope_period?: TopePeriod | null;
-  category_scope?: string;
-  notes?: string;
-}
-
-export interface Promo {
+// UI `Promo` = the extracted row plus the db-augmented columns (`id` from the
+// `promos.id` primary key, `updated_at` from the upsert trigger). The ingestion
+// emits `PromoExtracted`; the database returns this extended row shape.
+export type Promo = PromoExtracted & {
   id: string;
-  source_id: string;
-  source_url: string;
-  merchant: string;
-  category: Category;
-  wallet: Wallet[];
-  card_brand?: CardBrand[] | null;
-  issuer_bank?: string[] | null;
-  pct: number;
-  promo_type: PromoType;
-  tope: number | null;
-  tope_period: TopePeriod | null;
-  valid_days: number[]; // 0 = Sunday, 6 = Saturday
-  valid_regions: string[];
-  valid_from: string; // YYYY-MM-DD
-  valid_to: string; // YYYY-MM-DD
-  requires_min_spend: number | null;
-  stacks_with?: string[] | null;
-  variants?: PromoVariant[] | null;
-  last_seen_at: string; // ISO timestamp
   updated_at?: string;
-}
+};
