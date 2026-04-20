@@ -101,4 +101,64 @@ describe('PromoCard — behavior contract', () => {
       expect(container.textContent ?? '').not.toMatch(/por (mes|semana|día|ticket)/i);
     });
   });
+
+  describe('Spend-aware hero (spend > 0)', () => {
+    it('renders "Te ahorrás $X" as the hero when spend is set and effective<tope', () => {
+      // $40k × 35% = $14k, well below the $25k tope.
+      render(
+        <PromoCard
+          promo={makePromo({ pct: 35, tope: 25_000, tope_period: 'month' })}
+          spend={40_000}
+        />,
+      );
+      expect(screen.getByText(/Te ahorrás \$\s*14\.000/)).toBeInTheDocument();
+      // Tope cap still visible as the secondary line.
+      expect(screen.getByText(/Hasta \$\s*25\.000 por mes/)).toBeInTheDocument();
+      // No "Tope alcanzado" marker when we haven't hit the cap.
+      expect(screen.queryByText(/Tope alcanzado/i)).toBeNull();
+    });
+
+    it('shows "Tope alcanzado" when effective savings match the tope', () => {
+      // $100k × 35% = $35k, capped at $25k tope.
+      render(
+        <PromoCard
+          promo={makePromo({ pct: 35, tope: 25_000, tope_period: 'month' })}
+          spend={100_000}
+        />,
+      );
+      expect(screen.getByText(/Te ahorrás \$\s*25\.000/)).toBeInTheDocument();
+      expect(screen.getByText(/Tope alcanzado/i)).toBeInTheDocument();
+    });
+
+    it('sin-tope: shows "Te ahorrás $X" hero with a muted "Sin tope declarado" secondary', () => {
+      render(
+        <PromoCard promo={makePromo({ pct: 25, tope: null, tope_period: null })} spend={40_000} />,
+      );
+      expect(screen.getByText(/Te ahorrás \$\s*10\.000/)).toBeInTheDocument();
+      expect(screen.getByText(/Sin tope declarado/i)).toBeInTheDocument();
+    });
+
+    it('cuotas promo_type: falls through to the classic tope display — no "Te ahorrás $0"', () => {
+      const { container } = render(
+        <PromoCard
+          promo={makePromo({ pct: 0, tope: 25_000, tope_period: 'month', promo_type: 'cuotas' })}
+          spend={40_000}
+        />,
+      );
+      expect(container.textContent ?? '').not.toMatch(/Te ahorrás/i);
+      // The classic tope line is still there.
+      expect(screen.getByText(/Hasta \$\s*25\.000 por mes/)).toBeInTheDocument();
+    });
+
+    it('spend === 0: classic tope-line display (no regression vs pre-spend behavior)', () => {
+      const { container } = render(
+        <PromoCard
+          promo={makePromo({ pct: 35, tope: 25_000, tope_period: 'month' })}
+          spend={0}
+        />,
+      );
+      expect(container.textContent ?? '').not.toMatch(/Te ahorrás/i);
+      expect(screen.getByText(/Hasta \$\s*25\.000 por mes/)).toBeInTheDocument();
+    });
+  });
 });
