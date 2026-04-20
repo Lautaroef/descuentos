@@ -8,6 +8,11 @@ import { EmptyState } from './EmptyState';
 
 interface PromoListProps {
   promos: Promo[];
+  /**
+   * Planned spend (integer ARS). Forwarded to each PromoCard so the
+   * hero flips to `Te ahorrás $X` when > 0. Defaults to 0.
+   */
+  spend?: number;
 }
 
 /**
@@ -15,7 +20,7 @@ interface PromoListProps {
  * collapsible section so they don't pollute the sort-by-tope ranking
  * (product.md wedge, components.md §8).
  */
-export function PromoList({ promos }: PromoListProps) {
+export function PromoList({ promos, spend = 0 }: PromoListProps) {
   const withTope = promos.filter((p) => p.tope !== null);
   const noTope = promos.filter((p) => p.tope === null);
 
@@ -40,7 +45,7 @@ export function PromoList({ promos }: PromoListProps) {
         >
           {withTope.map((p) => (
             <li key={p.id}>
-              <PromoCard promo={p} />
+              <PromoCard promo={p} spend={spend} />
             </li>
           ))}
         </ul>
@@ -74,7 +79,7 @@ export function PromoList({ promos }: PromoListProps) {
               >
                 {noTope.map((p) => (
                   <li key={p.id}>
-                    <PromoCard promo={p} />
+                    <PromoCard promo={p} spend={spend} />
                   </li>
                 ))}
               </ul>

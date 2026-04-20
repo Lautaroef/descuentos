@@ -79,7 +79,7 @@ export default async function CategoriaPage({ params, searchParams }: PageProps)
           <FilterBar />
         </section>
 
-        <PromoList promos={promos} />
+        <PromoList promos={promos} spend={filter.spend} />
 
         <nav className="mt-12 border-t border-border pt-6">
           <h2 className="mb-3 text-xs font-medium text-text-muted">Otros rubros</h2>

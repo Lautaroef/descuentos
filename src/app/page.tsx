@@ -61,7 +61,7 @@ export default async function HomePage({
           </p>
         )}
 
-        <PromoList promos={promos} />
+        <PromoList promos={promos} spend={filter.spend} />
 
         <Disclaimer variant="home" />
       </main>

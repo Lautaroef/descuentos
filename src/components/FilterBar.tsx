@@ -5,9 +5,12 @@ import { useMemo, useTransition, useEffect } from 'react';
 import {
   CATEGORY_LABELS,
   CATEGORY_SLUGS,
+  SPEND_STORAGE_KEY,
   WALLET_LABELS,
+  WALLET_STORAGE_KEY,
 } from '@/lib/constants';
 import type { Category, Wallet } from '@/lib/schema';
+import { SpendChip } from './SpendChip';
 
 // Wallets we actively surface in the filter UI. Keep the list tight — the
 // long-tail wallets from constants.ts become selectable once we have actual
@@ -39,8 +42,6 @@ const DAY_OPTIONS: DayOption[] = [
   { value: '6', label: 'Sábado' },
   { value: '0', label: 'Domingo' },
 ];
-
-const WALLET_STORAGE_KEY = 'descuentos-ar:owned-wallets';
 
 export function FilterBar() {
   const router = useRouter();
@@ -143,21 +144,28 @@ export function FilterBar() {
     commit(new URLSearchParams());
     try {
       localStorage.removeItem(WALLET_STORAGE_KEY);
+      localStorage.removeItem(SPEND_STORAGE_KEY);
     } catch {
       /* ignore */
     }
   }
 
+  const hasSpend = (searchParams.get('spend') ?? '').length > 0;
   const anyActive =
     current.walletsSel.size > 0 ||
     current.categoriesSel.size > 0 ||
-    current.day !== 'cualquiera';
+    current.day !== 'cualquiera' ||
+    hasSpend;
 
   return (
     <div
       className={`flex flex-col gap-4 transition-opacity duration-[150ms] ${isPending ? 'opacity-70' : ''}`}
       aria-busy={isPending}
     >
+      <div>
+        <SpendChip />
+      </div>
+
       <FilterGroup title="Billetera">
         <ChipRow>
           {WALLETS_IN_UI.map((w) => (
