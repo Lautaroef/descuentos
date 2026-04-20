@@ -104,7 +104,7 @@ test.describe('Onboarding first-visit E2E', () => {
 
     await page.goto('/');
 
-    // Sheet is visible — the "Guardar" button is a reliable accessibility marker.
+    // Sheet step 1: the "Guardar" button is a reliable accessibility marker.
     const save = page.getByRole('button', { name: /^Guardar$/ });
     await expect(save).toBeVisible();
 
@@ -113,9 +113,12 @@ test.describe('Onboarding first-visit E2E', () => {
     await page.getByRole('button', { name: /Seleccionar MODO/i }).first().click();
     await save.click();
 
-    // Sheet disappears; URL gets `wallet=modo`.
-    await expect(save).toBeHidden();
+    // URL gets `wallet=modo` as soon as step 1 commits.
     await expect(page).toHaveURL(/[?&]wallet=modo(,|$|&)/);
+
+    // Step 2: optional spend question. "Ahora no" skips it and closes.
+    await page.getByRole('button', { name: /^Ahora no$/ }).click();
+    await expect(save).toBeHidden();
 
     // Reload → onboarding sheet MUST NOT reappear.
     await page.reload();

@@ -73,13 +73,11 @@ test.describe('Spend-aware effective-savings ranking (E2E)', () => {
   });
 
   test('SpendChip: empty → set → persists to URL', async ({ page }) => {
+    // Pre-seed the onboarding flag so the sheet doesn't intercept clicks.
+    await page.addInitScript(() =>
+      window.localStorage.setItem('descuentos-ar:onboarded', '1'),
+    );
     await page.goto('/?rubro=supermercado');
-
-    // Dismiss the onboarding sheet if it's present.
-    const ahoraNo = page.getByRole('button', { name: /^Ahora no$/ }).first();
-    if (await ahoraNo.isVisible().catch(() => false)) {
-      await ahoraNo.click();
-    }
 
     // Tap the empty spend chip.
     await page.getByRole('button', { name: /Ingresá tu presupuesto/i }).click();
@@ -93,13 +91,10 @@ test.describe('Spend-aware effective-savings ranking (E2E)', () => {
   });
 
   test('SpendChip: Quitar removes the spend param', async ({ page }) => {
+    await page.addInitScript(() =>
+      window.localStorage.setItem('descuentos-ar:onboarded', '1'),
+    );
     await page.goto('/?rubro=supermercado&spend=40000');
-
-    // Dismiss onboarding if it appears.
-    const ahoraNo = page.getByRole('button', { name: /^Ahora no$/ }).first();
-    if (await ahoraNo.isVisible().catch(() => false)) {
-      await ahoraNo.click();
-    }
 
     await page.getByRole('button', { name: /Presupuesto actual/i }).click();
     await page.getByRole('button', { name: /Quitar presupuesto/i }).click();
