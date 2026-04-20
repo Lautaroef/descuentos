@@ -126,15 +126,36 @@ export function PromoDetail({ promo, compact = false }: PromoDetailProps) {
               Bancos adheridos
             </h2>
             <div className="flex flex-wrap gap-2">
-              {banks.map((b) => (
-                <Link
-                  key={b}
-                  href={`/banco/${b}`}
-                  className="inline-flex min-h-9 items-center rounded-pill border border-border bg-surface px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors duration-[150ms] hover:border-border-strong hover:text-text-primary"
-                >
-                  {isBankSlug(b) ? BANK_LABELS[b] : b}
-                </Link>
-              ))}
+              {banks.map((b) => {
+                // Only render a pill as a clickable <Link> when the slug is
+                // a known, routable bank (has a /banco/[slug] SSG entry).
+                // Raw upstream slugs like "brubank-ultra" / "naranjax" used to
+                // render as <Link> here and 404 on click (P0 audit finding).
+                const known = isBankSlug(b);
+                const label = known ? BANK_LABELS[b] : b;
+                const baseClass =
+                  'inline-flex min-h-9 items-center rounded-pill border border-border bg-surface px-3 py-1.5 text-sm font-medium text-text-secondary';
+                if (known) {
+                  return (
+                    <Link
+                      key={b}
+                      href={`/banco/${b}`}
+                      className={`${baseClass} transition-colors duration-[150ms] hover:border-border-strong hover:text-text-primary`}
+                    >
+                      {label}
+                    </Link>
+                  );
+                }
+                return (
+                  <span
+                    key={b}
+                    className={baseClass}
+                    aria-label={`${label} (sin página dedicada)`}
+                  >
+                    {label}
+                  </span>
+                );
+              })}
             </div>
           </section>
         )}
