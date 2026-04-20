@@ -41,6 +41,10 @@ export async function listPromos(filter: PromoFilter): Promise<Promo[]> {
       last_seen_at, updated_at
     from promos
     where last_seen_at > now() - (${FRESHNESS_DAYS} || ' days')::interval
+      and (
+        valid_to is null
+        or valid_to >= (now() at time zone 'America/Argentina/Buenos_Aires')::date
+      )
       and (${walletArr}::text[] is null or wallet && ${walletArr}::text[])
       and (${categoryArr}::text[] is null or category = any(${categoryArr}::text[]))
       and (${bankArr}::text[] is null or issuer_bank && ${bankArr}::text[])
@@ -85,6 +89,10 @@ export async function listPromoSitemap(): Promise<Array<{ id: string; last_seen_
     select id, last_seen_at
     from promos
     where last_seen_at > now() - (${FRESHNESS_DAYS} || ' days')::interval
+      and (
+        valid_to is null
+        or valid_to >= (now() at time zone 'America/Argentina/Buenos_Aires')::date
+      )
     order by last_seen_at desc
   `;
   return rows.map((r) => ({
@@ -105,6 +113,10 @@ export const getPromoStats = cache(
       max(last_seen_at) as last_seen
     from promos
     where last_seen_at > now() - (${FRESHNESS_DAYS} || ' days')::interval
+      and (
+        valid_to is null
+        or valid_to >= (now() at time zone 'America/Argentina/Buenos_Aires')::date
+      )
   `;
     const r = rows[0];
     return {

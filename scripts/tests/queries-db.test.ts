@@ -61,6 +61,10 @@ async function listPromosMirror(
     from promos
     where source_id = any(${sourceIds}::text[])
       and last_seen_at > now() - (${FRESHNESS_DAYS} || ' days')::interval
+      and (
+        valid_to is null
+        or valid_to >= (now() at time zone 'America/Argentina/Buenos_Aires')::date
+      )
       and (${walletArr}::text[] is null or wallet && ${walletArr}::text[])
       and (${categoryArr}::text[] is null or category = any(${categoryArr}::text[]))
       and (${bankArr}::text[] is null or issuer_bank && ${bankArr}::text[])
@@ -307,6 +311,93 @@ test('P2-13 stale horizon: rows older than FRESHNESS_DAYS (3 days) are hidden', 
     const urls = new Set(rows.map((r) => r.source_url));
     assert.ok(urls.has(freshUrl), 'fresh row visible');
     assert.ok(!urls.has(staleUrl), 'stale (5d old) row hidden');
+  } finally {
+    await cleanupTestRows();
+  }
+});
+
+// =============================================================================
+// P0 — validity gate: rows whose `valid_to` is in the past must not surface
+// in list views. The scraper's `last_seen_at` refresh is decoupled from the
+// promo's real expiration date, so we need a second gate at query time.
+// Audit symptom: a Cerini promo with valid_to='2024-07-31' rendered today as
+// "Verificado hace 8 horas."
+// =============================================================================
+
+test('validity gate: expired promo (valid_to in past) is excluded', { skip: skipReason }, async () => {
+  try {
+    const expiredUrl = `https://test.example.com/p/expired-${randomUUID()}`;
+    const futureUrl = `https://test.example.com/p/future-${randomUUID()}`;
+
+    await insertFixture(
+      makePromo({
+        source_url: expiredUrl,
+        merchant: 'expired',
+        valid_from: '2024-01-01',
+        valid_to: '2024-07-31', // 21 months in the past
+      }),
+    );
+    await insertFixture(
+      makePromo({
+        source_url: futureUrl,
+        merchant: 'future',
+        valid_from: '2026-01-01',
+        valid_to: '2030-12-31',
+      }),
+    );
+
+    const rows = await listPromosMirror({
+      wallets: [],
+      categories: [],
+      banks: [],
+      day: null,
+      region: null,
+    });
+
+    const urls = new Set(rows.map((r) => r.source_url));
+    assert.ok(urls.has(futureUrl), 'future-valid row is visible');
+    assert.ok(
+      !urls.has(expiredUrl),
+      'past-valid_to row is hidden (decouples list visibility from scraper freshness)',
+    );
+  } finally {
+    await cleanupTestRows();
+  }
+});
+
+test('validity gate: valid_to = today (AR) is still visible (boundary)', {
+  skip: skipReason,
+}, async () => {
+  const sql = getDb();
+  try {
+    const todayAr = (
+      await sql<{ d: Date }[]>`select (now() at time zone 'America/Argentina/Buenos_Aires')::date as d`
+    )[0].d;
+    const todayIso =
+      typeof todayAr === 'string'
+        ? (todayAr as string).slice(0, 10)
+        : new Date(todayAr).toISOString().slice(0, 10);
+
+    const url = `https://test.example.com/p/boundary-${randomUUID()}`;
+    await insertFixture(
+      makePromo({
+        source_url: url,
+        merchant: 'boundary',
+        valid_from: '2026-01-01',
+        valid_to: todayIso,
+      }),
+    );
+
+    const rows = await listPromosMirror({
+      wallets: [],
+      categories: [],
+      banks: [],
+      day: null,
+      region: null,
+    });
+
+    const urls = new Set(rows.map((r) => r.source_url));
+    assert.ok(urls.has(url), 'valid_to = today in AR tz is still considered active');
   } finally {
     await cleanupTestRows();
   }
