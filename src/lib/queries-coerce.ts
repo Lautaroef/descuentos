@@ -7,6 +7,30 @@
 // This module has zero runtime dependencies — safe to import from anywhere.
 import type { Category, Promo, Wallet } from './schema.js';
 
+/**
+ * Compute the effective savings for a given promo at a given spend.
+ *
+ *   cashback|mixed with pct>0 and tope set  → LEAST(pct*spend/100, tope)
+ *   cashback|mixed with pct>0 and tope null → pct*spend/100 ("sin tope")
+ *   cuotas or pct=0                         → 0 (no cashback for this spend)
+ *   spend <= 0                              → 0 (no spend context)
+ *
+ * Integer ARS math — mirrors the SQL sort expression in `listPromos`.
+ * Exposed here so the card renderer and any future client utilities use the
+ * same formula as the server-side ranking.
+ */
+export function effectiveSavings(promo: Pick<Promo, 'pct' | 'tope' | 'promo_type'>, spend: number): number {
+  if (!spend || spend <= 0) return 0;
+  const pct = typeof promo.pct === 'string' ? Number(promo.pct) : promo.pct;
+  if (!Number.isFinite(pct) || pct <= 0) return 0;
+  if (promo.promo_type !== 'cashback' && promo.promo_type !== 'mixed') return 0;
+  const gross = Math.floor((pct * spend) / 100);
+  if (promo.tope === null || promo.tope === undefined) return gross;
+  const tope = typeof promo.tope === 'string' ? Number(promo.tope) : promo.tope;
+  if (!Number.isFinite(tope)) return gross;
+  return Math.min(gross, tope);
+}
+
 export interface PromoRowRaw {
   id: string;
   source_id: string;

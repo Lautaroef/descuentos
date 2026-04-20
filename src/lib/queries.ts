@@ -10,14 +10,38 @@ import type { Promo } from './schema';
 import { coerce, type PromoRowRaw } from './queries-coerce';
 
 export type { PromoFilter } from './filters';
-export { parseFilterFromParams, parseDayParam, parseRegionParam, filterToSearchParams } from './filters';
+export {
+  parseFilterFromParams,
+  parseDayParam,
+  parseRegionParam,
+  parseSpendParam,
+  filterToSearchParams,
+} from './filters';
 
 // =============================================================================
 // Queries
 // =============================================================================
 
 /**
- * List promos. Sort `tope` DESC NULLS LAST with `pct` tiebreak. Always applies the TTL gate.
+ * List promos. Sort order depends on the spend filter:
+ *
+ *   spend === 0 (default):
+ *     ORDER BY tope DESC NULLS LAST, pct DESC, merchant ASC
+ *
+ *   spend > 0 (spend-aware effective-savings):
+ *     effective = CASE
+ *       WHEN promo_type IN ('cashback','mixed') AND pct > 0 AND tope IS NOT NULL
+ *         THEN LEAST(pct * spend / 100, tope)
+ *       WHEN promo_type IN ('cashback','mixed') AND pct > 0 AND tope IS NULL
+ *         THEN pct * spend / 100
+ *       ELSE 0
+ *     END
+ *     ORDER BY effective DESC, pct DESC, tope DESC NULLS LAST, merchant ASC
+ *
+ * The `promo_type = 'cuotas'` / `pct = 0` case always ranks last (effective = 0) —
+ * there's no cashback, so for a spend-focused shopper it's irrelevant to the ranking.
+ *
+ * Always applies the TTL + valid_to gates.
  *
  * Region matching semantics: a promo matches when `valid_regions` is empty (= national)
  * OR contains the requested region. This is the correctness bit PromoArg gets wrong —
@@ -31,6 +55,7 @@ export async function listPromos(filter: PromoFilter): Promise<Promo[]> {
   const bankArr = filter.banks.length ? filter.banks : null;
   const day = filter.day;
   const region = filter.region && filter.region !== 'AR' ? filter.region : null;
+  const spend = filter.spend > 0 ? filter.spend : 0;
 
   const rows = await sql<PromoRowRaw[]>`
     select
@@ -54,7 +79,20 @@ export async function listPromos(filter: PromoFilter): Promise<Promo[]> {
         or coalesce(array_length(valid_regions, 1), 0) = 0
         or ${region}::text = any(valid_regions)
       )
-    order by tope desc nulls last, pct desc, merchant asc
+    order by
+      case when ${spend}::int > 0 then
+        case
+          when promo_type in ('cashback','mixed') and pct > 0 and tope is not null
+            then least(pct * ${spend}::int / 100, tope)
+          when promo_type in ('cashback','mixed') and pct > 0 and tope is null
+            then pct * ${spend}::int / 100
+          else 0
+        end
+      else 0 end desc,
+      case when ${spend}::int = 0 then tope else null end desc nulls last,
+      pct desc,
+      tope desc nulls last,
+      merchant asc
   `;
 
   return rows.map(coerce);

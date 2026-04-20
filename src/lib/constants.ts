@@ -191,3 +191,13 @@ export const DISCLAIMER_TEXT =
   'Información referencial. Verificá los términos en la entidad emisora.';
 
 export const FRESHNESS_DAYS = 3;
+
+// ---------------------------------------------------------------------------
+// localStorage keys — kept in one place so tests + hydration stay in sync.
+// ---------------------------------------------------------------------------
+
+export const ONBOARD_STORAGE_KEY = 'descuentos-ar:onboarded';
+export const WALLET_STORAGE_KEY = 'descuentos-ar:owned-wallets';
+export const BANK_STORAGE_KEY = 'descuentos-ar:owned-banks';
+/** User's planned spend in integer ARS (e.g. "30000"). Empty / missing = no spend context. */
+export const SPEND_STORAGE_KEY = 'descuentos-ar:spend';

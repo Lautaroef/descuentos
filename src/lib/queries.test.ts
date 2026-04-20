@@ -8,7 +8,10 @@ import {
   parseFilterFromParams,
   parseDayParam,
   parseRegionParam,
+  parseSpendParam,
 } from './filters.js';
+import { effectiveSavings } from './queries-coerce.js';
+import type { Promo } from './schema.js';
 
 describe('parseFilterFromParams', () => {
   it('returns empty filter when no params are set', () => {
@@ -19,6 +22,7 @@ describe('parseFilterFromParams', () => {
       banks: [],
       day: null,
       region: null,
+      spend: 0,
     });
   });
 
@@ -109,7 +113,9 @@ describe('parseFilterFromParams', () => {
 
   it('combines every filter in one URL (the "shared link" case)', () => {
     const f = parseFilterFromParams(
-      new URLSearchParams('wallet=modo,cuentadni&rubro=supermercado&issuer=galicia&dia=3&region=CABA'),
+      new URLSearchParams(
+        'wallet=modo,cuentadni&rubro=supermercado&issuer=galicia&dia=3&region=CABA&spend=40000',
+      ),
     );
     assert.deepEqual(f, {
       wallets: ['modo', 'cuentadni'],
@@ -117,7 +123,23 @@ describe('parseFilterFromParams', () => {
       banks: ['galicia'],
       day: 3,
       region: 'CABA',
+      spend: 40_000,
     });
+  });
+
+  it('parses a positive integer spend param', () => {
+    const f = parseFilterFromParams(new URLSearchParams('spend=30000'));
+    assert.equal(f.spend, 30_000);
+  });
+
+  it('drops non-numeric spend silently', () => {
+    const f = parseFilterFromParams(new URLSearchParams('spend=nope'));
+    assert.equal(f.spend, 0);
+  });
+
+  it('drops negative spend silently', () => {
+    const f = parseFilterFromParams(new URLSearchParams('spend=-5000'));
+    assert.equal(f.spend, 0);
   });
 });
 
@@ -151,5 +173,147 @@ describe('parseRegionParam', () => {
   it('rejects empty strings', () => {
     assert.equal(parseRegionParam(''), null);
     assert.equal(parseRegionParam('   '), null);
+  });
+});
+
+describe('parseSpendParam', () => {
+  it('returns 0 for null / undefined / empty', () => {
+    assert.equal(parseSpendParam(null), 0);
+    assert.equal(parseSpendParam(undefined), 0);
+    assert.equal(parseSpendParam(''), 0);
+    assert.equal(parseSpendParam('   '), 0);
+  });
+
+  it('parses a plain integer', () => {
+    assert.equal(parseSpendParam('30000'), 30_000);
+    assert.equal(parseSpendParam('40000'), 40_000);
+  });
+
+  it('rejects non-numeric input', () => {
+    assert.equal(parseSpendParam('40k'), 0);
+    assert.equal(parseSpendParam('40.000'), 0);
+    assert.equal(parseSpendParam('40,000'), 0);
+    assert.equal(parseSpendParam('abc'), 0);
+  });
+
+  it('rejects negatives / signed values', () => {
+    assert.equal(parseSpendParam('-5000'), 0);
+    assert.equal(parseSpendParam('+5000'), 0);
+  });
+
+  it('caps at 100_000_000', () => {
+    assert.equal(parseSpendParam('100000000000'), 100_000_000);
+  });
+});
+
+// -----------------------------------------------------------------------------
+// effectiveSavings — the ranking formula. Mirrors the SQL expression in listPromos.
+// -----------------------------------------------------------------------------
+
+type RankableBits = Pick<Promo, 'pct' | 'tope' | 'promo_type'>;
+
+function rankable(bits: Partial<RankableBits> & { pct: number }): RankableBits {
+  return {
+    pct: bits.pct,
+    tope: bits.tope ?? null,
+    promo_type: bits.promo_type ?? 'cashback',
+  };
+}
+
+describe('effectiveSavings — the spend-aware ranking formula', () => {
+  it('returns 0 when spend is 0 (no spend context)', () => {
+    assert.equal(effectiveSavings(rankable({ pct: 35, tope: 25_000 }), 0), 0);
+  });
+
+  it('returns 0 when spend is negative', () => {
+    assert.equal(effectiveSavings(rankable({ pct: 35, tope: 25_000 }), -1), 0);
+  });
+
+  it('cashback with tope — returns LEAST(pct*spend/100, tope)', () => {
+    // $40k × 35% = $14k, below the $25k tope → uncapped.
+    assert.equal(
+      effectiveSavings(rankable({ pct: 35, tope: 25_000 }), 40_000),
+      14_000,
+    );
+    // $40k × 10% = $4k, below the $35k tope.
+    assert.equal(
+      effectiveSavings(rankable({ pct: 10, tope: 35_000 }), 40_000),
+      4_000,
+    );
+  });
+
+  it('cashback with tope — caps at tope when pct*spend exceeds it', () => {
+    // $100k × 35% = $35k, capped at $25k tope.
+    assert.equal(
+      effectiveSavings(rankable({ pct: 35, tope: 25_000 }), 100_000),
+      25_000,
+    );
+  });
+
+  it('sin-tope (tope === null) — returns pct*spend/100 uncapped', () => {
+    assert.equal(
+      effectiveSavings(rankable({ pct: 25, tope: null }), 40_000),
+      10_000,
+    );
+  });
+
+  it('cuotas promo_type — always returns 0 regardless of pct/tope', () => {
+    assert.equal(
+      effectiveSavings(rankable({ pct: 30, tope: 25_000, promo_type: 'cuotas' }), 40_000),
+      0,
+    );
+  });
+
+  it('pct === 0 — returns 0 even for cashback/mixed', () => {
+    assert.equal(
+      effectiveSavings(rankable({ pct: 0, tope: 25_000 }), 40_000),
+      0,
+    );
+  });
+
+  it('mixed promo_type — computed the same as cashback', () => {
+    assert.equal(
+      effectiveSavings(rankable({ pct: 20, tope: 10_000, promo_type: 'mixed' }), 40_000),
+      8_000,
+    );
+  });
+
+  it('integer math — no fractional cents', () => {
+    // 40001 × 35 / 100 = 14000.35 → floor to 14000.
+    assert.equal(
+      effectiveSavings(rankable({ pct: 35, tope: 25_000 }), 40_001),
+      14_000,
+    );
+  });
+
+  it('ceiling spend (100_000_000) caps at tope', () => {
+    assert.equal(
+      effectiveSavings(rankable({ pct: 10, tope: 35_000 }), 100_000_000),
+      35_000,
+    );
+  });
+
+  // The persona scenario from docs/design/ux-audit.md:
+  // $40k budget, Carrefour 10% tope $35k = $4k; Carrefour 35% tope $25k = $14k.
+  it('ranks the persona scenario correctly (40k supermarket budget)', () => {
+    const carrefour10 = effectiveSavings(rankable({ pct: 10, tope: 35_000 }), 40_000);
+    const carrefour35 = effectiveSavings(rankable({ pct: 35, tope: 25_000 }), 40_000);
+    const coto25 = effectiveSavings(rankable({ pct: 25, tope: 30_000 }), 40_000);
+    assert.equal(carrefour10, 4_000);
+    assert.equal(carrefour35, 14_000);
+    assert.equal(coto25, 10_000);
+    // 35% card should outrank the 10% one.
+    assert.ok(carrefour35 > carrefour10);
+    // 25% with $30k tope also beats the 10% one.
+    assert.ok(coto25 > carrefour10);
+  });
+
+  it('sin-tope beats tope-capped when spend is small', () => {
+    // $5k spend: sin-tope 10% = $500. Tope-capped 35% tope $200 = min($1750, $200) = $200.
+    const sinTope = effectiveSavings(rankable({ pct: 10, tope: null }), 5_000);
+    const capped = effectiveSavings(rankable({ pct: 35, tope: 200 }), 5_000);
+    assert.equal(sinTope, 500);
+    assert.equal(capped, 200);
+    assert.ok(sinTope > capped);
   });
 });
