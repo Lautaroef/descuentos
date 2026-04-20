@@ -64,4 +64,25 @@ test.describe('Sitemap + robots contract', () => {
     const body = await resp.text();
     expect(body).toMatch(/Disallow:\s*\/api\//i);
   });
+
+  test('robots.txt Sitemap line references a live deploy host (no stale drift)', async ({
+    request,
+  }) => {
+    const resp = await request.get('/robots.txt');
+    expect(resp.status()).toBe(200);
+    const body = await resp.text();
+
+    // The Sitemap URL must point at a host the crawler can actually fetch.
+    // Historical bug: hardcoded `descuentos.ar` (unowned) while the app served
+    // from `descuentos-six.vercel.app`. The fix reads the host from the env
+    // chain (NEXT_PUBLIC_SITE_URL → VERCEL_PROJECT_PRODUCTION_URL → VERCEL_URL
+    // → the `descuentos-six.vercel.app` fallback) — never the unowned domain.
+    const match = body.match(/Sitemap:\s*(\S+)/i);
+    expect(match, 'robots.txt must declare a Sitemap line').not.toBeNull();
+    const sitemapUrl = match![1];
+    expect(sitemapUrl).toMatch(/\/sitemap\.xml$/);
+
+    // Guardrail: the unowned `descuentos.ar` default must never appear.
+    expect(sitemapUrl).not.toMatch(/^https?:\/\/descuentos\.ar\b/);
+  });
 });

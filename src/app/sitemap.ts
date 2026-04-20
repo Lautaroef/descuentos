@@ -1,11 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { listPromoSitemap } from '@/lib/queries';
 import { BANK_SLUGS, CATEGORY_SLUGS } from '@/lib/constants';
+import { getSiteUrl } from '@/lib/site-url';
 
 // Generate the sitemap from the DB. Copies PromoArg's `/p/<uuid>` URL shape per
 // competitor-promoarg.md (SEO parity). `lastModified` = each promo's `last_seen_at`.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://descuentos.ar';
+  const base = getSiteUrl();
 
   const promos = await listPromoSitemap();
   const now = new Date();
