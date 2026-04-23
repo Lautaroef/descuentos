@@ -49,8 +49,8 @@ Hub scrape (1 call):
 
 | Item | Phase | Reason |
 |---|---|---|
-| Inngest weekly cron + step-functions | 2 | No Vercel endpoint yet; CLI runs are sufficient for personal-use Phase 1. |
-| Discord/Telegram health-check webhook | 2 | No webhook URL in env yet; blocked on Phase 2 infra. |
+| ~~Inngest weekly cron + step-functions~~ | ~~2~~ | **SHIPPED Phase 1.5 (2026-04-25).** See [cron.md](cron.md) for the per-source schedule table, the `src/app/api/inngest/route.ts` serve endpoint, and the daily health-check function. Keys live in `INNGEST_EVENT_KEY` / `INNGEST_SIGNING_KEY`. |
+| ~~Discord/Telegram health-check webhook~~ | ~~2~~ | **SHIPPED Phase 1.6 (2026-04-25).** `ALERT_WEBHOOK_URL` env — if unset, health-check logs to stdout (visible in the Inngest dashboard). Discord/Slack webhook formats both accepted. |
 | Hard-delete of stale promos | 4 | Waits for canonical-hash dedup so we don't collapse aliasing. Soft-purge candidates are surfaced via `softPurgeStalePromos()`. |
 | Firecrawl Browser API "Cargar más" click | 4+ | 40 slugs is enough for v1 wedge validation; we'll widen when coverage gaps surface. |
 | Claude Haiku 4.5 fallback adapter | 4+ | Rollback path documented in `firecrawl-alternative-analysis.md`; not built until Gemini regresses. |

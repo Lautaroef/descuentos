@@ -8,7 +8,7 @@
 |---|---|---|
 | Fetching | Firecrawl (funded) | Handles anti-bot, JS rendering, sitemap/lastmod tracking, content hashing out of the box. |
 | Extraction | Claude Haiku 4.5 **or** GPT-4o-mini, with Zod schema validation | Per-site CSS parsers rot weekly. Schema-validated LLM extraction survives layout drift. ~$3/mo at daily cadence for 30 sources after pre-trimming. |
-| Orchestration | Inngest (free tier 50k runs/mo) | Step-level durability, retries, concurrency limits, dashboard. Alternative: GitHub Actions cron if you want zero infra but will build observability yourself. |
+| Orchestration | Inngest (free tier 50k runs/mo) — **shipped Phase 1.5** | Step-level durability, retries, concurrency limits, dashboard. 9 scheduled ingestion functions + 1 daily health check; see [cron.md](cron.md). Serve endpoint: `src/app/api/inngest/route.ts`. |
 | Change detection | sitemap `lastmod` → SHA-256 hash of normalized main content → skip LLM if unchanged | Cuts 70-90% of LLM cost week-over-week. |
 | Storage | Supabase Postgres | GIN indexes on `wallet[]`, `category`, `valid_days[]`, `valid_regions[]`, plus a range index on `tope`, handle our query shape natively. |
 | API serving | `/api/promos.json` materialized view, regenerated after each scrape run, served from Vercel Edge | Flat cost at scale — one cached JSON served globally instead of hitting Postgres per request. |

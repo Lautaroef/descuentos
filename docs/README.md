@@ -15,6 +15,7 @@ Read in this order if you're new to the project:
 11. [phase-1-notes.md](phase-1-notes.md) — **Phase 1 shipped (April 2026).** MODO ingestion end-to-end: hub crawler → slug-diff → Hybrid B extract (Firecrawl scrape + direct Gemini 2.5 Flash) → upsert-with-TTL. File list, first live-run numbers, gotchas, deferrals, and pointers for extending to Cuenta DNI / Brubank / Naranja X (Phase 3).
 12. [phase-2-notes.md](phase-2-notes.md) — **Phase 2 shipped (April 2026).** Next.js 15 PWA on top of the Phase 1 ingest. SSR-true filters, sort-by-tope, owned-wallet onboarding, SEO landings for 24 banks × 8 categories, Serwist service worker, live on Vercel. File list, deploy URL, UX decisions, and a week-1 testing checklist.
 13. [testing.md](testing.md) — Test runners and where each kind of test lives (node:test, Vitest, Playwright). Smoke tests included as scaffolding.
+13a. [cron.md](cron.md) — **Phase 1.5 + 1.6 shipped (April 2026).** Inngest-backed scheduled ingestion for all 9 sources + daily staleness health check. Per-source schedule table, webhook alert channel, cross-tree import trick, operator's manual. Read when ingestion goes dark.
 14. [sources.md](sources.md) — **The source-adapter playbook.** How to add a new ingestion source: `Source` interface, deterministic ids, test scaffolding, DB seed. Phase 3.0+.
 15. [backlog.md](backlog.md) — Validated demand signals worth revisiting (gastronomía scope, cuotas-as-inflation-hedge ranking, etc.). Source-cited; not a commitment — a memory aid.
 
