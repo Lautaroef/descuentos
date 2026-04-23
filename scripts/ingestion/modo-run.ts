@@ -44,28 +44,28 @@ export async function runModoIngestion(options: RunOptions = {}): Promise<RunRol
     return toModoRollup(rollup, null);
   }
 
-  // Default path: fetch the hub ourselves so we can report its stats (the UI summary
-  // in scripts/run-modo.ts prints hub markdown length + content hash). The source
-  // adapter's listUrls() would repeat the hub fetch; instead we inject the slug
-  // list by building a source with slug-overrides-via-factory. But runSource needs
-  // one listUrls() call — so we build a source that reuses the hub result below.
+  // Default path: fetch the hub inside listUrls() so runSource()'s try/catch captures any
+  // hub failure into scrape_runs.error. We keep a shared reference so the CLI summary can
+  // print hub stats and credits.
+  //
+  // Before 2026-04-23: hub fetch was outside runSource, so a hub failure crashed without
+  // writing a scrape_runs row — the silent-0 failure mode we're eliminating. Moving it
+  // inside listUrls() means `source.listUrls()` can throw, and runSource's existing
+  // error-handler writes `list_urls: <message>` to scrape_runs.error and rethrows.
   let hub: HubResult | null = null;
-  if (!dryRun || limit !== undefined || true) {
-    // We always want the hub stats in the summary, including for dry-run.
-    hub = await fetchModoHubSlugs();
-    console.log(
-      `[modo] hub returned ${hub.slugs.length} slugs (md=${hub.markdown_length} chars, credits=${hub.credits_used ?? 'n/a'})`,
-    );
-    for (const [section, slugs] of Object.entries(hub.sections)) {
-      console.log(`  - ${section}: ${slugs.length} slugs`);
-    }
-  }
-
-  // Build a source that returns the prefetched slug list. Keeps behaviour identical
-  // to Phase 1: one hub call per run, not two.
   const prefetchedSource = {
     ...createModoSource(),
-    listUrls: async () => (hub ? hub.slugs.map((s) => `https://www.modo.com.ar/promos/${s}`) : []),
+    listUrls: async () => {
+      hub = await fetchModoHubSlugs();
+      console.log(
+        `[modo] hub returned ${hub.slugs.length} slugs on attempt ${hub.attempt} ` +
+          `(md=${hub.markdown_length} chars, credits=${hub.credits_used ?? 'n/a'})`,
+      );
+      for (const [section, slugs] of Object.entries(hub.sections)) {
+        console.log(`  - ${section}: ${slugs.length} slugs`);
+      }
+      return hub.slugs.map((s) => `https://www.modo.com.ar/promos/${s}`);
+    },
   };
 
   const rollup = await runSource(prefetchedSource, { dryRun, limit, concurrency });

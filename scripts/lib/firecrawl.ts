@@ -27,6 +27,14 @@ export interface ScrapeOptions {
   onlyMainContent?: boolean;
   /** Soft request timeout in ms; applies to the HTTP call, not to Firecrawl's internal waitFor. */
   timeoutMs?: number;
+  /**
+   * Firecrawl cache max-age in milliseconds. When set, Firecrawl may return a cached
+   * response that is younger than this. Pass `0` to force a fresh scrape (bypasses cache).
+   * Unset = Firecrawl default (which has burned us before — a transient bad response gets
+   * stuck in the cache). Prefer setting an explicit value (e.g. `3_600_000` for 1 hour
+   * hub crawls) so cache behaviour is deterministic.
+   */
+  maxAge?: number;
 }
 
 export interface ScrapeResult {
@@ -63,16 +71,20 @@ export async function scrapePage(url: string, options: ScrapeOptions = {}): Prom
     formats = ['markdown', 'rawHtml'],
     onlyMainContent = true,
     timeoutMs = 90_000,
+    maxAge,
   } = options;
 
   const apiKey = getApiKey();
 
-  const body = {
+  const body: Record<string, unknown> = {
     url,
     formats,
     onlyMainContent,
     waitFor,
   };
+  if (typeof maxAge === 'number') {
+    body.maxAge = maxAge;
+  }
 
   const maxRetries = 3;
   let lastError: unknown = null;
