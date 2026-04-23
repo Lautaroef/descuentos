@@ -97,6 +97,54 @@ These are starter suggestions — the testing agent is free to research more:
 - Plan distribution: Ultra 18 / Plus 24 / One 43.
 - Tope coverage: 12/85 (Ultra tier cards only).
 
+## valid_to invariant (Phase 3.3, 2026-04-18 root-cause fix)
+
+Brubank's `/beneficios` is a rolling Webflow catalog of ongoing benefits; the
+page does NOT declare a per-card vigencia. The original prompt told the LLM
+to emit `valid_to = last day of current month`, so the extractor produced a
+hallucinated date for every row. The `valid_to >= today` gate in
+`src/lib/queries.ts` then correctly hid every row once the scraping month
+rolled over — surfacing as "0 of 85 fresh Brubank rows visible" on
+2026-04-18.
+
+**Semantic truth**: when the source page does not publish an end date, the
+Promo's `valid_to` must be `null`. Null means "no declared end" and passes
+the serving-layer gate (SQL: `valid_to is null or valid_to >= today`).
+
+**Fix**: two layers of defence.
+
+1. **Prompt**: tightened to instruct null emission unless one of these
+   markers appears: "Vigencia hasta DD/MM/YY", "Válido hasta DD/MM/YY",
+   "Hasta el DD/MM/YY", "Hasta el DD de <mes>", "Vigencia Del DD/MM/YY
+   al DD/MM/YY".
+2. **Runtime guard (Option B, evidence-based)**: the extractor scans the
+   source markdown with `markdownDeclaresEndDate()`. If NO end-date markers
+   are present anywhere on the page, the guard forces `valid_to = null`
+   across the whole payload regardless of what Gemini returned. If markers
+   ARE present, the LLM's per-row decision is trusted (it can still emit
+   null for rows the marker doesn't cover).
+
+Why Option B instead of unconditional null (Option A): if Brubank ever
+publishes a seasonal card with an explicit vigencia, we want to preserve
+that signal. Why Option B instead of prompt-only (Option C): a prompt
+regression or LLM hallucination could silently re-surface the bug. The
+runtime guard is a hard floor.
+
+**Live smoke (2026-04-19 re-run post-fix)**:
+- 85 promos ingested as before.
+- All 85 rows have `valid_to = null` (the real Webflow page has no markers).
+- All 85 pass the serving-layer `valid_to` gate → visible in production.
+
+Schema change: `scripts/promo-schema.ts`'s `valid_to` is now
+`z.string().date().nullable()` (was non-nullable). Migration 007 drops the
+DB-level NOT NULL constraint. Forward-only; existing non-null rows are
+unaffected.
+
+Test coverage: `scripts/tests/brubank-valid-to-invariant.test.ts` locks in
+the invariant. Asserts the runtime guard nulls hallucinated dates on the
+real fixture, preserves legitimate dates when the page declares them, and
+roundtrips LLM null emissions.
+
 ## Tests added (Phase 3.3, testing agent)
 
 Added by the testing agent on top of the three minimum smoke tests in

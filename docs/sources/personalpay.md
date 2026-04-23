@@ -88,6 +88,37 @@ Personal Pay's wallet uses a tier-based tope structure (Nivel 1 / Nivel 2 / Nive
 - Idempotency: 0 inserted / 10 updated, $0.0034 (bulk source re-extracts).
 - Tope coverage: 0/10 (intentional — this is the PARTIAL coverage flag in action).
 
+## valid_to invariant (Phase 3.3, 2026-04-18 root-cause fix)
+
+Mirrors the Brubank fix (see `docs/sources/brubank.md` for the full
+rationale). Personal Pay's hub is a rolling Nivel-tier catalog with no
+per-card vigencia. The old prompt instructed "valid_to = last day of
+current month", which got hidden by the serving-layer `valid_to >= today`
+gate once the scraping month rolled over — same bug class as Brubank.
+
+**Fix**: same two layers:
+
+1. **Prompt**: null by default; emit a date only if the page has an
+   explicit end-date marker ("Vigencia hasta", "Válido hasta", "Hasta el
+   DD de <mes>", "Vigencia Del DD/MM/YY al DD/MM/YY").
+2. **Runtime guard**: `markdownDeclaresEndDate()` scans the source
+   markdown. No markers → force null across the payload.
+
+The Personal Pay extractor already had a hard guard for `tope = null` +
+`tope_period = null`. The `valid_to` invariant follows the same pattern
+but with evidence-based gating instead of unconditional null — if the
+seasonal grid ever surfaces an explicit vigencia, we want to preserve it.
+
+**Live smoke (2026-04-19 re-run post-fix)**:
+- 10 promos ingested (page 1 of 8).
+- All 10 rows have `valid_to = null` (the real hub markdown has no
+  markers).
+- All 10 pass the serving-layer `valid_to` gate → visible in production.
+
+Test coverage: `scripts/tests/personalpay-valid-to-invariant.test.ts`
+mirrors the Brubank suite. Asserts guard-nulls-hallucinations on the real
+fixture + preserves legitimate dates when markers are present.
+
 ## Tests added + fix (Phase 3.3, testing agent)
 
 **Behavioral fix:** tightened the tope-null invariant at the extractor. The
