@@ -68,8 +68,13 @@ Output: { "promos": [ ... ] }. One entry per partner card. Fields:
     * "Lunes a viernes" → [1,2,3,4,5]
     * "Fin de semana" → [0,6]
 - valid_regions: []
-- valid_from: first day of current month.
-- valid_to: last day of current month.
+- valid_from: first day of current month (defensible floor; cards don't declare a start).
+- valid_to: **null by default**. Emit null UNLESS a card explicitly states a
+  per-card end date in one of these forms: "Vigencia hasta DD/MM/YY", "Válido
+  hasta DD/MM/YY", "Hasta el DD/MM/YY", "Hasta el DD de <mes>". If NONE of
+  those markers appears for a card, valid_to MUST be null. Do NOT default to
+  end-of-month. Do NOT infer from the scraping month. Personal Pay's hub is a
+  rolling Nivel-tier catalog; almost every card is null.
 - requires_min_spend: null.
 - promo_type: "cashback" (Personal Pay's "beneficio" mechanic is cashback by
   default, regardless of whether we can see the tope).
@@ -97,7 +102,8 @@ const LlmPromo = z.object({
   valid_days: z.array(z.number().int().min(0).max(6)),
   valid_regions: z.array(z.string()),
   valid_from: z.string(),
-  valid_to: z.string(),
+  // null = "the page did not declare an end date"; any date = the page stated one.
+  valid_to: z.string().nullable(),
   requires_min_spend: z.number().nullable(),
   promo_type: z.enum(['cashback', 'cuotas', 'mixed']),
 });
@@ -138,7 +144,11 @@ const GEMINI_RESPONSE_SCHEMA: Record<string, unknown> = {
           valid_days: { type: 'ARRAY', items: { type: 'INTEGER' } },
           valid_regions: { type: 'ARRAY', items: { type: 'STRING' } },
           valid_from: { type: 'STRING', description: 'YYYY-MM-DD' },
-          valid_to: { type: 'STRING', description: 'YYYY-MM-DD' },
+          valid_to: {
+            type: 'STRING',
+            description: 'YYYY-MM-DD, or null if the page did not declare a vigencia for this card',
+            nullable: true,
+          },
           requires_min_spend: { type: 'NUMBER', nullable: true },
           promo_type: { type: 'STRING', enum: ['cashback', 'cuotas', 'mixed'] },
         },
@@ -216,6 +226,40 @@ export function personalpayPromoId(
 }
 
 // =============================================================================
+// valid_to invariant — evidence-based guard.
+//
+// Same policy as Brubank (see scripts/lib/brubank-extract.ts for the full
+// rationale). Personal Pay's hub is a rolling Nivel-tier catalog with no
+// per-card vigencia. If the LLM emits a date when the page has no end-date
+// markers, we force null — any date is a hallucination.
+//
+// If the page ever gains end-date markers (e.g., a "Vigencia del DD/MM/YY al
+// DD/MM/YY" ribbon on seasonal pushes), the LLM's per-row choice is trusted.
+// =============================================================================
+
+const PERSONALPAY_END_DATE_MARKER = new RegExp(
+  [
+    'vigencia\\s+hasta',
+    'v[aá]lid[oa]\\s+hasta',
+    'v[aá]lido?s?\\s+del?',
+    'hasta\\s+el\\s+\\d{1,2}[\\s/]',
+    'hasta\\s+el\\s+\\d{1,2}\\s+de\\s+[a-z]+',
+    'vigencia\\s+del\\s+\\d',
+    'desde\\s+el\\s+\\d{1,2}[\\s/].*hasta\\s+el\\s+\\d',
+  ].join('|'),
+  'i',
+);
+
+/**
+ * Exported for tests. Returns true iff the source markdown contains at least
+ * one explicit end-date marker that could plausibly justify a non-null valid_to
+ * somewhere on the page.
+ */
+export function markdownDeclaresEndDate(markdown: string): boolean {
+  return PERSONALPAY_END_DATE_MARKER.test(markdown);
+}
+
+// =============================================================================
 // Extraction.
 // =============================================================================
 export interface ExtractPersonalPayPromosArgs {
@@ -261,6 +305,10 @@ export async function extractPersonalPayPromos(
   const rejected_reasons: string[] = [];
   const seenIds = new Set<string>();
 
+  // Evidence-based valid_to guard. See the comment block above
+  // markdownDeclaresEndDate for the policy rationale.
+  const pageDeclaresEndDate = markdownDeclaresEndDate(markdown);
+
   for (const item of payload.promos) {
     // Hard guard: Personal Pay's topes are image-locked and auth-gated (see file
     // header). The prompt tells the LLM to emit `tope=null`, but we FORCE null
@@ -270,6 +318,10 @@ export async function extractPersonalPayPromos(
     // rows come from a different source_id and aren't constrained by this rule.
     const tope = null;
     const tope_period = null;
+
+    // Same invariant for valid_to: if the page has no end-date markers at all,
+    // any date from the LLM is a hallucination. Force null.
+    const valid_to = pageDeclaresEndDate ? (item.valid_to ?? null) : null;
 
     const id = personalpayPromoId(source_url, item.merchant, item.pct, item.valid_days);
     if (seenIds.has(id)) continue;
@@ -288,7 +340,7 @@ export async function extractPersonalPayPromos(
       valid_days: item.valid_days,
       valid_regions: item.valid_regions ?? [],
       valid_from: item.valid_from,
-      valid_to: item.valid_to,
+      valid_to,
       requires_min_spend: item.requires_min_spend,
       last_seen_at: now,
     };
