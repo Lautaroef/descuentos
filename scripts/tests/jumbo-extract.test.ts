@@ -166,8 +166,11 @@ test('jumbo: Jumbo al 100 pesoscheck row has wallet=["jumbo_mas"] and valid_from
   assert.strictEqual(result.promos.length, 1);
   const p = result.promos[0];
   assert.deepStrictEqual(p.wallet, ['jumbo_mas'], 'exactly the own-cupon wallet');
+  // Jumbo sources always declare an explicit vigencia; valid_to is never null
+  // for this source. The non-null assertion documents that invariant.
+  assert.ok(p.valid_to !== null, 'jumbo: valid_to always declared');
   assert.ok(
-    new Date(p.valid_from).getTime() < new Date(p.valid_to).getTime(),
+    new Date(p.valid_from).getTime() < new Date(p.valid_to!).getTime(),
     'valid_from strictly before valid_to',
   );
 });

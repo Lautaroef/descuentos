@@ -81,7 +81,9 @@ export function PromoDetail({ promo, compact = false }: PromoDetailProps) {
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 text-sm">
           <Field label="Válido">{formatValidDays(promo.valid_days)}</Field>
           <Field label="Vigencia">
-            {formatDateShort(promo.valid_from)} – {formatDateShort(promo.valid_to)}
+            {promo.valid_to
+              ? `${formatDateShort(promo.valid_from)} – ${formatDateShort(promo.valid_to)}`
+              : 'Sin vigencia declarada'}
             {endingDays !== null && endingDays >= 0 && endingDays <= 3 && (
               <span className="ml-2 font-semibold text-[color:var(--color-warning)]">
                 {endingDays === 0

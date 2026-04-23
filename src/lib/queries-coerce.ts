@@ -47,7 +47,7 @@ export interface PromoRowRaw {
   valid_days: number[] | null;
   valid_regions: string[] | null;
   valid_from: string | Date;
-  valid_to: string | Date;
+  valid_to: string | Date | null;
   requires_min_spend: string | number | null;
   stacks_with: string[] | null;
   variants: Promo['variants'] | null;
@@ -82,7 +82,11 @@ export function coerce(row: PromoRowRaw): Promo {
     valid_days: row.valid_days ?? [],
     valid_regions: row.valid_regions ?? [],
     valid_from: toIsoDate(row.valid_from),
-    valid_to: toIsoDate(row.valid_to),
+    // `valid_to` is nullable at the schema/DB level: null = "no declared end
+    // date" (rolling catalogs like Brubank's Webflow page). The serving SQL
+    // treats null as "open-ended, always visible" via the `valid_to is null or
+    // valid_to >= today` gate in `listPromos`.
+    valid_to: row.valid_to === null ? null : toIsoDate(row.valid_to),
     requires_min_spend:
       row.requires_min_spend === null
         ? null

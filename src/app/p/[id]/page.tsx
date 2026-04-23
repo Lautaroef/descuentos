@@ -29,7 +29,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     promo.tope !== null
       ? `, tope ${formatTope(promo.tope)} ${topePeriodLabel(promo.tope_period)}`
       : ', sin tope'
-  }. ${formatValidDays(promo.valid_days)}. Vigencia hasta ${formatDateShort(promo.valid_to)}.`;
+  }. ${formatValidDays(promo.valid_days)}.${
+    promo.valid_to ? ` Vigencia hasta ${formatDateShort(promo.valid_to)}.` : ''
+  }`;
   return {
     title,
     description,

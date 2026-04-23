@@ -48,7 +48,12 @@ export const Promo = z.object({
   valid_days: z.array(z.number().int().min(0).max(6)),
   valid_regions: z.array(z.string()),
   valid_from: z.string().date(),
-  valid_to: z.string().date(),
+  // `valid_to: null` means "no declared end date" — the source page didn't
+  // publish a vigencia. This is semantic truth for rolling catalogs like
+  // Brubank's Webflow page and Personal Pay's Nivel tier grid. Do NOT default
+  // to end-of-month; that's a hallucination and breaks the `valid_to >= today`
+  // visibility gate in `src/lib/queries.ts` at the end of the scraping month.
+  valid_to: z.string().date().nullable(),
   requires_min_spend: z.number().nullable(),
   stacks_with: z.array(z.string()).optional(),
   variants: z

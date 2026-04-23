@@ -1,0 +1,28 @@
+-- Phase 3.3: make `valid_to` nullable on promos.
+--
+-- WHY
+-- ---
+-- The `valid_to` column was NOT NULL since 001_init, and extractors that
+-- couldn't read a vigencia from the source page hallucinated a default
+-- (end-of-month for Brubank, Personal Pay). When the scraping month rolled
+-- over, the serving-layer gate (`valid_to >= today` in src/lib/queries.ts)
+-- hid every freshly-scraped row that kept last month's hallucinated date,
+-- producing the "0 promos visible from 85 fresh Brubank rows" failure mode
+-- observed 2026-04-18.
+--
+-- Root cause: the schema couldn't express "this source did not declare an
+-- end date" — both null and a guessed date collapsed into a string. The
+-- Brubank Webflow catalog and the Personal Pay hub are rolling catalogs;
+-- their promos have no published vigencia. Null is the honest representation.
+--
+-- The serving SQL in src/lib/queries.ts already handles `valid_to is null`
+-- correctly (treats it as "open-ended, visible"); this migration just
+-- unblocks the ingestion side from storing the truth.
+--
+-- FORWARD-ONLY
+-- ------------
+-- Existing rows stay populated. The change is permission-only (column still
+-- accepts dates). Rolling back would require refilling nulls with a sentinel,
+-- which is worse than the original bug — don't.
+
+alter table promos alter column valid_to drop not null;
