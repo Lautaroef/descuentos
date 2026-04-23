@@ -90,9 +90,16 @@ Output a JSON object: { "promos": [ ... ] } with ONE entry per merchant card. Fi
     * "Jueves a domingos" → [0,4,5,6]
     * "Lunes a viernes" → [1,2,3,4,5]
 - valid_regions: always [] (Brubank is national).
-- valid_from: first day of the current month (YYYY-MM-01).
-- valid_to: last day of the current month (YYYY-MM-LL). Brubank catalogs rotate
-  monthly; use the scraping month as the window.
+- valid_from: first day of the current month (YYYY-MM-01). Brubank cards don't
+  declare a start date; the scraping month is a defensible floor.
+- valid_to: **null by default**. Emit null UNLESS the page explicitly states an
+  end date for THIS card in one of these forms: "Vigencia hasta DD/MM/YY",
+  "Válido hasta DD/MM/YY", "Hasta el DD/MM/YY", "Hasta el DD de <mes>",
+  "Vigencia Del DD/MM/YY al DD/MM/YY". If NONE of those markers appear for a
+  card, valid_to MUST be null. Do NOT default to end-of-month. Do NOT infer a
+  date from the scraping month. Do NOT reuse a legal-text phrase like "durante
+  el mes en curso" as a date — that is an open-ended indicator, still null.
+  Brubank's Webflow catalog is rolling; almost every card is null.
 - requires_min_spend: null (Brubank catalog cards never show this).
 - promo_type: "cashback" for "reintegro" cards, "mixed" for "descuento" cards (in
   Brubank lingo "descuento" = direct discount, "reintegro" = cashback); "cuotas"
@@ -126,7 +133,8 @@ const LlmBrubankPromo = z.object({
   valid_days: z.array(z.number().int().min(0).max(6)),
   valid_regions: z.array(z.string()),
   valid_from: z.string(),
-  valid_to: z.string(),
+  // null = "the page did not declare an end date"; any date = the page stated one.
+  valid_to: z.string().nullable(),
   requires_min_spend: z.number().nullable(),
   promo_type: z.enum(['cashback', 'cuotas', 'mixed']),
   cuotas: z.number().int().min(0).nullable().optional(),
@@ -171,7 +179,11 @@ const GEMINI_RESPONSE_SCHEMA: Record<string, unknown> = {
           valid_days: { type: 'ARRAY', items: { type: 'INTEGER' } },
           valid_regions: { type: 'ARRAY', items: { type: 'STRING' } },
           valid_from: { type: 'STRING', description: 'YYYY-MM-DD' },
-          valid_to: { type: 'STRING', description: 'YYYY-MM-DD' },
+          valid_to: {
+            type: 'STRING',
+            description: 'YYYY-MM-DD, or null if the page did not declare a vigencia for this card',
+            nullable: true,
+          },
           requires_min_spend: { type: 'NUMBER', nullable: true },
           promo_type: { type: 'STRING', enum: ['cashback', 'cuotas', 'mixed'] },
           cuotas: { type: 'INTEGER', nullable: true },
@@ -266,6 +278,56 @@ function issuerBankForPlan(plan: 'ultra' | 'plus' | 'one'): string[] {
 }
 
 // =============================================================================
+// valid_to invariant — evidence-based guard.
+//
+// Brubank's /beneficios page is a rolling Webflow catalog of ongoing
+// benefits; almost every card has NO declared vigencia. When the LLM
+// hallucinates an end-of-month date, the `valid_to >= today` gate in
+// src/lib/queries.ts hides every promo the day the scraping month rolls
+// over — surfacing as "0 of 85 fresh Brubank rows visible" in production
+// on 2026-04-18.
+//
+// Guard policy (Option B, evidence-based):
+//   - If the source markdown does NOT contain any explicit end-date marker,
+//     force valid_to=null on every row — the LLM is not authoritative over
+//     the source.
+//   - If the markdown DOES contain end-date markers, trust the LLM's
+//     per-row decision: null stays null, a date stays a date. The LLM is
+//     the best judge of which card the marker belongs to.
+//
+// This trades a small amount of recall (if Brubank ever publishes a
+// vigencia image-only on a single card, we'd miss it) for a hard floor
+// against the hallucination class of bug. The alternative (Option A,
+// unconditional null) loses too much signal; Option C (prompt-only trust)
+// is what we had before, and it was wrong.
+//
+// Source-specific: only applies to Brubank extractions. MODO/Cuenta DNI
+// have dedicated vigencia UI blocks and a different extraction discipline.
+// =============================================================================
+
+const BRUBANK_END_DATE_MARKER = new RegExp(
+  [
+    'vigencia\\s+hasta',
+    'v[aá]lid[oa]\\s+hasta',
+    'v[aá]lido?s?\\s+del?',
+    'hasta\\s+el\\s+\\d{1,2}[\\s/]',
+    'hasta\\s+el\\s+\\d{1,2}\\s+de\\s+[a-z]+',
+    'vigencia\\s+del\\s+\\d',
+    'desde\\s+el\\s+\\d{1,2}[\\s/].*hasta\\s+el\\s+\\d',
+  ].join('|'),
+  'i',
+);
+
+/**
+ * Exported for tests. Returns true iff the source markdown contains at least
+ * one explicit end-date marker that could plausibly justify a non-null valid_to
+ * somewhere on the page.
+ */
+export function markdownDeclaresEndDate(markdown: string): boolean {
+  return BRUBANK_END_DATE_MARKER.test(markdown);
+}
+
+// =============================================================================
 // Extraction — public entry point.
 // =============================================================================
 export interface ExtractBrubankPromosArgs {
@@ -300,7 +362,10 @@ export async function extractBrubankPromos(
       content: markdown,
       schema: LlmPayload,
       schemaForModel: GEMINI_RESPONSE_SCHEMA,
-      maxOutputTokens: 8192, // many cards per page.
+      // 85-card catalog. Bumped from 8192 → 16384 on 2026-04-18 after the
+      // `valid_to: null` change widened the JSON envelope enough to trip
+      // truncation mid-response. See docs/sources/brubank.md for details.
+      maxOutputTokens: 16384,
     });
     payload = r.data;
     usage = r.usage;
@@ -312,10 +377,21 @@ export async function extractBrubankPromos(
   const rejected_reasons: string[] = [];
   const seenIds = new Set<string>();
 
+  // Evidence-based valid_to guard. If the source markdown has NO explicit
+  // end-date marker, the LLM has nothing to anchor a valid_to on; any date
+  // it emits is a hallucination. Force null across the whole payload.
+  // If markers ARE present, we trust the LLM's per-row decision.
+  const pageDeclaresEndDate = markdownDeclaresEndDate(markdown);
+
   for (const item of payload.promos) {
     const tope_period = item.tope_period === '' ? null : (item.tope_period ?? null);
     const plansToEmit: Array<'ultra' | 'plus' | 'one'> =
       item.plan === 'all' ? ['ultra', 'plus', 'one'] : [item.plan];
+
+    // The LLM's valid_to is only trustworthy if the page actually has
+    // vigencia language. When the page is a rolling catalog (no markers),
+    // force null regardless of what the model emitted.
+    const valid_to = pageDeclaresEndDate ? (item.valid_to ?? null) : null;
 
     for (const plan of plansToEmit) {
       const id = brubankPromoId(source_url, plan, item.merchant, item.pct, item.valid_days);
@@ -337,7 +413,7 @@ export async function extractBrubankPromos(
         valid_days: item.valid_days,
         valid_regions: item.valid_regions ?? [],
         valid_from: item.valid_from,
-        valid_to: item.valid_to,
+        valid_to,
         requires_min_spend: item.requires_min_spend,
         last_seen_at: now,
       };
