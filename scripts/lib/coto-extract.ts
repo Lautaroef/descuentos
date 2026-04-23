@@ -60,6 +60,10 @@ Fields (required):
 - tope_period: ticket | day | week | month. "semanal" → week; "por mes" / "mensual"
   → month; "p/ transacción" / "por transacción" → ticket. If tope is null, set
   tope_period to null.
+- cuotas_count: REQUIRED for promo_type="cuotas". Integer number of installments
+  ("3 cuotas sin interés" → 3, "6 cuotas" → 6, "12 cuotas" → 12). If a block
+  lists MULTIPLE counts ("3 y 6 cuotas") use the HIGHER count. null for
+  cashback/mixed rows. Disambiguates same-bank/day cuotas tiers on the id level.
 - merchant: always "Coto".
 - category: always "supermercado".
 - issuer_bank: lowercased short names of banks. From logo captions / legal text.

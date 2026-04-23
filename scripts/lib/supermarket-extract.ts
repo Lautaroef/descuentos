@@ -9,19 +9,51 @@
 //     block — those become ONE promo row with array-valued `wallet` and
 //     `issuer_bank` rather than N separate rows.
 //
-// Canonical id strategy for this family (bulk, multi-block):
+// Canonical id strategy — v2 (2026-04-23):
 //
-//   Row id = uuidV5(`${source_url}#${day_key}#${bank_key}#${pct}#${promo_type}`,
-//                   SUPERMARKET_UUID_NAMESPACE)
+//   Row id = uuidV5(`${source_url}#${day_key}#${banks_key}#${wallets_key}#${pct}#${promo_type}#${variant_key}`,
+//                   SUPERMARKET_UUID_NAMESPACE_V2)
 //
-// Why this tuple (and not `(source_url, merchant, pct)` like Cuenta DNI)?
-//   - Merchant is constant on a cross-bank catalog page (always the chain), so
-//     it can't distinguish rows.
-//   - Multiple Mondays-only 30% promos from DIFFERENT banks need separate ids.
-//   - Adding `promo_type` disambiguates a 20% cashback row from a 20% cuotas
-//     row (Carrefour sometimes has both on the same day/bank).
-//   - `day_key` is a stable normalized form of the weekday array (e.g.
-//     "1" for Mondays, "1,2,3,4,5" for L-V, "0-6" for all days).
+// Why this tuple (and not the v1 `(source_url, day_key, primary_bank, pct, promo_type)`)?
+//
+//   v1 collapsed distinct promos in two documented ways:
+//
+//   1. Cuotas tiers from the same bank on the same days. Jumbo's Cencopay shows
+//      3/6/12/18/24 cuotas as separate blocks on `Todos los días` — all have
+//      pct=0 + promo_type='cuotas' + bank='cencopay' + day_key='0,1,2,3,4,5,6'
+//      → same id. 5 distinct promos collapsed to 1 row (first wins).
+//      Symptom in production (2026-04-23): "30 inserted / 47 updated" reported
+//      but only 14 rows in the DB for jumbo-descuentos.
+//
+//   2. Multi-bank promos on Carrefour where only the FIRST sorted bank went
+//      into the id. Two distinct blocks of the form "Sábados Galicia+BBVA
+//      10%" vs "Sábados Galicia+Santander 10%" would share bank_key='bbva'
+//      (if bbva appears in both) and collide.
+//
+//   v2 resolves both:
+//
+//   - `banks_key`:   ALL sorted+deduped banks joined by `|`. Captures the full
+//                    bank composition of the promo block. Empty → `_none_`.
+//   - `wallets_key`: ALL sorted+deduped wallets joined by `|`. Captures the
+//                    cross-wallet universal promo composition. Empty → `_none_`.
+//   - `variant_key`: disambiguates same-bank/day/pct/type collisions:
+//                      * cuotas rows  → `cuotas_count` from the LLM payload
+//                        (e.g., "3", "6", "12", "24")
+//                      * cashback/mixed → compact tope signature
+//                        (e.g., "20000:month", or "" if tope null)
+//                    The prompt MUST elicit `cuotas_count` for cuotas rows.
+//
+// NEW UUID NAMESPACE (v2 → new namespace). Different from v1 so existing rows
+// under the old tuple don't clash with newly-ingested v2 rows. Migration 007
+// deletes the old rows; re-ingestion recreates them under v2 ids.
+//
+// `supermarketPromoIdV1` is retained ONLY for test fixtures that pin the old
+// behaviour to prove the fix. Production code must not call it.
+//
+// Idempotency preservation: every v2 tuple component is normalized in-function
+// (sort, dedup, lowercase, round) so Gemini drift (pct float jitter, valid_day
+// duplicates, bank casing) cannot change the id. See the companion Phase-3.3
+// hardening rationale below.
 //
 // Trade-off: when the chain reshuffles their catalog (e.g., drops a bank,
 // changes the day a promo runs on), new ids emit. Phase 4 dedup will collapse
@@ -31,12 +63,19 @@ import { z } from 'zod';
 import { Promo as PromoSchema, type Promo } from '../promo-schema.js';
 import { extractStructured, type GeminiUsage } from './gemini.js';
 
-// One namespace UUID shared across Coto/Jumbo/Carrefour. Different from MODO /
-// Cuenta DNI so ids don't collide across sources.
+// v1 namespace — retained for test-only proof of pre-fix behaviour. Do NOT use
+// in production paths. The v2 production path uses the new namespace below.
 export const SUPERMARKET_UUID_NAMESPACE = '7b9f3d1c-2e4a-5b6c-8d7e-9f0a1b2c3d4e';
+
+// v2 namespace — the live production id namespace as of 2026-04-23.
+// Different from v1 so v1 and v2 ids never collide, which means we can run a
+// dry-run test-harness extraction under v1 next to a live v2 extraction for
+// debugging without cross-contamination.
+export const SUPERMARKET_UUID_NAMESPACE_V2 = '2a6d7e1f-9c8b-4a3e-8d5c-1f0e2b3a4c5d';
 
 // =============================================================================
 // LLM payload schema — tolerant of empty-string tope_period per the MODO quirk.
+// Added `cuotas_count` for v2 id scheme — optional integer (null for cashback).
 // =============================================================================
 const TopePeriod = z.union([z.enum(['ticket', 'day', 'week', 'month']), z.literal(''), z.null()]);
 const PromoTypeEnum = z.enum(['cashback', 'cuotas', 'mixed']);
@@ -48,6 +87,12 @@ export const LlmSuperPromo = z.object({
   promo_type: PromoTypeEnum,
   tope: z.number().nullable(),
   tope_period: TopePeriod,
+  /**
+   * Cuotas count — number of installments. REQUIRED for promo_type='cuotas'
+   * to disambiguate same-bank/day cuotas tiers (Cencopay 3 / 6 / 12 / 24).
+   * null for cashback/mixed rows.
+   */
+  cuotas_count: z.number().int().positive().nullable().optional(),
   merchant: z.string(), // the chain ("Coto", "Jumbo", "Carrefour")
   category: z.enum([
     'supermercado',
@@ -99,6 +144,7 @@ export const SUPERMARKET_GEMINI_SCHEMA: Record<string, unknown> = {
             enum: ['ticket', 'day', 'week', 'month'],
             nullable: true,
           },
+          cuotas_count: { type: 'INTEGER', nullable: true },
           merchant: { type: 'STRING' },
           category: {
             type: 'STRING',
@@ -145,6 +191,7 @@ export const SUPERMARKET_GEMINI_SCHEMA: Record<string, unknown> = {
           'promo_type',
           'tope',
           'tope_period',
+          'cuotas_count',
           'merchant',
           'category',
           'issuer_bank',
@@ -275,12 +322,12 @@ export function dayKey(valid_days: number[]): string {
 }
 
 /**
- * Primary bank (for id derivation): first sorted bank after dedup, or
+ * Primary bank (for v1 id derivation): first sorted bank after dedup, or
  * `_none_` if empty.
  *
- * Dedup is defensive — `normalizeBanks` already de-dupes via Set, but callers
- * may occasionally pass already-structured input (tests, migrations). Keeping
- * this function byte-identical across inputs is load-bearing for idempotency.
+ * Retained for backward compatibility with `supermarketPromoIdV1` which is
+ * used ONLY by regression tests that prove the v1 collision shape. Production
+ * extraction uses `banksKey` (v2) which includes ALL banks.
  */
 export function primaryBank(issuer_bank: string[]): string {
   const seen = new Set<string>();
@@ -290,6 +337,47 @@ export function primaryBank(issuer_bank: string[]): string {
   }
   if (seen.size === 0) return '_none_';
   return [...seen].sort()[0];
+}
+
+/**
+ * v2 banks_key: ALL sorted+deduped banks joined by `|`. Empty → `_none_`.
+ *
+ * This is the v2 upgrade over `primaryBank`. A promo block that spans multiple
+ * banks (e.g., Carrefour's "BBVA + Galicia + Santander all offer 10% saturdays
+ * with identical terms") produces a SINGLE id under v2, distinguishable from
+ * any other Saturday 10% promo with a different bank composition. Under v1,
+ * `primaryBank` only saw "bbva" — two multi-bank blocks could share the same
+ * first-alphabetical bank and collide.
+ *
+ * Normalizes input (lowercase, trim, dedup) so Gemini casing drift doesn't
+ * affect the id.
+ */
+export function banksKey(issuer_bank: string[]): string {
+  const seen = new Set<string>();
+  for (const b of issuer_bank) {
+    const trimmed = b.trim().toLowerCase();
+    if (trimmed) seen.add(trimmed);
+  }
+  if (seen.size === 0) return '_none_';
+  return [...seen].sort().join('|');
+}
+
+/**
+ * v2 wallets_key: ALL sorted+deduped wallets joined by `|`. Empty → `_none_`.
+ *
+ * Carrefour's universal cross-wallet "10% QR todas las billeteras" block emits
+ * ONE row with wallet=[8 slugs]. Under v1, wallets didn't enter the id at all
+ * — so a pct-10 + saturday + no-bank universal block would collide with any
+ * other pct-10 + saturday + no-bank row. This key prevents that.
+ */
+export function walletsKey(wallet: string[]): string {
+  const seen = new Set<string>();
+  for (const w of wallet) {
+    const trimmed = w.trim().toLowerCase();
+    if (trimmed) seen.add(trimmed);
+  }
+  if (seen.size === 0) return '_none_';
+  return [...seen].sort().join('|');
 }
 
 /**
@@ -309,6 +397,36 @@ export function canonicalPct(pct: number): number {
 /** Canonicalize the `promo_type` component — trim + lowercase (enum-safe). */
 export function canonicalPromoType(promo_type: string): string {
   return String(promo_type).trim().toLowerCase();
+}
+
+/**
+ * v2 variant_key: disambiguates rows that share (day, bank, wallet, pct, type).
+ *
+ * For cuotas rows: `cuotas_count` (e.g. "3", "6", "12"). If the LLM didn't
+ * emit it (legacy fixture or partial extraction), falls back to "" — the
+ * extractor will log a warning but we accept the row rather than collapse it.
+ *
+ * For cashback/mixed rows: a compact tope signature (`"20000:month"`) to
+ * separate same-bank/day/pct tiers like "10% sueldo tope $8k/week" vs
+ * "10% segmento tope $15k/week" when they appear on the same page.
+ * Empty tope → empty signature.
+ */
+export function variantKey(args: {
+  promo_type: string;
+  cuotas_count: number | null | undefined;
+  tope: number | null;
+  tope_period: string | null | undefined;
+}): string {
+  const type = canonicalPromoType(args.promo_type);
+  if (type === 'cuotas') {
+    return args.cuotas_count != null && Number.isFinite(args.cuotas_count)
+      ? `c${Math.round(args.cuotas_count)}`
+      : '';
+  }
+  // cashback / mixed
+  if (args.tope == null) return '';
+  const period = (args.tope_period ?? '').toString().trim().toLowerCase();
+  return `${Math.round(args.tope)}:${period}`;
 }
 
 // =============================================================================
@@ -341,30 +459,18 @@ function uuidV5(name: string, namespace: string): string {
   );
 }
 
-export interface IdTuple {
+// =============================================================================
+// v1 id — retained for regression tests that pin the pre-fix collision shape.
+// Production code uses supermarketPromoId (v2) below.
+// =============================================================================
+export interface IdTupleV1 {
   source_url: string;
   day_key: string;
   bank_key: string;
   pct: number;
   promo_type: string;
 }
-
-/**
- * Build the deterministic UUID v5 for a supermarket promo.
- *
- * The tuple is normalized here (belt-and-suspenders) so callers who pass raw
- * values still get a stable id:
- *   - `source_url`: trimmed (never contains whitespace in practice)
- *   - `day_key`:     assumed already built via `dayKey()`; lightly trimmed
- *   - `bank_key`:    lowercased + trimmed
- *   - `pct`:         rounded to nearest integer (see `canonicalPct`)
- *   - `promo_type`:  lowercased + trimmed (`canonicalPromoType`)
- *
- * This hardening is specifically to defuse the Gemini token-boundary
- * nondeterminism observed on Carrefour's /descuentos-bancarios run
- * (1 insert / 24 updates on idempotent re-run, Phase 3.3).
- */
-export function supermarketPromoId(t: IdTuple): string {
+export function supermarketPromoIdV1(t: IdTupleV1): string {
   const source_url = t.source_url.trim();
   const day_key = String(t.day_key).trim();
   const bank_key = t.bank_key.trim().toLowerCase();
@@ -372,6 +478,163 @@ export function supermarketPromoId(t: IdTuple): string {
   const promo_type = canonicalPromoType(t.promo_type);
   const name = `${source_url}#${day_key}#${bank_key}#${pct}#${promo_type}`;
   return uuidV5(name, SUPERMARKET_UUID_NAMESPACE);
+}
+
+// =============================================================================
+// v2 id — the production id scheme as of 2026-04-23.
+// =============================================================================
+export interface IdTuple {
+  source_url: string;
+  day_key: string;
+  banks_key: string;
+  wallets_key: string;
+  pct: number;
+  promo_type: string;
+  variant_key: string;
+}
+
+/**
+ * Build the deterministic UUID v5 for a supermarket promo under the v2 scheme.
+ *
+ * All components are re-normalized defensively so callers passing raw values
+ * still get a stable id:
+ *   - `source_url`: trimmed
+ *   - `day_key`:     lightly trimmed (caller should have used `dayKey()`)
+ *   - `banks_key`:   lowercased + trimmed (caller should have used `banksKey()`)
+ *   - `wallets_key`: lowercased + trimmed (caller should have used `walletsKey()`)
+ *   - `pct`:         rounded to nearest integer (see `canonicalPct`)
+ *   - `promo_type`:  lowercased + trimmed (`canonicalPromoType`)
+ *   - `variant_key`: lowercased + trimmed
+ */
+export function supermarketPromoId(t: IdTuple): string {
+  const source_url = t.source_url.trim();
+  const day_key = String(t.day_key).trim();
+  const banks_key = t.banks_key.trim().toLowerCase();
+  const wallets_key = t.wallets_key.trim().toLowerCase();
+  const pct = canonicalPct(t.pct);
+  const promo_type = canonicalPromoType(t.promo_type);
+  const variant_key = String(t.variant_key).trim().toLowerCase();
+  const name =
+    `${source_url}#${day_key}#${banks_key}#${wallets_key}#${pct}#${promo_type}#${variant_key}`;
+  return uuidV5(name, SUPERMARKET_UUID_NAMESPACE_V2);
+}
+
+// =============================================================================
+// Chunked extraction — the long-term answer to the Carrefour truncation bug.
+//
+// Problem (2026-04-23, `pnpm run-carrefour`):
+//   Single LLM call for the full page (~25-30 blocks) → JSON payload with long
+//   notes fields exceeded maxOutputTokens, truncated mid-string, parse failed.
+//   Bumping maxOutputTokens only defers the problem (if the catalog grows to 50
+//   blocks, the 8192 ceiling will also fail).
+//
+// Solution (Option 1 — section-level chunking):
+//   Source adapters supply a `chunker` callback that splits the markdown into
+//   N small chunks, each containing ~1-3 promo blocks (small enough that
+//   Gemini's output fits in <2k tokens per call). We run one call per chunk
+//   with bounded concurrency, merge the resulting promos, and report per-chunk
+//   telemetry (success/failure). A single bad chunk does NOT kill the run.
+//
+//   Why section-level chunking and not per-promo?
+//     - Per-promo (Option 5) would require reliable single-block boundary
+//       detection at the TS layer, which is brittle when the markdown has
+//       marketing banners / duplicate logos / embedded nav.
+//     - Section-level chunking uses source-specific markers ("Ver legal" for
+//       Carrefour, `- ![](...png)` for Jumbo) that are robust heuristics
+//       already present in the raw scrape. 2 blocks per chunk still keeps
+//       Gemini output under 1k tokens each.
+//     - The single-shot path is retained as a fallback when `chunker` is not
+//       provided (preserves Coto behaviour, which has shorter catalogs).
+// =============================================================================
+
+export type SupermarketChunker = (markdown: string) => string[];
+
+/**
+ * Run `extractStructured` once per chunk with bounded concurrency.
+ * Merges all per-chunk `LlmSuperPayload.promos` into a single payload.
+ * Surfaces per-chunk errors in `chunk_errors` (telemetry).
+ */
+async function runChunkedLlm(args: {
+  chunks: string[];
+  prompt: string;
+  source_id: string;
+  source_url: string;
+  concurrency: number;
+  maxOutputTokens: number;
+}): Promise<{
+  payload: LlmSuperPayload;
+  usage: GeminiUsage;
+  chunk_errors: string[];
+  chunks_total: number;
+  chunks_succeeded: number;
+}> {
+  const { chunks, prompt, source_id, source_url, concurrency, maxOutputTokens } = args;
+
+  const results = new Array<{
+    promos: LlmSuperPromo[];
+    usage: GeminiUsage;
+    error: string | null;
+  }>(chunks.length);
+
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(Math.max(1, concurrency), chunks.length) }, async () => {
+    while (true) {
+      const idx = cursor++;
+      if (idx >= chunks.length) return;
+      try {
+        const r = await extractStructured({
+          prompt: `${prompt}\n\nsource_id: ${source_id}\nsource_url: ${source_url}`,
+          content: chunks[idx],
+          schema: LlmSuperPayload,
+          schemaForModel: SUPERMARKET_GEMINI_SCHEMA,
+          maxOutputTokens,
+        });
+        results[idx] = { promos: r.data.promos, usage: r.usage, error: null };
+      } catch (err: any) {
+        results[idx] = {
+          promos: [],
+          usage: { input_tokens: 0, output_tokens: 0, thoughts_tokens: 0, cost_usd: 0 },
+          error: err?.message ?? String(err),
+        };
+      }
+    }
+  });
+  await Promise.all(workers);
+
+  const mergedPromos: LlmSuperPromo[] = [];
+  const chunk_errors: string[] = [];
+  let totalInput = 0;
+  let totalOutput = 0;
+  let totalThoughts = 0;
+  let totalCost = 0;
+  let succeeded = 0;
+
+  for (let i = 0; i < results.length; i += 1) {
+    const r = results[i];
+    if (r.error) {
+      chunk_errors.push(`chunk#${i}: ${r.error}`);
+    } else {
+      succeeded += 1;
+      for (const p of r.promos) mergedPromos.push(p);
+    }
+    totalInput += r.usage.input_tokens;
+    totalOutput += r.usage.output_tokens;
+    totalThoughts += r.usage.thoughts_tokens;
+    totalCost += r.usage.cost_usd;
+  }
+
+  return {
+    payload: { promos: mergedPromos },
+    usage: {
+      input_tokens: totalInput,
+      output_tokens: totalOutput,
+      thoughts_tokens: totalThoughts,
+      cost_usd: Math.round(totalCost * 10_000) / 10_000,
+    },
+    chunk_errors,
+    chunks_total: chunks.length,
+    chunks_succeeded: succeeded,
+  };
 }
 
 // =============================================================================
@@ -388,6 +651,15 @@ export interface ExtractSupermarketArgs {
   /** Optional per-URL override. */
   llmOverride?: (content: string) => Promise<{ data: LlmSuperPayload; usage: GeminiUsage }>;
   maxOutputTokens?: number;
+  /**
+   * Optional chunker. When provided AND produces 2+ chunks, the extractor runs
+   * one Gemini call per chunk with bounded concurrency and merges the results.
+   * This is the long-term answer to oversize catalogs. For small pages, return
+   * a 1-element array (or omit) to preserve single-call behaviour.
+   */
+  chunker?: SupermarketChunker;
+  /** Per-chunk concurrency. Defaults to 4 (same ceiling as the MODO runner). */
+  chunkConcurrency?: number;
 }
 
 export interface ExtractSupermarketResult {
@@ -396,6 +668,16 @@ export interface ExtractSupermarketResult {
   usage: GeminiUsage;
   rejected_count: number;
   rejected_reasons: string[];
+  /** Per-chunk telemetry. 1 chunk means single-call path (no chunker). */
+  chunks_total: number;
+  chunks_succeeded: number;
+  chunk_errors: string[];
+  /**
+   * Count of cuotas rows whose cuotas_count was missing. These rows risk
+   * collision on the variant_key (empty string for all of them). Surface so
+   * the adapter can warn loudly if it exceeds a threshold.
+   */
+  cuotas_missing_count: number;
 }
 
 export async function extractSupermarketPromos(
@@ -408,15 +690,53 @@ export async function extractSupermarketPromos(
     prompt,
     default_regions = [],
     maxOutputTokens = 6144, // catalogs are large (~20-60 blocks per page)
+    chunker,
+    chunkConcurrency = 4,
   } = args;
 
   let payload: LlmSuperPayload;
   let usage: GeminiUsage;
+  let chunk_errors: string[] = [];
+  let chunks_total = 1;
+  let chunks_succeeded = 1;
 
   if (args.llmOverride) {
+    // Test override — single call, full payload from caller.
     const r = await args.llmOverride(markdown);
     payload = r.data;
     usage = r.usage;
+  } else if (chunker) {
+    const chunks = chunker(markdown).filter((c) => c.trim().length > 0);
+    if (chunks.length <= 1) {
+      // Chunker returned ≤1 chunk — treat as single-call (safety: never hit
+      // zero-chunk state if chunker couldn't find delimiters; pass the full
+      // markdown through instead of silently extracting nothing).
+      const r = await extractStructured({
+        prompt: `${prompt}\n\nsource_id: ${source_id}\nsource_url: ${source_url}`,
+        content: chunks[0] ?? markdown,
+        schema: LlmSuperPayload,
+        schemaForModel: SUPERMARKET_GEMINI_SCHEMA,
+        maxOutputTokens,
+      });
+      payload = r.data;
+      usage = r.usage;
+    } else {
+      const r = await runChunkedLlm({
+        chunks,
+        prompt,
+        source_id,
+        source_url,
+        concurrency: chunkConcurrency,
+        // Each chunk is small (~1-3 blocks) — 2048 tokens per chunk is ample.
+        // Keep maxOutputTokens respect the caller's override if explicitly lower.
+        maxOutputTokens: Math.min(maxOutputTokens, 2048),
+      });
+      payload = r.payload;
+      usage = r.usage;
+      chunk_errors = r.chunk_errors;
+      chunks_total = r.chunks_total;
+      chunks_succeeded = r.chunks_succeeded;
+    }
   } else {
     const r = await extractStructured({
       prompt: `${prompt}\n\nsource_id: ${source_id}\nsource_url: ${source_url}`,
@@ -434,6 +754,7 @@ export async function extractSupermarketPromos(
   const ids: string[] = [];
   const rejected_reasons: string[] = [];
   const seenIds = new Set<string>();
+  let cuotasMissingCount = 0;
 
   for (const item of payload.promos) {
     const tope_period = item.tope_period === '' ? null : (item.tope_period ?? null);
@@ -473,12 +794,28 @@ export async function extractSupermarketPromos(
       continue;
     }
 
+    // Soft warning: cuotas rows should carry cuotas_count to disambiguate
+    // tiers. When absent, variant_key falls back to '' and same-bank/day
+    // cuotas rows with different tiers will collide. Don't reject — the row
+    // is still directionally useful — but surface the count so we can tune
+    // the prompt.
+    if (canonicalPromoType(item.promo_type) === 'cuotas' && item.cuotas_count == null) {
+      cuotasMissingCount += 1;
+    }
+
     const id = supermarketPromoId({
       source_url,
       day_key: dayKey(item.valid_days),
-      bank_key: primaryBank(issuer_bank),
+      banks_key: banksKey(issuer_bank),
+      wallets_key: walletsKey(wallet),
       pct: item.pct,
       promo_type: item.promo_type,
+      variant_key: variantKey({
+        promo_type: item.promo_type,
+        cuotas_count: item.cuotas_count ?? null,
+        tope: item.tope,
+        tope_period,
+      }),
     });
 
     // Intra-page dedup: if two blocks distill to the same id tuple (e.g., the
@@ -491,11 +828,23 @@ export async function extractSupermarketPromos(
     ids.push(id);
   }
 
+  if (cuotasMissingCount > 0) {
+    console.warn(
+      `[${source_id}] ${cuotasMissingCount} cuotas row(s) missing cuotas_count — ` +
+        `variant_key will be empty for those rows. Collision risk: tier rows on the ` +
+        `same bank+day will dedupe to one. Tune the source prompt to elicit cuotas_count.`,
+    );
+  }
+
   return {
     promos,
     ids,
     usage,
     rejected_count: rejected_reasons.length,
     rejected_reasons,
+    chunks_total,
+    chunks_succeeded,
+    chunk_errors,
+    cuotas_missing_count: cuotasMissingCount,
   };
 }

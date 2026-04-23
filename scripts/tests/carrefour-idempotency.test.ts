@@ -27,7 +27,9 @@ import { extractJumboPromos } from '../lib/jumbo-extract.js';
 import {
   supermarketPromoId,
   dayKey,
-  primaryBank,
+  banksKey,
+  walletsKey,
+  variantKey,
 } from '../lib/supermarket-extract.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -225,9 +227,11 @@ test('carrefour (P0) tuple: valid_days dedup survives repeated Gemini-style dupl
   const base = {
     source_url: 'https://www.carrefour.com.ar/descuentos-bancarios',
     day_key: dayKey([6]),
-    bank_key: primaryBank(['carrefour']),
+    banks_key: banksKey(['carrefour']),
+    wallets_key: walletsKey([]),
     pct: 10,
     promo_type: 'cashback',
+    variant_key: variantKey({ promo_type: 'cashback', cuotas_count: null, tope: null, tope_period: null }),
   };
   const drifted = {
     ...base,

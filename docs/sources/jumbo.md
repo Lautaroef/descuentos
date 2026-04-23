@@ -23,9 +23,22 @@ Both URLs carry their own rows; no cross-URL dedup.
 
 Jumbo IS VTEX (`generator: vtex.render-server@8.179.3`) but we did not probe its promo dataentity — we did probe Carrefour's BP dataentity (auth-gated). Jumbo's promo content surfaces cleanly in markdown, so no API alternative was explored. Worth a Phase 4 pass if credit budget tightens.
 
-## Canonical id strategy
+## Canonical id strategy — v2 (2026-04-23)
 
-Same tuple as Coto: `(source_url, day_key, bank_key, pct, promo_type)`. For the Jumbo al 100 row specifically, `bank_key = '_none_'` (no bank involved, wallet-only).
+Tuple: `(source_url, day_key, banks_key, wallets_key, pct, promo_type, variant_key)`.
+
+- `banks_key`:   ALL sorted+deduped banks joined by `|` (or `_none_`).
+- `wallets_key`: ALL sorted+deduped wallets joined by `|` (or `_none_`).
+- `variant_key`: for cuotas rows = `cNN` where NN is `cuotas_count`; for
+  cashback/mixed = `TOPE:PERIOD` (empty if tope null).
+
+**Why v2**: v1's `(source_url, day_key, primary_bank, pct, promo_type)` collapsed
+Cencopay's 3/6/12/18/24 cuotas tiers into a single row. Production evidence
+(2026-04-23): `pnpm run-jumbo` reported 30 inserted / 47 updated but only 14
+DB rows. Root cause was not an insert/update race — it was id collapse. See
+`db/migrations/006_supermarket_id_v2.sql` for the migration rationale.
+
+For the Jumbo al 100 row specifically: `banks_key = '_none_'`, `wallets_key = 'jumbo_mas'`, `pct = 100`, `variant_key = ''`.
 
 Monthly slug rotation note: `jumbo-al-cien` URL path is STABLE; only the emission/canje date ranges in the content rotate. The id tuple doesn't include dates, so re-runs UPDATE the single pesoscheck row in place — intended.
 
@@ -38,7 +51,7 @@ Monthly slug rotation note: `jumbo-al-cien` URL path is STABLE; only the emissio
 
 ## Edge cases discovered
 
-- **Multiple cuotas-count rows on the same bank** — Cencopay shows 3-cuotas, 6-cuotas, 12-cuotas, 18-cuotas, 24-cuotas as separate blocks with the same bank/day. Each extracts as a distinct row with `pct: 0, promo_type: 'cuotas'`. **They currently collide in the id tuple** because `pct: 0` is the same for all of them. This is a known gap in the current id scheme — Phase 4 should add cuotas-count to the tuple. For Phase 3.3, the first-seen row wins and subsequent cuotas-only rows are deduped out.
+- **Multiple cuotas-count rows on the same bank** — Cencopay shows 3-cuotas, 6-cuotas, 12-cuotas, 18-cuotas, 24-cuotas as separate blocks with the same bank/day. **FIXED (2026-04-23, v2 id):** the prompt now elicits a `cuotas_count` integer field, which feeds into `variant_key` in the id tuple. Each Cencopay tier gets a distinct id. Prior behavior (v1): all five tiers collapsed to one row — confirmed bug-fixed in `scripts/tests/jumbo-canonical-id.test.ts`.
 - **Patagonia Sábados tiered** — Visa crédito general 30% tope $20k/mes AND 35% supermercado tope $25k/mes are TWO separate rows with same bank+day but different `pct`. Deduped correctly by pct.
 - **Cencopay is a Cencosud private-label card** (not a traditional bank). We emit `issuer_bank: ['cencopay']` for consistency; this is a design choice and may want renaming later.
 - **Jumbo al 100 monthly rotation** — the scraped March 2026 cycle landed in the fixture. Next run (April or May) will produce an updated row at the same id.

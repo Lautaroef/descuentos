@@ -36,13 +36,31 @@ Conclusion: the BP dataentity IS the backing store for the promo catalog (confir
 
 If Carrefour ever opens the BP schema publicly (or if a logged-in token becomes reliably available), revisit — a JSON feed would save ~1 Firecrawl credit/run and give us structured fields without LLM inference. For Phase 3.3 the HTML path is the right choice.
 
-## Canonical id strategy
+## Canonical id strategy — v2 (2026-04-23)
 
-Same as Coto/Jumbo: `(source_url, day_key, bank_key, pct, promo_type)`.
+Same as Coto/Jumbo: `(source_url, day_key, banks_key, wallets_key, pct, promo_type, variant_key)`.
 
-**Cross-wallet universal promo handling**: Carrefour's "10% sin tope con QR de todas las billeteras" legal body lists 8+ wallets sharing identical terms. Per the brief: emit ONE Promo row with `wallet` as an array of all listed wallets, NOT N separate rows. This is the honest model — the promo IS one promo that works on many wallets.
+- `banks_key`: ALL sorted+deduped banks joined by `|` (or `_none_`).
+- `wallets_key`: ALL sorted+deduped wallets joined by `|` (or `_none_`).
+- `variant_key`: `cNN` for cuotas rows, `TOPE:PERIOD` for cashback/mixed, empty if no tope.
 
-**Multi-bank identical-terms promos** get the same treatment: one row with `issuer_bank: ['bbva','galicia','santander',...]` rather than N rows. The id's `bank_key` is the FIRST sorted bank — so if Carrefour reshuffles the participating banks, the primary-bank key may shift and a new row emits. Phase 4 canonical dedup handles this.
+**Cross-wallet universal promo handling**: Carrefour's "10% sin tope con QR de todas las billeteras" legal body lists 8+ wallets sharing identical terms. Per the brief: emit ONE Promo row with `wallet` as an array of all listed wallets, NOT N separate rows. Under v2, the `wallets_key` captures this composition so the universal block has a distinct id from any single-wallet variant.
+
+**Multi-bank identical-terms promos** get the same treatment: one row with `issuer_bank: ['bbva','galicia','santander',...]` rather than N rows. Under v1, the id's `bank_key` was the FIRST sorted bank — so two multi-bank promos sharing `bbva` as first-alphabetical would collide. Under v2, `banks_key` is the FULL sorted list joined by `|`, preventing collisions.
+
+## Extraction architecture — chunked (2026-04-23)
+
+The live /descuentos-bancarios page has grown to ~30 promo blocks with long exclusion legal bodies (bodega lists, product exclusions). On 2026-04-23, a single Gemini call for the full page hit `maxOutputTokens` and truncated mid-string:
+  `Gemini returned non-JSON text (Unterminated string in JSON at position 25862)`.
+
+**Long-term fix**: `buildCarrefourChunker` in `scripts/lib/carrefour-extract.ts` splits the markdown at "Ver legal" boundaries (one per block), grouping 2 blocks per chunk. Each chunk becomes a separate Gemini call (concurrency 4). Output tokens per call drop from ~6k to ~700, well under the 2048 ceiling. The shared `extractSupermarketPromos` helper merges per-chunk payloads and surfaces per-chunk telemetry (`chunks_total`, `chunks_succeeded`, `chunk_errors`).
+
+Trade-off analysis:
+  - **Chosen: section-chunking** (Option 1). Parallel, bounded per-call, source-specific boundary detection via an existing "Ver legal" marker already in the raw markdown.
+  - **Not chosen: two-pass** (Option 2). 2N LLM calls instead of N/k; ~2x more expensive for no quality improvement.
+  - **Not chosen: streaming / resume** (Option 3). Complex resume logic; error-prone.
+  - **Not chosen: bump `maxOutputTokens` only** (Option 4). Defers the problem; catalogs grow over time. Kept as single-chunk fallback at 8192 tokens when the chunker can't find delimiters.
+  - **Not chosen: per-promo extraction** (Option 5). Requires reliable per-promo boundary detection at the TS layer, which is brittle when the markdown has marketing banners.
 
 ## Fixtures
 

@@ -52,6 +52,13 @@ Fields (required):
 - tope: "$20.000/mes" → 20000. "TOPE POR MES $25.000" → 25000. "Sin tope" → null.
   Cuotas rows generally have no tope → null.
 - tope_period: week | month | ticket | day | null. "POR MES" → month. "semanal" → week.
+- cuotas_count: REQUIRED for promo_type="cuotas". Integer number of installments
+  ("3 cuotas sin interés" → 3, "12 cuotas" → 12, "24 cuotas" → 24). If a block
+  lists MULTIPLE counts in one block ("6 y 12 cuotas sin interés") use the
+  HIGHER count (12 here) since that's the headline value a user cares about.
+  null for cashback/mixed rows. This disambiguates same-bank/day cuotas tiers
+  (Cencopay 3/6/12/18/24 cuotas — previously collapsed to a single row under
+  the v1 id scheme; fixed in v2 as of 2026-04-23).
 - merchant: always "Jumbo".
 - category: always "supermercado".
 - issuer_bank: lowercased short names. Examples from Jumbo: galicia, macro,

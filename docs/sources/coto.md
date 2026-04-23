@@ -23,16 +23,18 @@ Both URLs carry their OWN rows (no cross-URL dedup) — they represent distinct 
 
 Not applicable to Coto — Coto's stack is a bespoke CMS (not VTEX). Coto Digital uses a custom framework; no public JSON feed for promos was explored. HTML scraping is the only path.
 
-## Canonical id strategy
+## Canonical id strategy — v2 (2026-04-23)
 
-`uuidV5(SUPERMARKET_UUID_NAMESPACE, "${source_url}#${day_key}#${bank_key}#${pct}#${promo_type}")`
+`uuidV5(SUPERMARKET_UUID_NAMESPACE_V2, "${source_url}#${day_key}#${banks_key}#${wallets_key}#${pct}#${promo_type}#${variant_key}")`
 
 Rationale:
 - `merchant` is constant (always "Coto"), so it can't distinguish rows — drop it from the tuple.
 - Multiple Mondays-only 30% promos from DIFFERENT banks need separate ids.
 - `day_key` = sorted ISO weekday numbers joined by `,` — e.g., `"3"` for Miércoles, `"1,2,3,4,5"` for L-V.
-- `bank_key` = first sorted bank, or `"_none_"` if the promo is wallet-only (Comunidad Coto).
-- `promo_type` disambiguates a 20% cashback row from a 20% cuotas row on the same bank + day (rare but observed on some chains).
+- `banks_key` = ALL sorted+deduped banks joined by `|` (v2 upgrade; v1 only kept the first alphabetical bank and collided on multi-bank Carrefour blocks that shared a primary).
+- `wallets_key` = ALL sorted+deduped wallets joined by `|` — distinguishes Comunidad Coto own-cupon rows from bank-card-only rows cleanly.
+- `promo_type` disambiguates a 20% cashback row from a 20% cuotas row on the same bank + day.
+- `variant_key` = `cNN` for cuotas rows (the cuotas_count), `TOPE:PERIOD` for cashback/mixed — disambiguates same-bank/day/pct tiers (e.g., "Credicoop 30% cartera general tope $15k" vs "Credicoop 30% sueldo tope $20k" if such a tuple ever appears).
 
 **Trade-off**: When Coto reshuffles (bank drops, day changes), new ids emit — old rows go stale under TTL. Intentional for Phase 3; Phase 4 dedup will merge equivalents.
 

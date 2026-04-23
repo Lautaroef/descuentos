@@ -29,6 +29,7 @@
         "promo_type": "cuotas",
         "tope": null,
         "tope_period": null,
+        "cuotas_count": 3,
         "merchant": "Carrefour",
         "category": "supermercado",
         "issuer_bank": [],
