@@ -144,7 +144,9 @@ test('scheduled runner: per-URL scrape failure does NOT throw, records error in 
       markSeenOverride: async () => {},
       runLoggerOverride: {
         start: async () => 'run-1',
-        finish: async (_, a) => Object.assign(finishArgs, a),
+        finish: async (_, a) => {
+          Object.assign(finishArgs, a);
+        },
       },
     },
   );

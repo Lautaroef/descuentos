@@ -1,6 +1,6 @@
 // Scheduled Jumbo ingestion.
-import { buildIngestFunction } from './build-ingest-function';
-import { SOURCE_SCHEDULES } from '../schedules';
+import { buildIngestFunction } from './build-ingest-function.js';
+import { SOURCE_SCHEDULES } from '../schedules.js';
 import { runJumboIngestion } from '../../../../scripts/ingestion/jumbo-run.js';
 
 const schedule = SOURCE_SCHEDULES.find((s) => s.function_id === 'ingest-jumbo');

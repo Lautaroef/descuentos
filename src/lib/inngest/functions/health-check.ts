@@ -20,14 +20,14 @@
 // The DB client here is `scripts/lib/db.ts` (not src/lib/db.ts) because the
 // health-check function is executed in the same Node environment as the CLI
 // runners — it should reuse the exact client the rest of ingestion uses.
-import { inngest } from '../client';
-import { HEALTH_CHECK_CRON, SOURCE_SCHEDULES } from '../schedules';
+import { inngest } from '../client.js';
+import { HEALTH_CHECK_CRON, SOURCE_SCHEDULES } from '../schedules.js';
 import {
   findStaleSources,
   type ScrapeRunSummary,
   type SourceConfig,
-} from '../health-predicate';
-import { sendHealthAlert } from '../../alerts';
+} from '../health-predicate.js';
+import { sendHealthAlert } from '../../alerts.js';
 import { getDb } from '../../../../scripts/lib/db.js';
 
 /**

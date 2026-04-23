@@ -13,7 +13,7 @@
 // We use 2x the expected cadence as the stale threshold so a single skipped week
 // on a weekly source doesn't alert. The alert fires only when a source has
 // genuinely fallen behind its schedule.
-import type { StaleSourceAlert } from '../alerts';
+import type { StaleSourceAlert } from '../alerts.js';
 
 export interface ScrapeRunSummary {
   source_id: string;

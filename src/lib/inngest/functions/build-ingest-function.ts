@@ -16,8 +16,8 @@
 // bundler resolves `.js` extension imports against TS siblings, so this Just
 // Works without `transpilePackages`. The outputFileTracingExcludes in
 // next.config.ts was updated to allow scripts/ to be traced into the bundle.
-import { inngest } from '../client';
-import type { SourceSchedule } from '../schedules';
+import { inngest } from '../client.js';
+import type { SourceSchedule } from '../schedules.js';
 import type { RunRollup } from '../../../../scripts/lib/source-runner.js';
 
 type RunnerFn = () => Promise<RunRollup>;

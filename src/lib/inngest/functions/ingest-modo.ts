@@ -2,8 +2,8 @@
 //
 // Wraps `runModoIngestion` (which itself wraps the generic runner). The runner
 // handles hub fetch → per-slug hash-compare → upsert → scrape_runs rollup.
-import { buildIngestFunction } from './build-ingest-function';
-import { SOURCE_SCHEDULES } from '../schedules';
+import { buildIngestFunction } from './build-ingest-function.js';
+import { SOURCE_SCHEDULES } from '../schedules.js';
 import { runModoIngestion } from '../../../../scripts/ingestion/modo-run.js';
 
 const schedule = SOURCE_SCHEDULES.find((s) => s.function_id === 'ingest-modo');

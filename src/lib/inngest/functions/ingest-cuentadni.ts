@@ -1,6 +1,6 @@
 // Scheduled Cuenta DNI ingestion (press-article extraction).
-import { buildIngestFunction } from './build-ingest-function';
-import { SOURCE_SCHEDULES } from '../schedules';
+import { buildIngestFunction } from './build-ingest-function.js';
+import { SOURCE_SCHEDULES } from '../schedules.js';
 import { runCuentaDniIngestion } from '../../../../scripts/ingestion/cuentadni-run.js';
 
 const schedule = SOURCE_SCHEDULES.find((s) => s.function_id === 'ingest-cuentadni');
