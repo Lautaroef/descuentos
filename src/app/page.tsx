@@ -42,13 +42,12 @@ export default async function HomePage({
         <OnboardingSheet />
 
         <header className="mb-6">
-          <h1 className="text-[28px] font-semibold leading-[34px] tracking-[-0.015em] text-text-primary">
-            Descuentos
+          <h1 className="flex items-baseline gap-3 text-[28px] font-semibold leading-[34px] tracking-[-0.015em] text-text-primary">
+            <span>Descuentos</span>
+            <span className="text-text-muted">
+              {stats.total} {stats.total === 1 ? 'activa' : 'activas'}
+            </span>
           </h1>
-          <p className="mt-1 text-sm font-medium text-text-secondary">
-            Hoy te conviene…
-            <span className="ml-2 text-text-muted">{stats.total} activas</span>
-          </p>
         </header>
 
         <section className="mb-6">

@@ -52,7 +52,10 @@ export function MerchantAvatar({ name, size = 32 }: MerchantAvatarProps) {
       aria-hidden="true"
     >
       {/* Plain <img>: follows Google's 301 → gstatic transparently; no Next
-          image config required. Fixed intrinsic dimensions prevent CLS. */}
+          image config required. Fixed intrinsic dimensions prevent CLS.
+          On load, downgrade to the letter avatar if the response was Google's
+          generic 16×16 fallback (returned when the requested domain has no
+          publishable favicon — looks worse than a clean first-letter disc). */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={logoUrl}
@@ -63,6 +66,12 @@ export function MerchantAvatar({ name, size = 32 }: MerchantAvatarProps) {
         decoding="async"
         referrerPolicy="no-referrer"
         onError={() => setFailed(true)}
+        onLoad={(e) => {
+          const img = e.currentTarget;
+          if (img.naturalWidth > 0 && img.naturalWidth < 32) {
+            setFailed(true);
+          }
+        }}
         style={{
           width: size,
           height: size,

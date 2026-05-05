@@ -48,6 +48,8 @@ const MERCHANT_DOMAIN_MAP: Record<string, string> = {
   makro: 'makro.com.ar',
   yaguar: 'yaguar.com.ar',
   'disco vea': 'disco.com.ar',
+  cordiez: 'cordiez.com.ar',
+  vital: 'vital.com.ar',
 
   // Farmacia
   farmacity: 'farmacity.com',
@@ -84,6 +86,7 @@ const MERCHANT_DOMAIN_MAP: Record<string, string> = {
   cabify: 'cabify.com',
   despegar: 'despegar.com.ar',
   almundo: 'almundo.com.ar',
+  'al mundo': 'almundo.com.ar',
   chevallier: 'nuevachevallier.com',
   'flecha bus': 'flechabus.com.ar',
   'la veloz del norte': 'lavelozdelnorte.com.ar',
@@ -91,6 +94,8 @@ const MERCHANT_DOMAIN_MAP: Record<string, string> = {
   'general urquiza transportes': 'generalurquiza.com.ar',
   'viajes naranja x': 'naranjax.com',
   'viajes naranjax': 'naranjax.com',
+  andesmar: 'andesmar.com',
+  plusmar: 'plusmar.com.ar',
 
   // Indumentaria / deportes
   nike: 'nike.com.ar',
@@ -101,9 +106,18 @@ const MERCHANT_DOMAIN_MAP: Record<string, string> = {
   lazaro: 'lazaro.com.ar',
   sportclub: 'sportclub.com.ar',
   sportotal: 'sportotal.com.ar',
+  sportline: 'sportline.com.ar',
   showsport: 'showsport.com.ar',
   'on city': 'oncity.com',
+  'on sports': 'onsports.com.ar',
   eyelit: 'eyelit.com.ar',
+  adidas: 'adidas.com.ar',
+  puma: 'ar.puma.com',
+  reebok: 'reebok.com.ar',
+  topper: 'topper.com.ar',
+  cannon: 'cannon.com.ar',
+  rosen: 'rosen.com.ar',
+  sodimac: 'sodimac.com.ar',
 
   // Electro
   samsung: 'samsung.com',
@@ -134,6 +148,10 @@ const MERCHANT_DOMAIN_MAP: Record<string, string> = {
   'recargas personal': 'personal.com.ar',
   'recargas movistar prepago o tuenti': 'movistar.com.ar',
   'ualá bis': 'uala.com.ar',
+  'uala bis': 'uala.com.ar',
+  cinemark: 'cinemarkhoyts.com.ar',
+  'tienda ciudad': 'tiendaciudad.com.ar',
+  vacalin: 'vacalin.com.ar',
 };
 
 /**

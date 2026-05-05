@@ -16,10 +16,18 @@ let client: Sql | null = null;
 export function getDb(): Sql {
   if (client) return client;
 
-  const url = process.env.DATABASE_URL;
+  // Connection-string priority:
+  //   1. DATABASE_POOLER_URL — Supabase transaction-mode pooler (IPv4-compatible).
+  //      MUST be used from Vercel because Vercel's serverless network is IPv4-only
+  //      and Supabase's direct `db.<ref>.supabase.co` host resolves IPv6-only.
+  //      Connecting to the direct URL from Vercel hangs until the function timeout
+  //      — that was the 2026-04 silent-cron-failure root cause.
+  //   2. DATABASE_URL — direct connection. Fine from local CLI runs. Falls back
+  //      here when no pooler URL is present.
+  const url = process.env.DATABASE_POOLER_URL || process.env.DATABASE_URL;
   if (!url) {
     throw new Error(
-      'DATABASE_URL is not set. Populate .env.local (see .env.example) before running DB scripts.',
+      'DATABASE_POOLER_URL or DATABASE_URL must be set. Populate .env.local (see .env.example) before running DB scripts.',
     );
   }
 
