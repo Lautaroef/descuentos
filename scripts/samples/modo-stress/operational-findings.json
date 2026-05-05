@@ -64,8 +64,8 @@
     "production_recommendation": "Scrape with rawHtml format (1 credit), regex-extract valid_days first, then feed LLM the remaining content + the pre-computed valid_days as a hint. This gives 100% accuracy on valid_days at no extra cost."
   },
   "competitor_signal_promoarg": {
-    "query": "Francisco Martos PromoArg MODO 2026",
-    "findings": "LinkedIn post (Dec 2025-ish, post_id=7442944621451816961) describes PromoArg as a personal project for centralizing bank promos. No 2026 posts specifically mentioning MODO scraper breakage, rate limits, or access issues surfaced in search.",
+    "query": "PromoArg MODO 2026",
+    "findings": "Public LinkedIn launch posts describe PromoArg as a personal project for centralizing bank promos. No 2026 posts specifically mentioning MODO scraper breakage, rate limits, or access issues surfaced in search.",
     "note": "LinkedIn blocks Firecrawl access to post content — only description snippet available. Deeper competitor investigation was not prioritized (time budget).",
     "interpretation": "No signal that MODO is actively blocking scrapers. PromoArg's own data suggests they rely on MODO as a source (same conclusion as our PoC)."
   }

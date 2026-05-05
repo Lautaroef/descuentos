@@ -155,7 +155,7 @@ For v1 launch at daily cadence: **Standard plan, $83/mo**. For a "free-ish" laun
 
 ### Competitor signal
 
-LinkedIn search for Francisco Martos (PromoArg) + MODO 2026 issues: no posts surfaced mentioning scraper breakage or rate limits. LinkedIn blocks Firecrawl, so deeper search skipped within time budget. Takeaway: no visible signal that MODO is actively blocking scrapers.
+Public LinkedIn / launch-post searches for the closest public analog (PromoArg) surfaced no posts mentioning MODO scraper breakage or rate limits in 2026. LinkedIn blocks Firecrawl, so deeper search was skipped within time budget. Takeaway: no visible signal that MODO is actively blocking scrapers.
 
 ## Extraction prompt (final, refined — production-ready)
 

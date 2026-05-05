@@ -35,4 +35,4 @@ Published: 2026-02-04. Read as a press-extraction triangulation for Personal Pay
 
 Press-article extraction works cleanly for fintech topes when monthly combo roundup articles exist. These are published by iProUp / iProfesional / Ámbito / promociones.com.ar monthly. Quality: same as Cuenta DNI press extraction.
 
-Known content-farm caveat: promociones.com.ar is Francisco-Martos-adjacent content-farming (PromoArg's neighbor). Cross-verify topes against a second source (iProUp or iProfesional) before trusting.
+Caveat: promociones.com.ar reads as low-effort content farming. Cross-verify topes against a second source (iProUp or iProfesional) before trusting.

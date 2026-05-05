@@ -24,3 +24,8 @@ coverage/
 playwright-report/
 test-results/
 playwright/.cache/
+
+# Strategic / competitive docs — excluded from public repo
+docs/competitor-promoarg.md
+docs/build-plan.md
+docs/firecrawl-alternative-analysis.md

@@ -60,11 +60,11 @@ Per-wallet scrape results (all 1 credit each, basic proxy, Firecrawl markdown wi
 | **Ualá** | `uala.com.ar/promociones` + `/promociones/<merchant-slug>` | Next.js, Firecrawl-resolved | Hub lists ~4-10 merchants; per-merchant pages have MODO-grade fixed-label blocks (Días/Métodos/Válido hasta/Tope/Disponible en + full T&Cs) | Firecrawl + LLM extract per-merchant slug |
 | **Personal Pay** | `personalpay.com.ar/beneficios` (301→`personal.com.ar/pay/beneficios`) | AEM, rendered, paginated | ~96 partners visible (8 pages × 12). Each card shows merchant + pct + días. **Topes only in summary image** (`Desk_tabla_v2.webp`) | Scrape hub pages 1-8 for merchant list; get tope via press article triangulation (e.g., promociones.com.ar combo article gives Nivel 3 topes) |
 
-**The app-API reverse-engineering angle**: searched GitHub and dev blogs for `naranja-x-api`, `personal-pay-reverse-engineered`, Ualá/Brubank. **No public repos found.** Naranja X engineers present at DEF CON 31 (Ileana Barrionuevo, security engineer) and publish CI/CD talks on YouTube, but no public SDK leakage. Conclusion: don't decompile, don't need to — the web surfaces are sufficient.
+**The app-API reverse-engineering angle**: searched GitHub and dev blogs for `naranja-x-api`, `personal-pay-reverse-engineered`, Ualá/Brubank. **No public repos found.** Conclusion: don't decompile, don't need to — the public web surfaces are sufficient.
 
 **Press-extraction triangulation test** (the promociones.com.ar combo article, Feb 2026):
 
-Extracted cleanly: Plan Turbo martes (Naranja X 25% super tope $12k/sem), Personal Pay Nivel 3 (20% super+combustible tope $8k), Naranja X transporte NFC (100% reintegro tope $20k/mes), Personal Pay Flow/servicios ($3.500 reintegro factura), requisitos de nivel (>$150k gasto mes anterior = Nivel 3). Caveat: promociones.com.ar is Francisco-Martos-adjacent content farming — cross-verify against iProUp / iProfesional before trusting.
+Extracted cleanly: Plan Turbo martes (Naranja X 25% super tope $12k/sem), Personal Pay Nivel 3 (20% super+combustible tope $8k), Naranja X transporte NFC (100% reintegro tope $20k/mes), Personal Pay Flow/servicios ($3.500 reintegro factura), requisitos de nivel (>$150k gasto mes anterior = Nivel 3). Caveat: promociones.com.ar reads as low-effort content farming — cross-verify against iProUp / iProfesional before trusting.
 
 **Cross-chain confirmation**: the Carrefour `/descuentos-bancarios` page **explicitly names** Cuenta DNI, Personal Pay, Ualá, Naranja X, BNA+, Prex as participating billeteras in a "10% sin tope" universal cross-wallet promo. Supermarkets themselves document the wallets we thought were siloed.
 
@@ -100,11 +100,11 @@ The wedge (sort by tope) **broadens materially**. Phase 1's implicit universe wa
 
 **Estimated coverage of AR deal-hunter's promo universe** with MODO + long-tail findings combined: **~85–90%**. The remaining 10–15% is per-user app-only cupones (Mi Carrefour birthday cupon, personalized Cuenta DNI push notifications, per-user Mercado Pago perks). These are genuinely individual and no aggregator can surface them without per-user OAuth into each app — out of scope.
 
-**Differentiators vs PromoArg** (per `competitor-promoarg.md`):
+**Coverage gains over the closest public analog (PromoArg, see `competitor-promoarg.md`)**:
 
-- We can claim supermarket-native own-cupones (Comunidad Coto, Jumbo pesoscheck, Mi Carrefour mentions) — PromoArg does not source these.
-- We can surface Brubank / Ualá / Naranja X / Personal Pay with structured topes — PromoArg's bank filter caps at 100 and includes these thinly.
-- Our press-article extraction for Cuenta DNI is cheaper and more current than manual curation.
+- Supermarket-native own-cupones (Comunidad Coto, Jumbo pesoscheck, Mi Carrefour mentions) — PromoArg does not source these.
+- Structured topes for Brubank / Ualá / Naranja X / Personal Pay — PromoArg's bank filter caps at 100 and covers these thinly.
+- Press-article extraction for Cuenta DNI is cheaper and more current than manual curation.
 
 ## Updates to other docs
 
