@@ -27,6 +27,17 @@ export function Disclaimer({ variant = 'home', merchant }: DisclaimerProps) {
       <p className="mt-1">
         Datos tomados de fuentes públicas. No estamos afiliados a ningún banco ni billetera.
       </p>
+      <p className="mt-1">
+        made by{' '}
+        <a
+          href="https://github.com/Lautaroef"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline-offset-2 transition-colors hover:text-text-secondary hover:underline"
+        >
+          lautaroef
+        </a>
+      </p>
     </footer>
   );
 }
