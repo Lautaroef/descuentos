@@ -5,10 +5,26 @@ import { getSiteUrl } from '@/lib/site-url';
 
 // Generate the sitemap from the DB. Copies PromoArg's `/p/<uuid>` URL shape per
 // competitor-promoarg.md (SEO parity). `lastModified` = each promo's `last_seen_at`.
+//
+// The sitemap is prerendered at build time, so a DB outage (e.g. Supabase pausing
+// the Free-plan project, 2026-10-08) used to fail the whole deploy. If the DB is
+// unreachable we ship the static entries and let the daily revalidation add the
+// promo URLs back once the DB answers.
+export const revalidate = 86400;
+
+async function loadPromoEntries(): Promise<Awaited<ReturnType<typeof listPromoSitemap>>> {
+  try {
+    return await listPromoSitemap();
+  } catch (err) {
+    console.error('[sitemap] promo query failed; serving static entries only', err);
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
 
-  const promos = await listPromoSitemap();
+  const promos = await loadPromoEntries();
   const now = new Date();
 
   const entries: MetadataRoute.Sitemap = [
