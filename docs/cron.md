@@ -143,3 +143,26 @@ promo because no ingestion had run in 4 days). The gap wasn't a failing scraper
 — it was *no orchestration at all*. With Phase 1.5 in place, a missed weekly
 cycle is visible within 24h via the health check, long before the UI filter
 clamps everything to empty.
+
+## DB keep-alive (Vercel Cron) — added 2026-10-08
+
+Supabase pauses Free-plan projects after ~7 days of low database activity
+([docs](https://supabase.com/docs/guides/platform/free-project-pausing)). On
+2026-10-08 the project was paused and every page returned 500 (Supavisor:
+`tenant/user postgres.<ref> not found`), because the Inngest schedules that used
+to generate DB traffic were no longer running.
+
+- `vercel.json` registers a daily Vercel Cron (12:00 UTC; Hobby allows one run
+  per day) on `GET /api/keepalive`.
+- The route (`src/app/api/keepalive/route.ts`) requires
+  `Authorization: Bearer $CRON_SECRET` (Vercel sends it automatically; the env
+  var is set in Vercel production) and runs `select count(*) from promos`.
+- A failed ping returns 503 and logs `[keepalive] database ping failed`, visible
+  under Vercel → Logs / Cron Jobs.
+- It is independent of Inngest on purpose: if the ingestion scheduler goes dark
+  again, the DB still stays awake.
+- `src/app/error.tsx` renders a branded, retryable error page if a render
+  still fails, instead of the bare Next.js 500 screen.
+
+If the project is paused anyway: Supabase dashboard → project → Resume project
+(free), then check `supabase projects list` shows `ACTIVE_HEALTHY`.
